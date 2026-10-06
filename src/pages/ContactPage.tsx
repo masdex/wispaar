@@ -111,6 +111,24 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                 سپاس از حسن اعتماد شما. پیام شما در اولویت بررسی کارشناسان قرار گرفت
                 و به زودی با شما تماس حاصل خواهد شد.
               </p>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setFormData({
+                      name: '',
+                      email: '',
+                      phone: '',
+                      service: 'طراحی اختصاصی وب‌سایت',
+                      message: ''
+                    });
+                  }}
+                  className="px-5 py-2 text-xs font-semibold text-[#00D9FF] bg-[#0A1626] border border-[#23364C] rounded-xl hover:bg-[#0F2035] transition-colors cursor-pointer"
+                >
+                  ارسال پیام دیگر
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">

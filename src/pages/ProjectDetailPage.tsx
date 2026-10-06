@@ -28,6 +28,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   const nextProject = projectsData[(currentIndex + 1) % projectsData.length];
 
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
+  const [showCmsSchema, setShowCmsSchema] = useState(false);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-16">
@@ -214,6 +215,68 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               </span>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* WordPress CMS-Ready Schema Inspector (Developer & Architecture Transparency) */}
+      <section className="border-t border-[#172638] pt-8">
+        <div className="bg-[#06111F] border border-[#172638] rounded-xl p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
+                <span>&lt;WORDPRESS CMS ARCHITECTURE&gt;</span>
+                <span>·</span>
+                <span>Custom Post Type Ready</span>
+              </div>
+              <h4 className="text-sm font-bold text-[#F5F8FC]">
+                معماری داده پروژه برای انتقال مستقیم به وردپرس (WordPress CPT & ACF)
+              </h4>
+              <p className="text-xs text-[#8C9BAD] mt-0.5">
+                این پروژه دارای ساختار داده مستقل و جدا از لایه نمایش است و بدون وابستگی، آماده ثبت در وردپرس می‌باشد.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowCmsSchema(!showCmsSchema)}
+              className="px-4 py-2 text-xs font-mono bg-[#0A1626] border border-[#23364C] hover:border-[#00D9FF] text-[#00D9FF] rounded-lg transition-colors shrink-0 cursor-pointer"
+            >
+              {showCmsSchema ? 'پنهان کردن ساختار JSON' : 'مشاهده مدل داده CPT & ACF'}
+            </button>
+          </div>
+
+          {showCmsSchema && (
+            <div className="mt-6 pt-6 border-t border-[#172638] space-y-4">
+              <div className="text-xs text-[#8C9BAD]">
+                مدل شیء پست سفارشی (Post Type: <code className="font-mono text-[#00D9FF]">wispaar_project</code>) و فیلدهای سفارشی (ACF):
+              </div>
+              <pre className="p-4 bg-[#03070D] border border-[#172638] rounded-lg text-xs font-mono text-[#C5D0DD] overflow-x-auto leading-relaxed" dir="ltr">
+{JSON.stringify(
+  {
+    post_type: 'wispaar_project',
+    post_title: project.title,
+    post_name: project.slug,
+    taxonomies: {
+      project_industry: project.industry,
+      project_tech: project.technology,
+      project_tags: project.tags,
+    },
+    meta_fields: {
+      client_name: project.client,
+      project_year: project.year,
+      project_type: project.projectType,
+      challenge_text: project.challenge,
+      solution_architecture: project.solution,
+      key_kpis: project.results,
+      demo_status: project.isDemo ? 'concept_demo' : 'production_verified',
+    },
+    rest_api_endpoint: `/wp-json/wispaar/v1/projects/${project.slug}`,
+  },
+  null,
+  2
+)}
+              </pre>
+            </div>
+          )}
         </div>
       </section>
 

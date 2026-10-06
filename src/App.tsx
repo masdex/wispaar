@@ -3,6 +3,7 @@ import { PageRoute } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
+import { updatePageMeta } from './utils/seo';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -18,6 +19,7 @@ import { ArticleDetailPage } from './pages/ArticleDetailPage';
 import { FaqPage } from './pages/FaqPage';
 import { ContactPage } from './pages/ContactPage';
 import { StartProjectPage } from './pages/StartProjectPage';
+import { SearchPage } from './pages/SearchPage';
 import { LegalPage } from './pages/LegalPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
@@ -53,7 +55,7 @@ export default function App() {
         }
       } else if (main === 'portfolio') {
         setRoute('portfolio');
-        setSlug(undefined);
+        setSlug(sub); // Supports sub-routes like web-design
       } else if (main === 'projects') {
         if (sub) {
           setRoute('project-detail');
@@ -64,7 +66,7 @@ export default function App() {
         }
       } else if (main === 'seo') {
         setRoute('seo');
-        setSlug(undefined);
+        setSlug(sub); // Supports sub-routes like case-studies
       } else if (main === 'process') {
         setRoute('process');
         setSlug(undefined);
@@ -85,6 +87,9 @@ export default function App() {
       } else if (main === 'start-project') {
         setRoute('start-project');
         setSlug(undefined);
+      } else if (main === 'search') {
+        setRoute('search');
+        setSlug(undefined);
       } else if (main === 'privacy') {
         setRoute('privacy');
         setSlug(undefined);
@@ -101,6 +106,11 @@ export default function App() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  // Update dynamic page meta title & description for SEO
+  useEffect(() => {
+    updatePageMeta(route, slug);
+  }, [route, slug]);
 
   // Keyboard shortcut for search (Ctrl+K or Cmd+K)
   useEffect(() => {
@@ -127,15 +137,16 @@ export default function App() {
     else if (newRoute === 'about') hashTarget = 'about';
     else if (newRoute === 'services') hashTarget = 'services';
     else if (newRoute === 'service-detail') hashTarget = `services/${newSlug || ''}`;
-    else if (newRoute === 'portfolio') hashTarget = 'portfolio';
+    else if (newRoute === 'portfolio') hashTarget = newSlug ? `portfolio/${newSlug}` : 'portfolio';
     else if (newRoute === 'project-detail') hashTarget = `projects/${newSlug || ''}`;
-    else if (newRoute === 'seo') hashTarget = 'seo';
+    else if (newRoute === 'seo') hashTarget = newSlug ? `seo/${newSlug}` : 'seo';
     else if (newRoute === 'process') hashTarget = 'process';
     else if (newRoute === 'blog') hashTarget = 'blog';
     else if (newRoute === 'article-detail') hashTarget = `blog/${newSlug || ''}`;
     else if (newRoute === 'faq') hashTarget = 'faq';
     else if (newRoute === 'contact') hashTarget = 'contact';
     else if (newRoute === 'start-project') hashTarget = 'start-project';
+    else if (newRoute === 'search') hashTarget = 'search';
     else if (newRoute === 'privacy') hashTarget = 'privacy';
     else if (newRoute === 'terms') hashTarget = 'terms';
     else if (newRoute === '404') hashTarget = '404';
@@ -155,7 +166,7 @@ export default function App() {
       case 'service-detail':
         return <ServiceDetailPage slug={slug || 'web-design'} onNavigate={navigate} />;
       case 'portfolio':
-        return <PortfolioPage onNavigate={navigate} />;
+        return <PortfolioPage filterSlug={slug} onNavigate={navigate} />;
       case 'project-detail':
         return <ProjectDetailPage slug={slug || 'arya-capital'} onNavigate={navigate} />;
       case 'seo':
@@ -172,6 +183,8 @@ export default function App() {
         return <ContactPage onNavigate={navigate} />;
       case 'start-project':
         return <StartProjectPage onNavigate={navigate} />;
+      case 'search':
+        return <SearchPage onNavigate={navigate} />;
       case 'privacy':
         return <LegalPage type="privacy" onNavigate={navigate} />;
       case 'terms':

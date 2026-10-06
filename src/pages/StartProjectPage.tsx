@@ -142,16 +142,36 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
               حداکثر ۲۴ ساعت کاری جهت هماهنگی جلسه ارزیابی استراتژیک با شما
               تماس خواهند گرفت.
             </p>
-            <div className="pt-4 flex justify-center gap-4">
+            {/* Success state buttons */}
+            <div className="pt-4 flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => onNavigate('home')}
-                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] rounded-xl hover:bg-[#155bd8] transition-colors"
+                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] rounded-xl hover:bg-[#155bd8] transition-colors cursor-pointer"
               >
                 بازگشت به صفحه اصلی
               </button>
               <button
+                onClick={() => {
+                  setIsSubmitted(false);
+                  setCurrentStep(1);
+                  setSelectedServices([]);
+                  setSelectedGoals([]);
+                  setCurrentPlatform('');
+                  setWebsiteUrl('');
+                  setBudgetRange('');
+                  setTimeline('');
+                  setClientName('');
+                  setClientEmail('');
+                  setClientPhone('');
+                  setProjectDescription('');
+                }}
+                className="px-6 py-2.5 text-xs font-medium text-[#00D9FF] bg-[#0A1626] border border-[#23364C] rounded-xl hover:bg-[#0F2035] transition-colors cursor-pointer"
+              >
+                ثبت بریف پروژه جدید
+              </button>
+              <button
                 onClick={() => onNavigate('portfolio')}
-                className="px-6 py-2.5 text-xs font-medium text-[#C5D0DD] bg-[#0A1626] border border-[#172638] rounded-xl hover:text-white"
+                className="px-6 py-2.5 text-xs font-medium text-[#C5D0DD] bg-[#0A1626] border border-[#172638] rounded-xl hover:text-white cursor-pointer"
               >
                 مرور نمونه‌کارها
               </button>
@@ -359,6 +379,38 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
                   <p className="text-xs text-[#8C9BAD]">
                     این اطلاعات صرفاً برای هماهنگی مستقیم جلسه ارزیابی استفاده می‌شود.
                   </p>
+                </div>
+
+                {/* Selected Brief Summary Badge */}
+                <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl text-xs space-y-2">
+                  <div className="font-semibold text-[#00D9FF] flex items-center justify-between">
+                    <span>خلاصه انتخاب‌های شما در گام‌های پیشین:</span>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(1)}
+                      className="text-[#4AA3FF] hover:underline"
+                    >
+                      ویرایش انتخاب‌ها
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#C5D0DD]">
+                    <div>
+                      <span className="text-[#536174]">خدمات: </span>
+                      {selectedServices.length > 0 ? selectedServices.join('، ') : 'انتخاب نشده'}
+                    </div>
+                    <div>
+                      <span className="text-[#536174]">اهداف: </span>
+                      {selectedGoals.length > 0 ? selectedGoals.join('، ') : 'انتخاب نشده'}
+                    </div>
+                    <div>
+                      <span className="text-[#536174]">بستر فعلی: </span>
+                      {currentPlatform || websiteUrl || 'پروژه جدید'}
+                    </div>
+                    <div>
+                      <span className="text-[#536174]">بودجه و زمان: </span>
+                      {budgetRange ? budgetRange.split('(')[0] : 'مشاوره'} / {timeline || 'استاندارد'}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -7,13 +7,17 @@ import { Sparkles, Filter } from 'lucide-react';
 
 interface PortfolioPageProps {
   onNavigate: (route: PageRoute, slug?: string) => void;
+  filterSlug?: string;
 }
 
-export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate }) => {
-  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
+export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, filterSlug }) => {
+  const [selectedIndustry, setSelectedIndustry] = useState<string>(
+    filterSlug === 'web-design' ? 'web-design' : 'all'
+  );
 
   const industries = [
     { id: 'all', label: 'همه پروژه‌ها' },
+    { id: 'web-design', label: 'طراحی اختصاصی وب' },
     { id: 'fintech', label: 'فین‌تک و سرمایه‌گذاری' },
     { id: 'biotech', label: 'علوم زیستی و پزشکی' },
     { id: 'luxury', label: 'معماری و دکوراسیون' },
@@ -22,6 +26,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate }) => {
 
   const filteredProjects = projectsData.filter((p) => {
     if (selectedIndustry === 'all') return true;
+    if (selectedIndustry === 'web-design') return p.services.some((s) => s.includes('طراحی') || s.includes('وب'));
     if (selectedIndustry === 'fintech') return p.industry.includes('فین‌تک');
     if (selectedIndustry === 'biotech') return p.industry.includes('زیستی') || p.industry.includes('سلامت');
     if (selectedIndustry === 'luxury') return p.industry.includes('معماری');
