@@ -1,0 +1,6 @@
+{
+  "name": "WISPAAR | ویسپار — آفرینش با خرد",
+  "description": "استودیو فناوری و طراحی دیجیتال ویسپار (WISPAAR). طراحی و توسعه وب‌سایت‌های اختصاصی، بهینه‌سازی وردپرس، صفحات فرود و استراتژی سئو با رویکرد آفرینش با خرد.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
