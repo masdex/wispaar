@@ -20,6 +20,7 @@ import { FaqPage } from './pages/FaqPage';
 import { ContactPage } from './pages/ContactPage';
 import { StartProjectPage } from './pages/StartProjectPage';
 import { SearchPage } from './pages/SearchPage';
+import { WordPressHubPage } from './pages/WordPressHubPage';
 import { LegalPage } from './pages/LegalPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
@@ -90,6 +91,9 @@ export default function App() {
       } else if (main === 'search') {
         setRoute('search');
         setSlug(undefined);
+      } else if (main === 'wordpress-hub' || main === 'wp-admin' || main === 'wordpress') {
+        setRoute('wordpress-hub');
+        setSlug(undefined);
       } else if (main === 'privacy') {
         setRoute('privacy');
         setSlug(undefined);
@@ -147,6 +151,7 @@ export default function App() {
     else if (newRoute === 'contact') hashTarget = 'contact';
     else if (newRoute === 'start-project') hashTarget = 'start-project';
     else if (newRoute === 'search') hashTarget = 'search';
+    else if (newRoute === 'wordpress-hub') hashTarget = 'wordpress-hub';
     else if (newRoute === 'privacy') hashTarget = 'privacy';
     else if (newRoute === 'terms') hashTarget = 'terms';
     else if (newRoute === '404') hashTarget = '404';
@@ -185,6 +190,8 @@ export default function App() {
         return <StartProjectPage onNavigate={navigate} />;
       case 'search':
         return <SearchPage onNavigate={navigate} />;
+      case 'wordpress-hub':
+        return <WordPressHubPage onNavigate={navigate} />;
       case 'privacy':
         return <LegalPage type="privacy" onNavigate={navigate} />;
       case 'terms':

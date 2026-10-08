@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Check, CheckCircle2, ArrowRight, ArrowLeft, Send, Sparkles } from 'lucide-react';
+import { saveLead } from '../utils/wordpressStore';
+import { Check, CheckCircle2, ArrowRight, ArrowLeft, Send, Sparkles, Server } from 'lucide-react';
 
 interface StartProjectPageProps {
   onNavigate: (route: PageRoute, slug?: string) => void;
@@ -69,10 +70,25 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Save lead into WordPress storage / REST API
+    saveLead({
+      name: clientName,
+      email: clientEmail,
+      phone: clientPhone,
+      services: selectedServices,
+      goals: selectedGoals,
+      platform: currentPlatform,
+      website: websiteUrl,
+      budget: budgetRange,
+      timeline: timeline,
+      description: projectDescription,
+    });
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 900);
+    }, 700);
   };
 
   return (
@@ -151,6 +167,13 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
                 بازگشت به صفحه اصلی
               </button>
               <button
+                onClick={() => onNavigate('wordpress-hub' as any)}
+                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#22C55E] hover:bg-[#1ba850] rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-md shadow-[#22C55E]/20"
+              >
+                <Server className="w-3.5 h-3.5" />
+                <span>مشاهده این درخواست در پیشخوان وردپرس (WP Inbox) ←</span>
+              </button>
+              <button
                 onClick={() => {
                   setIsSubmitted(false);
                   setCurrentStep(1);
@@ -168,12 +191,6 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
                 className="px-6 py-2.5 text-xs font-medium text-[#00D9FF] bg-[#0A1626] border border-[#23364C] rounded-xl hover:bg-[#0F2035] transition-colors cursor-pointer"
               >
                 ثبت بریف پروژه جدید
-              </button>
-              <button
-                onClick={() => onNavigate('portfolio')}
-                className="px-6 py-2.5 text-xs font-medium text-[#C5D0DD] bg-[#0A1626] border border-[#172638] rounded-xl hover:text-white cursor-pointer"
-              >
-                مرور نمونه‌کارها
               </button>
             </div>
           </div>

@@ -118,6 +118,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   فرم بریف پروژه جدید
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => handleNav('wordpress-hub' as any)}
+                  className="hover:text-[#00D9FF] font-mono text-xs transition-colors text-right text-[#00D9FF]"
+                >
+                  &lt;قالب وردپرس & پیشخوان لیدها&gt;
+                </button>
+              </li>
             </ul>
           </div>
 

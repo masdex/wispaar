@@ -13,6 +13,7 @@ export type PageRoute =
   | 'contact'
   | 'start-project'
   | 'search'
+  | 'wordpress-hub'
   | 'privacy'
   | 'terms'
   | '404';

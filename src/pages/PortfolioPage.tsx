@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { PageRoute } from '../types';
+import React, { useState, useEffect } from 'react';
+import { PageRoute, Project } from '../types';
 import { projectsData } from '../data/projectsData';
+import { getCustomProjects } from '../utils/wordpressStore';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ProjectCard } from '../components/ProjectCard';
-import { Sparkles, Filter } from 'lucide-react';
+import { Sparkles, Filter, Plus } from 'lucide-react';
 
 interface PortfolioPageProps {
   onNavigate: (route: PageRoute, slug?: string) => void;
@@ -14,6 +15,12 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, filter
   const [selectedIndustry, setSelectedIndustry] = useState<string>(
     filterSlug === 'web-design' ? 'web-design' : 'all'
   );
+  const [projectsList, setProjectsList] = useState<Project[]>(projectsData);
+
+  useEffect(() => {
+    const custom = getCustomProjects();
+    setProjectsList([...custom, ...projectsData]);
+  }, []);
 
   const industries = [
     { id: 'all', label: 'همه پروژه‌ها' },
@@ -24,7 +31,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, filter
     { id: 'cloud', label: 'زیرساخت ابری و IT' },
   ];
 
-  const filteredProjects = projectsData.filter((p) => {
+  const filteredProjects = projectsList.filter((p) => {
     if (selectedIndustry === 'all') return true;
     if (selectedIndustry === 'web-design') return p.services.some((s) => s.includes('طراحی') || s.includes('وب'));
     if (selectedIndustry === 'fintech') return p.industry.includes('فین‌تک');

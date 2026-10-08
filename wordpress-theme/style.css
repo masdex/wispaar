@@ -1,0 +1,43 @@
+/*
+Theme Name: WISPAAR - Creative Technology & Digital Agency
+Theme URI: https://wispaar.com
+Author: WISPAAR Studio
+Author URI: https://wispaar.com
+Description: قالب فوق‌العاده مدرن، سریع و اختصاصی استودیو ویسپار بر پایه هویت «آفرینش با خرد». کاملاً سازگار با تمامی صفحه‌سازها به‌ویژه المنتور (Elementor)، گوتنبرگ و سیستم پیشرفته مدیریت بریف و پروژه‌ها.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: wispaar
+Domain Path: /languages
+Tags: dark-theme, portfolio, agency, elementor, rtl-language-support, custom-post-types, translation-ready
+*/
+
+:root {
+  --wispaar-primary: #1769FF;
+  --wispaar-cyan: #00D9FF;
+  --wispaar-indigo: #6366F1;
+  --wispaar-bg: #03070D;
+  --wispaar-secondary-bg: #06111F;
+  --wispaar-surface: #0A1626;
+  --wispaar-surface-hover: #0F2035;
+  --wispaar-heading: #F5F8FC;
+  --wispaar-body: #C5D0DD;
+  --wispaar-secondary-text: #8C9BAD;
+  --wispaar-border: #172638;
+  --wispaar-border-light: #23364C;
+  --wispaar-success: #22C55E;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--wispaar-bg);
+  color: var(--wispaar-body);
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  direction: rtl;
+  text-align: right;
+  overflow-x: hidden;
+}

@@ -200,6 +200,18 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               <button
+                onClick={() => handleNav('wordpress-hub' as any)}
+                className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
+                  currentRoute === 'wordpress-hub'
+                    ? 'bg-[#1769FF] text-white'
+                    : 'bg-[#0A1626] border border-[#23364C] text-[#00D9FF] hover:bg-[#0F2035]'
+                }`}
+                title="دانلود قالب وردپرس و مشاهده پیشخوان لیدها"
+              >
+                <span>&lt;WP Theme & Leads&gt;</span>
+              </button>
+
+              <button
                 onClick={() => handleNav('start-project')}
                 className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] active:scale-[0.98] transition-all rounded-lg whitespace-nowrap shadow-sm shadow-[#1769FF]/20 cursor-pointer"
               >
@@ -289,6 +301,12 @@ export const Header: React.FC<HeaderProps> = ({
                 className="text-right py-2 text-[#F5F8FC] hover:text-[#00D9FF] border-b border-[#172638]/60"
               >
                 تماس با ما
+              </button>
+              <button
+                onClick={() => handleNav('wordpress-hub' as any)}
+                className="text-right py-2 text-[#00D9FF] hover:text-white border-b border-[#172638]/60 font-mono text-sm"
+              >
+                &lt;قالب وردپرس & مدیریت لیدها&gt;
               </button>
             </div>
 
