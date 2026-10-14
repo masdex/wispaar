@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { PageRoute, Project } from '../types';
-import { projectsData } from '../data/projectsData';
-import { getCustomProjects } from '../utils/wordpressStore';
+import React, { useState } from 'react';
+import { PageRoute } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ProjectCard } from '../components/ProjectCard';
-import { Sparkles, Filter, Plus } from 'lucide-react';
+import { Sparkles, Filter, Plus, RefreshCw } from 'lucide-react';
+import { useHeadless } from '../context/HeadlessContext';
 
 interface PortfolioPageProps {
   onNavigate: (route: PageRoute, slug?: string) => void;
@@ -12,15 +11,10 @@ interface PortfolioPageProps {
 }
 
 export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, filterSlug }) => {
+  const { projects: projectsList, status, isSyncing, syncFromWordPress } = useHeadless();
   const [selectedIndustry, setSelectedIndustry] = useState<string>(
     filterSlug === 'web-design' ? 'web-design' : 'all'
   );
-  const [projectsList, setProjectsList] = useState<Project[]>(projectsData);
-
-  useEffect(() => {
-    const custom = getCustomProjects();
-    setProjectsList([...custom, ...projectsData]);
-  }, []);
 
   const industries = [
     { id: 'all', label: 'همه پروژه‌ها' },
@@ -60,10 +54,33 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, filter
           رعایت شده است.
         </p>
 
-        {/* CMS / Demo Transparency Note */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0A1626] border border-[#172638] text-xs text-[#8C9BAD]">
-          <span className="w-2 h-2 rounded-full bg-[#00D9FF]" />
-          <span>پروژه‌ها با ساختار CMS-ready و دارای برچسب شفاف وضعیت (Concept / Demo) هستند.</span>
+        {/* Headless Live Status & Sync Trigger */}
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0A1626] border border-[#172638] text-xs text-[#8C9BAD]">
+            <span className={`w-2 h-2 rounded-full ${status === 'connected' ? 'bg-[#22C55E] animate-pulse' : 'bg-[#00D9FF]'}`} />
+            <span>
+              {status === 'connected'
+                ? 'متصل به وردپرس هدلس (REST API زنده)'
+                : 'حالت آفلاین / داده‌های پیش‌فرض پروژه'}
+            </span>
+          </div>
+
+          <button
+            onClick={() => syncFromWordPress()}
+            disabled={isSyncing}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#06111F] hover:bg-[#0A1626] border border-[#172638] hover:border-[#00D9FF] text-xs text-[#00D9FF] transition-all cursor-pointer"
+            title="دریافت آخرین پروژه‌ها از وردپرس"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span>{isSyncing ? 'در حال سینک...' : 'همگام‌سازی با وردپرس'}</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('wordpress-hub')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1769FF]/10 border border-[#1769FF]/30 text-xs text-[#4AA3FF] hover:bg-[#1769FF]/20 transition-all cursor-pointer"
+          >
+            <span>+ مدیریت در پیشخوان وردپرس</span>
+          </button>
         </div>
       </section>
 

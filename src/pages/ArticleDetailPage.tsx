@@ -1,8 +1,8 @@
 import React from 'react';
 import { PageRoute } from '../types';
-import { articlesData } from '../data/articlesData';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { Clock, Calendar, User, ArrowUpLeft, Share2, Tag, BookOpen } from 'lucide-react';
+import { useHeadless } from '../context/HeadlessContext';
 
 interface ArticleDetailPageProps {
   slug: string;
@@ -13,8 +13,9 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
   slug,
   onNavigate,
 }) => {
-  const article = articlesData.find((a) => a.slug === slug) || articlesData[0];
-  const relatedArticles = articlesData.filter((a) => a.slug !== article.slug).slice(0, 2);
+  const { articles } = useHeadless();
+  const article = articles.find((a) => a.slug === slug) || articles[0];
+  const relatedArticles = articles.filter((a) => a.slug !== article.slug).slice(0, 2);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-12">

@@ -3,17 +3,8 @@ import { PageRoute, Project } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { wpThemeFiles } from '../data/wordpressThemeFiles';
 import { downloadWordPressThemeZip } from '../utils/exportThemeZip';
-import {
-  getStoredLeads,
-  updateLeadStatus,
-  deleteLead,
-  getCustomProjects,
-  saveCustomProject,
-  getWordPressEndpoint,
-  setWordPressEndpoint,
-  WordPressLead,
-} from '../utils/wordpressStore';
-import { projectsData } from '../data/projectsData';
+import { WordPressLead } from '../utils/wordpressStore';
+import { useHeadless } from '../context/HeadlessContext';
 import {
   Download,
   FolderArchive,
@@ -33,7 +24,16 @@ import {
   Phone,
   Mail,
   Calendar,
-  Settings
+  Settings,
+  Activity,
+  RefreshCw,
+  Zap,
+  Globe,
+  AlertCircle,
+  ArrowUpLeft,
+  Database,
+  Terminal,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface WordPressHubPageProps {
@@ -45,17 +45,34 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
   onNavigate,
   onProjectAdded,
 }) => {
-  const [activeTab, setActiveTab] = useState<'download' | 'leads' | 'projects' | 'files' | 'connect'>('download');
+  const {
+    endpoint,
+    setEndpoint,
+    status,
+    latency,
+    wpHealth,
+    projects: allProjects,
+    leads,
+    isSyncing,
+    lastSynced,
+    syncFromWordPress,
+    seedDatabase,
+    createProject: createHeadlessProject,
+    submitBrief: submitHeadlessBrief,
+    updateLeadStatus,
+    deleteLead,
+  } = useHeadless();
+
+  const [activeTab, setActiveTab] = useState<'connect' | 'download' | 'leads' | 'projects' | 'files'>('connect');
   const [downloading, setDownloading] = useState(false);
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
+  const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
   const [selectedFileIdx, setSelectedFileIdx] = useState(0);
 
-  // Leads state
-  const [leads, setLeads] = useState<WordPressLead[]>([]);
+  // Leads modal state
   const [selectedLead, setSelectedLead] = useState<WordPressLead | null>(null);
 
-  // Projects state
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  // New Project modal state
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [newProject, setNewProject] = useState({
     title: '',
@@ -73,23 +90,31 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
     isDemo: true,
   });
 
-  // Remote WP endpoint state
-  const [remoteEndpoint, setRemoteEndpoint] = useState('');
-  const [endpointSaved, setEndpointSaved] = useState(false);
+  // Local input for endpoint editing
+  const [inputEndpoint, setInputEndpoint] = useState(endpoint || 'http://demo.local');
+  const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [isTestingBrief, setIsTestingBrief] = useState(false);
 
   useEffect(() => {
-    setLeads(getStoredLeads());
-    setRemoteEndpoint(getWordPressEndpoint());
-    const custom = getCustomProjects();
-    setAllProjects([...custom, ...projectsData]);
-  }, []);
+    if (endpoint) {
+      setInputEndpoint(endpoint);
+    }
+  }, [endpoint]);
+
+  const showBanner = (type: 'success' | 'error' | 'info', text: string) => {
+    setFeedbackMsg({ type, text });
+    setTimeout(() => setFeedbackMsg(null), 5000);
+  };
 
   const handleDownloadZip = async () => {
     setDownloading(true);
     try {
       await downloadWordPressThemeZip();
+      showBanner('success', 'فایل زیپ کامل پوسته وردپرس دانلود شد.');
     } catch (e) {
       console.error(e);
+      showBanner('error', 'خطا در ایجاد فایل زیپ.');
     } finally {
       setDownloading(false);
     }
@@ -101,124 +126,188 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
     setTimeout(() => setCopiedFile(null), 2000);
   };
 
-  const handleStatusChange = (id: string, status: 'new' | 'reviewed' | 'contacted') => {
-    const updated = updateLeadStatus(id, status);
-    setLeads(updated);
+  const handleCopySnippet = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedSnippet(id);
+    setTimeout(() => setCopiedSnippet(null), 2000);
+  };
+
+  const handleSaveEndpoint = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setEndpoint(inputEndpoint);
+    showBanner('info', 'در حال آزمون ارتباط با وردپرس...');
+    const ok = await syncFromWordPress();
+    if (ok) {
+      showBanner('success', 'ارتباط با وردپرس هدلس با موفقیت برقرار شد!');
+    } else {
+      showBanner('error', 'ارتباط برقرار نشد. اطمینان حاصل کنید وردپرس روشن است و آدرس صحیح است.');
+    }
+  };
+
+  const handleSeedDatabase = async () => {
+    if (!endpoint) {
+      showBanner('error', 'ابتدا آدرس سرور وردپرس را وارد کنید.');
+      return;
+    }
+    setIsSeeding(true);
+    try {
+      const res = await seedDatabase();
+      if (res.success) {
+        showBanner('success', res.message);
+      } else {
+        showBanner('error', res.message);
+      }
+    } catch (e: any) {
+      showBanner('error', 'خطا در درون‌ریزی داده‌ها در وردپرس.');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
+  const handleTestBriefPush = async () => {
+    setIsTestingBrief(true);
+    try {
+      const sampleLead = {
+        name: 'تست خودکار استودیو ویسپار',
+        email: 'test@wispaar.com',
+        phone: '09120000000',
+        services: ['توسعه پیشرفته وردپرس', 'معماری هدلس'],
+        goals: ['آزمون سرعت وب‌هوک REST API'],
+        platform: 'WordPress Headless Core',
+        website: 'https://wispaar.com',
+        budget: 'تست اتصال سیستمی',
+        timeline: 'فوری',
+        description: 'این بریف آزمایشی برای اعتبارسنجی ثبت خودکار در پیشخوان وردپرس از فرانت‌اند React ارسال شده است.',
+      };
+
+      const res = await submitHeadlessBrief(sampleLead);
+      if (res.success) {
+        showBanner('success', res.message);
+        await syncFromWordPress();
+      } else {
+        showBanner('error', res.message);
+      }
+    } catch (e: any) {
+      showBanner('error', 'خطا در ارسال بریف تستی.');
+    } finally {
+      setIsTestingBrief(false);
+    }
+  };
+
+  const handleStatusChange = (id: string, newStatus: 'new' | 'reviewed' | 'contacted') => {
+    updateLeadStatus(id, newStatus);
     if (selectedLead && selectedLead.id === id) {
-      setSelectedLead({ ...selectedLead, status });
+      setSelectedLead({ ...selectedLead, status: newStatus });
     }
   };
 
   const handleDeleteLead = (id: string) => {
     if (confirm('آیا از حذف این درخواست مطمئن هستید؟')) {
-      const updated = deleteLead(id);
-      setLeads(updated);
+      deleteLead(id);
       if (selectedLead && selectedLead.id === id) {
         setSelectedLead(null);
       }
     }
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.title) return;
 
-    const slug = 'project-' + Date.now();
-    const createdProject: Project = {
-      id: slug,
-      slug: slug,
-      title: newProject.title,
-      titleEn: newProject.titleEn || newProject.title,
-      client: newProject.client || 'سفارشی ویسپار',
-      industry: newProject.industry,
-      services: ['طراحی اختصاصی UI/UX', 'توسعه وردپرس مهندسی‌شده'],
-      technology: ['WordPress Headless', 'Tailwind', 'ACF Pro'],
-      year: newProject.year,
-      projectType: newProject.projectType,
-      coverImage: '/src/assets/images/project_arch_fintech_1791304932616.jpg',
-      isDemo: newProject.isDemo,
-      editorialQuote: '«آفریده‌شده با تلفیق خرد و فناوری در استودیو ویسپار.»',
-      challenge: newProject.challenge || 'طراحی و توسعه ساختار مقیاس‌پذیر برای نیازهای کسب‌وکار.',
-      solution: newProject.solution || 'پیاده‌سازی دیزاین سیستم مینیمال و بهینه‌سازی حداکثری سرعت.',
-      results: [
-        { label: newProject.kpi1Label, value: newProject.kpi1Value, detail: 'شاخص عملکرد' },
-        { label: newProject.kpi2Label, value: newProject.kpi2Value, detail: 'شاخص رشد' }
-      ],
-      websiteUrlPlaceholder: 'https://demo.wispaar.com',
-      tags: [newProject.industry, 'وردپرس اختصاصی']
-    };
-
-    saveCustomProject(createdProject);
-    setAllProjects([createdProject, ...allProjects]);
+    const res = await createHeadlessProject(newProject);
     setShowAddProjectModal(false);
+    showBanner('success', res.message);
     if (onProjectAdded) onProjectAdded();
-    alert('پروژه جدید با موفقیت به سیستم اضافه شد و در نمایشگاه پروژه‌ها قابل مشاهده است!');
-  };
-
-  const handleSaveEndpoint = (e: React.FormEvent) => {
-    e.preventDefault();
-    setWordPressEndpoint(remoteEndpoint);
-    setEndpointSaved(true);
-    setTimeout(() => setEndpointSaved(false), 2500);
   };
 
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-12">
-      <Breadcrumb items={[{ label: 'مرکز توسعه وردپرس و بک‌اند (WordPress Hub)' }]} onNavigate={onNavigate} />
+      <Breadcrumb items={[{ label: 'مرکز توسعه وردپرس و بک‌اند (WordPress Headless Hub)' }]} onNavigate={onNavigate} />
 
       {/* Hero Banner */}
       <section className="bg-gradient-to-l from-[#06111F] via-[#0A1626] to-[#06111F] border border-[#23364C] rounded-2xl p-8 lg:p-12 relative overflow-hidden">
         <div className="max-w-3xl space-y-5">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF]">
-            <span className="bg-[#03070D] border border-[#172638] px-2 py-0.5 rounded">&lt;/WORDPRESS CORE&gt;</span>
-            <span>سازگار با المنتور (Elementor) · انواع پست سفارشی · مدیریت لیدها</span>
+          <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#00D9FF]">
+            <span className="bg-[#03070D] border border-[#172638] px-2 py-0.5 rounded">&lt;/HEADLESS CMS ARCHITECTURE&gt;</span>
+            <span>·</span>
+            <span>بک‌اند: وردپرس (REST API)</span>
+            <span>·</span>
+            <span>فرانت‌اند: React SPA + Tailwind</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F5F8FC] leading-tight">
-            تبدیل کامل به قالب وردپرس + مدیریت درخواست‌ها و نمونه‌کارها در پیشخوان
+            معماری هدلس؛ هر تغییری در وردپرس، آنی در فرانت‌اند ظاهر می‌شود.
           </h1>
 
           <p className="text-sm sm:text-base text-[#C5D0DD] leading-relaxed">
-            کدهای این پروژه به‌گونه‌ای مهندسی شده‌اند که می‌توانید آن را با یک کلیک به صورت یک{' '}
-            <strong className="text-white">قالب کامل، استاندارد و آماده نصب در وردپرس</strong> دانلود کنید.
-            همچنین تمام فرم‌های بریف و مشاوره مستقیماً در منوی اختصاصی پیشخوان وردپرس ذخیره شده و نمونه‌کارها به صورت انواع پست سفارشی (CPT) قابل ویرایش و افزودن هستند.
+            این پروژه به صورت کامل به یک <strong className="text-white">Headless CMS</strong> تبدیل شده است: وردپرس به عنوان پنل بک‌اند برای مدیریت پروژه‌ها، مقالات و فرم‌های بریف عمل می‌کند؛ و فرانت‌اند React با اندپوینت‌های اختصاصی <code className="text-[#00D9FF] font-mono">/wp-json/wispaar/v1</code> متصل است. در صورت آفلاین بودن وردپرس نیز دیتای محلی به عنوان Fallback بی‌نقص عمل می‌کند تا سایت هرگز خالی نماند.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-4">
+          {/* Quick Actions */}
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setActiveTab('connect')}
+              className="px-5 py-3 text-xs sm:text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-[#1769FF]/20"
+            >
+              <Zap className="w-4 h-4" />
+              <span>پنل اتصال و همگام‌سازی وردپرس هدلس</span>
+            </button>
+
             <button
               onClick={handleDownloadZip}
               disabled={downloading}
-              className="px-6 py-3.5 text-xs sm:text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-all shadow-lg shadow-[#1769FF]/25 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 text-xs sm:text-sm font-semibold text-[#00D9FF] bg-[#03070D] border border-[#23364C] hover:bg-[#0A1626] rounded-xl transition-all flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود پکیج کامل قالب وردپرس (ZIP آماده نصب)'}</span>
+              <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود پوسته وردپرس (ZIP)'}</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('leads')}
-              className="px-5 py-3.5 text-xs sm:text-sm font-medium text-[#00D9FF] bg-[#03070D] border border-[#23364C] hover:bg-[#0A1626] rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <span>مشاهده پیشخوان درخواست‌های رسیده</span>
-              {newLeadsCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#EF4444] text-white font-mono">
-                  {newLeadsCount} جدید
-                </span>
-              )}
-            </button>
+            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#03070D] border border-[#172638] text-xs font-mono">
+              <span className={`w-2.5 h-2.5 rounded-full ${status === 'connected' ? 'bg-[#22C55E] animate-pulse' : 'bg-[#536174]'}`} />
+              <span className="text-[#8C9BAD]">وضعیت اتصال:</span>
+              <span className={status === 'connected' ? 'text-[#22C55E] font-bold' : 'text-[#8C9BAD]'}>
+                {status === 'connected' ? `متصل (${latency}ms)` : status === 'connecting' ? 'در حال تست...' : 'آفلاین / Fallback'}
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Global Toast Feedback */}
+      {feedbackMsg && (
+        <div
+          className={`p-4 rounded-xl border text-xs sm:text-sm flex items-center justify-between transition-all ${
+            feedbackMsg.type === 'success'
+              ? 'bg-[#22C55E]/10 border-[#22C55E]/40 text-[#22C55E]'
+              : feedbackMsg.type === 'error'
+              ? 'bg-[#EF4444]/10 border-[#EF4444]/40 text-[#EF4444]'
+              : 'bg-[#1769FF]/10 border-[#1769FF]/40 text-[#4AA3FF]'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {feedbackMsg.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 shrink-0" />
+            ) : (
+              <AlertCircle className="w-5 h-5 shrink-0" />
+            )}
+            <span>{feedbackMsg.text}</span>
+          </div>
+          <button onClick={() => setFeedbackMsg(null)} className="text-xs opacity-70 hover:opacity-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Main Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#172638] scrollbar-none">
         {[
+          { id: 'connect', label: '⚡ وردپرس هدلس & همگام‌سازی زنده', icon: Zap },
           { id: 'download', label: 'راهنمای نصب و امکانات قالب', icon: FolderArchive },
           { id: 'leads', label: `درخواست‌های پروژه و لیدها (${leads.length})`, icon: Mail, badge: newLeadsCount },
-          { id: 'projects', label: `مدیریت و افزودن نمونه‌کارها (${allProjects.length})`, icon: Layers },
-          { id: 'connect', label: 'اتصال به سرور وردپرس واقعی (REST API)', icon: Server },
-          { id: 'files', label: 'مرورگر کدهای منبع قالب (PHP & CSS)', icon: Code },
+          { id: 'projects', label: `مدیریت نمونه‌کارها (${allProjects.length})`, icon: Layers },
+          { id: 'files', label: 'کدهای منبع تم و اندپوینت‌ها', icon: Code },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -244,14 +333,371 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
         })}
       </div>
 
-      {/* TAB 1: DOWNLOAD & INSTRUCTIONS */}
+      {/* TAB 1: HEADLESS LIVE COMMAND CENTER */}
+      {activeTab === 'connect' && (
+        <section className="space-y-8">
+          {/* Top Grid: Connection Box & Diagnostics */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Col: Endpoint Settings Form */}
+            <div className="lg:col-span-7 bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-8 space-y-6">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
+                  <span>&lt;REST API LIVE BRIDGE&gt;</span>
+                  <span>·</span>
+                  <span>اتصال پویا به وردپرس</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC]">
+                  اتصال فرانت‌اند React به دیتابیس وردپرس
+                </h2>
+                <p className="text-xs sm:text-sm text-[#8C9BAD] leading-relaxed mt-1.5">
+                  آدرس سایت وردپرس محلی (مثل LocalWP) یا دامنه سرور خود را در کادر زیر وارد کنید تا فرانت‌اند به صورت زنده به آن متصل شده و داده‌ها را بخواند و بنویسد.
+                </p>
+              </div>
+
+              <form onSubmit={handleSaveEndpoint} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-[#8C9BAD] mb-2">
+                    آدرس وب‌سایت وردپرسی (WordPress Site URL):
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="http://demo.local"
+                      value={inputEndpoint}
+                      onChange={(e) => setInputEndpoint(e.target.value)}
+                      className="w-full bg-[#03070D] border border-[#172638] focus:border-[#00D9FF] text-white px-4 py-3 rounded-xl text-sm outline-none font-mono"
+                      dir="ltr"
+                    />
+                    <Globe className="w-4 h-4 text-[#536174] absolute left-3.5 top-3.5" />
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] text-[#536174]">انتخاب سریع آدرس‌های استاندارد LocalWP / سرور:</span>
+                  <div className="flex flex-wrap gap-2 text-xs font-mono">
+                    {[
+                      'http://demo.local',
+                      'http://localhost:10004',
+                      'http://localhost/demo',
+                      'https://wispaar.com',
+                    ].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => {
+                          setInputEndpoint(preset);
+                          setEndpoint(preset);
+                        }}
+                        className="px-2.5 py-1 rounded bg-[#0A1626] border border-[#172638] text-[#8C9BAD] hover:text-[#00D9FF] hover:border-[#00D9FF] transition-all cursor-pointer"
+                        dir="ltr"
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <button
+                    type="submit"
+                    disabled={isSyncing}
+                    className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] disabled:opacity-50 rounded-xl transition-all cursor-pointer flex items-center gap-2 shadow-md shadow-[#1769FF]/20"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                    <span>{isSyncing ? 'در حال آزمون...' : 'تست اتصال و بررسی سلامت'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => syncFromWordPress()}
+                    disabled={isSyncing}
+                    className="px-4 py-2.5 text-xs font-medium text-[#00D9FF] bg-[#0A1626] border border-[#172638] hover:bg-[#122238] rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>دریافت مجدد محتوا از وردپرس</span>
+                  </button>
+                </div>
+              </form>
+
+              {/* Status Note */}
+              <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl text-xs text-[#8C9BAD] space-y-1.5">
+                <div className="flex items-center gap-2 text-[#00D9FF] font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-[#22C55E]" />
+                  <span>CORS و امنیت هدلس پیش‌تنظیم شده است</span>
+                </div>
+                <p className="leading-relaxed">
+                  پوسته اختصاصی ویسپار هدرهای استاندارد <code className="text-white font-mono">Access-Control-Allow-Origin: *</code> را به صورت خودکار به تمام ریکوئست‌های REST API تزریق می‌کند. بنابراین نیازی به نصب هیچ افزونه جانبی CORS در وردپرس نخواهید داشت.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Col: Diagnostics Card */}
+            <div className="lg:col-span-5 bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-3 border-b border-[#172638]">
+                  <h3 className="text-base font-bold text-[#F5F8FC] flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-[#00D9FF]" />
+                    <span>گزارش زنده سلامت اندپوینت وردپرس</span>
+                  </h3>
+                  <span
+                    className={`px-2.5 py-0.5 rounded text-[11px] font-bold ${
+                      status === 'connected'
+                        ? 'bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/30'
+                        : status === 'connecting'
+                        ? 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30'
+                        : 'bg-[#536174]/15 text-[#8C9BAD] border border-[#536174]/30'
+                    }`}
+                  >
+                    {status === 'connected' ? 'آنلاین و فعال' : status === 'connecting' ? 'در حال پینگ...' : 'حالت آفلاین / Fallback'}
+                  </span>
+                </div>
+
+                <div className="mt-4 space-y-3 text-xs">
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
+                    <span className="text-[#8C9BAD]">سرعت پاسخگویی (Latency):</span>
+                    <span className="font-mono text-[#00D9FF] font-bold">
+                      {latency !== null ? `${latency} میلی‌ثانیه` : 'نامشخص'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
+                    <span className="text-[#8C9BAD]">نسخه وردپرس:</span>
+                    <span className="font-mono text-white">
+                      {wpHealth?.version || 'WordPress Core'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
+                    <span className="text-[#8C9BAD]">عنوان سایت در وردپرس:</span>
+                    <span className="text-white font-medium">
+                      {wpHealth?.siteName || 'سایت وردپرسی ویسپار'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
+                    <span className="text-[#8C9BAD]">وضعیت موتور هدلس:</span>
+                    <span className="text-[#22C55E] font-medium flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" />
+                      {wpHealth?.isWispaarEngine ? 'پوسته ویسپار فعال است' : 'هسته استاندارد REST'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
+                    <span className="text-[#8C9BAD]">آخرین زمان سینک موفق:</span>
+                    <span className="font-mono text-[#8C9BAD]">
+                      {lastSynced ? `ساعت ${lastSynced}` : 'اولیه'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Instant Health Stats / Counts */}
+              <div className="grid grid-cols-3 gap-2 pt-2 text-center text-xs">
+                <div className="p-3 bg-[#0A1626] border border-[#172638] rounded-xl">
+                  <div className="font-mono text-lg font-bold text-[#00D9FF]">{allProjects.length}</div>
+                  <div className="text-[10px] text-[#8C9BAD] mt-0.5">پروژه‌ها</div>
+                </div>
+                <div className="p-3 bg-[#0A1626] border border-[#172638] rounded-xl">
+                  <div className="font-mono text-lg font-bold text-[#22C55E]">{leads.length}</div>
+                  <div className="text-[10px] text-[#8C9BAD] mt-0.5">بریف‌ها</div>
+                </div>
+                <div className="p-3 bg-[#0A1626] border border-[#172638] rounded-xl">
+                  <div className="font-mono text-lg font-bold text-[#F59E0B]">۴</div>
+                  <div className="text-[10px] text-[#8C9BAD] mt-0.5">مقالات</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Row: Two-Way Sync Operations */}
+          <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span className="badge-code mb-1">&lt;TWO-WAY DATABASE SYNCHRONIZATION&gt;</span>
+                <h3 className="text-lg sm:text-xl font-bold text-[#F5F8FC]">
+                  ابزارهای تزریق و تبادل داده با دیتابیس وردپرس
+                </h3>
+                <p className="text-xs text-[#8C9BAD] mt-1">
+                  با این دکمه‌ها می‌توانید دیتابیس یک وردپرس خام را بلافاصله پر از داده‌های واقعی کنید یا جریان بریف را آزمایش فرمایید:
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Tool 1: Seed WP */}
+              <div className="p-5 bg-[#0A1626] border border-[#172638] rounded-xl space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-lg bg-[#1769FF]/10 text-[#1769FF] flex items-center justify-center mb-3">
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-[#F5F8FC]">۱. درون‌ریزی خودکار در وردپرس</h4>
+                  <p className="text-xs text-[#8C9BAD] mt-1 leading-relaxed">
+                    ایجاد خودکار ۴ پروژه پرچمدار، دسته‌بندی‌ها و مقالات در دیتابیس وردپرس از طریق اندپوینت <code className="text-[#00D9FF] font-mono">/seed</code>.
+                  </p>
+                </div>
+                <button
+                  onClick={handleSeedDatabase}
+                  disabled={isSeeding}
+                  className="w-full py-2.5 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] disabled:opacity-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>{isSeeding ? 'در حال تزریق داده...' : 'تزریق آنی داده به دیتابیس وردپرس'}</span>
+                </button>
+              </div>
+
+              {/* Tool 2: Push Test Brief */}
+              <div className="p-5 bg-[#0A1626] border border-[#172638] rounded-xl space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-lg bg-[#22C55E]/10 text-[#22C55E] flex items-center justify-center mb-3">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-[#F5F8FC]">۲. ارسال بریف تستی به پیشخوان</h4>
+                  <p className="text-xs text-[#8C9BAD] mt-1 leading-relaxed">
+                    ارسال یک درخواست آزمایشی به <code className="text-[#00D9FF] font-mono">/brief</code> و اطمینان از ثبت در منوی لیدهای وردپرس و ارسال ایمیل مدیر.
+                  </p>
+                </div>
+                <button
+                  onClick={handleTestBriefPush}
+                  disabled={isTestingBrief}
+                  className="w-full py-2.5 text-xs font-semibold text-white bg-[#22C55E] hover:bg-[#1da850] disabled:opacity-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>{isTestingBrief ? 'در حال ارسال...' : 'ارسال بریف تستی'}</span>
+                </button>
+              </div>
+
+              {/* Tool 3: Create Project Modal Trigger */}
+              <div className="p-5 bg-[#0A1626] border border-[#172638] rounded-xl space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-lg bg-[#6366F1]/10 text-[#6366F1] flex items-center justify-center mb-3">
+                    <Plus className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-[#F5F8FC]">۳. انتشار پروژه تازه</h4>
+                  <p className="text-xs text-[#8C9BAD] mt-1 leading-relaxed">
+                    فرم افزودن نمونه‌کار جدید با شاخص لایت‌هاوس، چالش و راهکار که همزمان در وردپرس و فرانت‌اند منتشر می‌شود.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddProjectModal(true)}
+                  className="w-full py-2.5 text-xs font-semibold text-white bg-[#6366F1] hover:bg-[#5254db] rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>افزودن نمونه‌کار جدید</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Row: Headless REST API Endpoints Cheat Sheet */}
+          <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-8 space-y-6">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
+                <span>&lt;REST API SPECIFICATION&gt;</span>
+                <span>·</span>
+                <span>فهرست کامل اندپوینت‌های اختصاصی تم</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#F5F8FC]">
+                مستندات فنی اندپوینت‌های REST API هدلس ویسپار
+              </h3>
+              <p className="text-xs text-[#8C9BAD] mt-1">
+                می‌توانید این اندپوینت‌ها را با Postman، cURL یا Fetch در هر زبانی فراخوانی کنید:
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {[
+                {
+                  method: 'GET',
+                  route: '/wp-json/wispaar/v1/health',
+                  desc: 'بررسی زنده بودن سرور، وضعیت CORS، نسخه وردپرس و شمارش محتوا',
+                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/health"`,
+                },
+                {
+                  method: 'GET',
+                  route: '/wp-json/wispaar/v1/projects',
+                  desc: 'دریافت تمام نمونه‌کارها با تمام متادیتا (شاخص‌ها، فناوری‌ها، چالش، راهکار)',
+                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/projects"`,
+                },
+                {
+                  method: 'POST',
+                  route: '/wp-json/wispaar/v1/projects',
+                  desc: 'ایجاد پروژه تازه در دیتابیس وردپرس CPT مستقیماً از فرانت‌اند',
+                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/projects" -H "Content-Type: application/json" -d '{"title":"پروژه جدید","industry":"فین‌تک"}'`,
+                },
+                {
+                  method: 'GET',
+                  route: '/wp-json/wispaar/v1/articles',
+                  desc: 'دریافت مقالات ژورنال و وبلاگ با زمان تقریبی مطالعه و نام نویسنده',
+                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/articles"`,
+                },
+                {
+                  method: 'POST',
+                  route: '/wp-json/wispaar/v1/brief',
+                  desc: 'ثبت بریف دریافتی در پست تایپ اختصاصی wispaar_brief همراه با اعلان ایمیل به مدیر',
+                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/brief" -H "Content-Type: application/json" -d '{"name":"علی","phone":"09121111111"}'`,
+                },
+                {
+                  method: 'POST',
+                  route: '/wp-json/wispaar/v1/seed',
+                  desc: 'درون‌ریزی ۱ کلیک تمام پروژه‌های دمو در دیتابیس وردپرس',
+                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/seed"`,
+                },
+              ].map((ep) => (
+                <div
+                  key={ep.route + ep.method}
+                  className="p-4 bg-[#03070D] border border-[#172638] rounded-xl space-y-2 text-xs"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-2 py-0.5 rounded font-mono font-bold text-[10px] ${
+                          ep.method === 'GET'
+                            ? 'bg-[#1769FF]/20 text-[#00D9FF] border border-[#1769FF]/40'
+                            : 'bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40'
+                        }`}
+                      >
+                        {ep.method}
+                      </span>
+                      <code className="font-mono text-white text-xs" dir="ltr">
+                        {ep.route}
+                      </code>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopySnippet(ep.curl, ep.route)}
+                      className="px-2.5 py-1 rounded bg-[#0A1626] hover:bg-[#172638] text-[#8C9BAD] hover:text-[#00D9FF] transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      {copiedSnippet === ep.route ? (
+                        <>
+                          <Check className="w-3 h-3 text-[#22C55E]" />
+                          <span className="text-[#22C55E]">کپی شد</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>کپی دستور cURL</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[#8C9BAD] leading-relaxed">{ep.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* TAB 2: DOWNLOAD & INSTRUCTIONS */}
       {activeTab === 'download' && (
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-6">
               <h2 className="text-xl font-bold text-[#F5F8FC] flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-[#22C55E]" />
-                <span>ویژگی‌های کلیدی قالب وردپرس WISPAAR</span>
+                <span>ویژگی‌های کلیدی پکیج قالب و هسته وردپرس WISPAAR</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
@@ -263,105 +709,113 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                 </div>
 
                 <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl space-y-1.5">
-                  <strong className="text-[#00D9FF] block">۲. پنل پیشخوان لیدها (Leads Inbox):</strong>
+                  <strong className="text-[#00D9FF] block">۲. پست تایپ اختصاصی پروژه‌ها (CPT):</strong>
                   <span className="text-[#8C9BAD]">
-                    دریافت خودکار بریف‌های ۵ مرحله‌ای کاربران با تمام جزئیات (بودجه، خدمات، زمان‌بندی و شماره تماس) با ایمیل نوتیفیکیشن.
+                    فیلدهای سفارشی متادیتا شامل نام انگلیسی، نام مشتری، سال، چالش، راهکار، شاخص‌های لایت‌هاوس و نرخ تبدیل.
                   </span>
                 </div>
 
                 <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl space-y-1.5">
-                  <strong className="text-[#00D9FF] block">۳. انواع پست سفارشی (Custom Post Types):</strong>
+                  <strong className="text-[#00D9FF] block">۳. صندوق دریافت درخواست‌های پروژه (Leads CRM):</strong>
                   <span className="text-[#8C9BAD]">
-                    پست‌تایپ اختصاصی <code className="font-mono text-[#00D9FF]">wispaar_project</code> با فیلدهای متای کارفرما، سال، چالش، راهکار، نتایج و وضعیت دمو.
+                    هر بریف یا فرم مشاوره‌ای که توسط کاربران ارسال شود در منوی اختصاصی پیشخوان وردپرس ذخیره و اعلان ایمیل به مدیر ارسال می‌شود.
                   </span>
                 </div>
 
                 <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl space-y-1.5">
-                  <strong className="text-[#00D9FF] block">۴. اندپوینت‌های REST API یکپارچه:</strong>
+                  <strong className="text-[#00D9FF] block">۴. هسته مدرن REST API با هدرهای CORS:</strong>
                   <span className="text-[#8C9BAD]">
-                    امکان استفاده به عنوان قالب مستقل PHP یا بک‌اند هدلس برای فرانت‌اند React با اندپوینت‌های امن و آماده.
+                    آماده برای اتصال فوری به فرانت‌آند‌های مدرن React، Next.js یا Vue بدون نیاز به هیچ کانفیگ پیچیده در سرور.
                   </span>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#172638]">
-                <h3 className="text-sm font-bold text-[#F5F8FC] mb-3">مراحل نصب آسان در ۳ قدم:</h3>
-                <ol className="space-y-3 text-xs sm:text-sm text-[#C5D0DD] list-decimal pr-5">
-                  <li>
-                    روی دکمه <strong className="text-[#00D9FF]">«دانلود پکیج کامل قالب وردپرس»</strong> کلیک کنید تا فایل <code className="font-mono text-white bg-[#03070D] px-2 py-0.5 rounded">wispaar-theme.zip</code> دانلود شود.
-                  </li>
-                  <li>
-                    وارد پیشخوان وردپرس سایت خود شوید: <code className="font-mono text-white bg-[#03070D] px-2 py-0.5 rounded">yoursite.com/wp-admin</code>
-                  </li>
-                  <li>
-                    به منوی <strong>نمایش (Appearance) ← پوسته‌ها (Themes) ← افزودن پوسته تازه ← بارگذاری پوسته</strong> رفته و فایل زیپ را آپلود و فعال نمایید.
-                  </li>
+              {/* Step by step install */}
+              <div className="pt-4 border-t border-[#172638] space-y-4">
+                <h3 className="text-base font-bold text-[#F5F8FC]">راهنمای گام‌به‌گام نصب در پیشخوان وردپرس:</h3>
+                <ol className="space-y-3 text-xs sm:text-sm text-[#C5D0DD] list-decimal list-inside leading-relaxed">
+                  <li>روی دکمه آبی‌رنگ «دانلود پکیج کامل قالب وردپرس» کلیک کنید تا فایل <code className="font-mono text-[#00D9FF]">wispaar-theme.zip</code> دانلود شود.</li>
+                  <li>وارد پیشخوان وردپرس خود شوید (<code className="font-mono text-[#00D9FF]">wp-admin</code>).</li>
+                  <li>از منوی کناری به مسیر <strong>نمایش (Appearance) → پوسته‌ها (Themes) → افزودن پوسته تازه → بارگذاری پوسته</strong> بروید.</li>
+                  <li>فایل زیپ دانلودشده را انتخاب کرده و روی <strong>«هم‌اکنون نصب کن»</strong> و سپس <strong>«فعال‌سازی»</strong> کلیک نمایید.</li>
+                  <li>بلافاصله منوهای <strong>«پروژه‌های ویسپار»</strong> و <strong>«درخواست‌های پروژه»</strong> در پیشخوان شما فعال خواهند شد!</li>
                 </ol>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-[#06111F] border border-[#23364C] rounded-2xl p-6 text-center space-y-4">
-              <FolderArchive className="w-12 h-12 text-[#00D9FF] mx-auto" />
-              <h3 className="text-lg font-bold text-[#F5F8FC]">دانلود مستقیم فایل زیپ</h3>
-              <p className="text-xs text-[#8C9BAD] leading-relaxed">
-                این بسته شامل ۹ فایل استاندارد PHP، شیوه نامه‌های CSS، سازگاری با Elementor و راهنمای کامل است.
-              </p>
+            <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-6 space-y-5">
+              <h3 className="text-base font-bold text-[#F5F8FC]">دانلود و مشخصات فنی بسته</h3>
+
+              <div className="space-y-3 text-xs">
+                <div className="flex justify-between py-2 border-b border-[#172638]">
+                  <span className="text-[#8C9BAD]">نام پکیج:</span>
+                  <span className="font-mono text-white">wispaar-theme.zip</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-[#172638]">
+                  <span className="text-[#8C9BAD]">تعداد فایل‌های تم:</span>
+                  <span className="font-mono text-[#00D9FF]">{wpThemeFiles.length} فایل مستقل</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-[#172638]">
+                  <span className="text-[#8C9BAD]">نسخه:</span>
+                  <span className="font-mono text-white">1.0.2 Production</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-[#172638]">
+                  <span className="text-[#8C9BAD]">نیازمندی:</span>
+                  <span className="text-white">PHP 7.4+ / WordPress 5.8+</span>
+                </div>
+              </div>
+
               <button
                 onClick={handleDownloadZip}
                 disabled={downloading}
-                className="w-full py-3 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 text-xs sm:text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] disabled:opacity-50 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#1769FF]/20"
               >
                 <Download className="w-4 h-4" />
-                <span>{downloading ? 'در حال آماده‌سازی...' : 'دانلود wispaar-theme.zip'}</span>
+                <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود زیپ آماده نصب (Theme Zip)'}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('files')}
+                className="w-full py-2.5 text-xs font-medium text-[#8C9BAD] hover:text-white bg-[#0A1626] border border-[#172638] rounded-xl transition-colors text-center"
+              >
+                مشاهده و مرور کدهای PHP قالب ←
               </button>
             </div>
           </div>
         </section>
       )}
 
-      {/* TAB 2: LIVE WP-ADMIN LEADS INBOX */}
+      {/* TAB 3: LEADS INBOX */}
       {activeTab === 'leads' && (
         <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
-                <span>&lt;WP-ADMIN SIMULATOR&gt;</span>
-                <span>·</span>
-                <span>منوی: درخواست‌های پروژه و بریف (Leads)</span>
-              </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC]">
-                صندوق ورودی بریف‌ها و فرم‌های مشاوره در پیشخوان وردپرس
+                پیشخوان درخواست‌های پروژه و سرنخ‌ها (Leads Inbox)
               </h2>
+              <p className="text-xs sm:text-sm text-[#8C9BAD] mt-1">
+                این بریف‌ها از طریق فرم تعاملی فرانت‌اند ارسال و در دیتابیس ثبت شده‌اند:
+              </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => onNavigate('start-project')}
-                className="px-4 py-2 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <span>تست ارسال بریف جدید از فرم سایت ←</span>
-              </button>
-            </div>
+            <button
+              onClick={() => onNavigate('start-project')}
+              className="px-4 py-2 text-xs font-medium text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>ارسال بریف جدید از صفحه فرم</span>
+            </button>
           </div>
 
-          {/* WordPress Leads Table */}
+          {/* Leads Table */}
           <div className="bg-[#06111F] border border-[#172638] rounded-2xl overflow-hidden shadow-xl">
-            <div className="p-4 bg-[#03070D] border-b border-[#172638] flex items-center justify-between text-xs text-[#8C9BAD]">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-[#F5F8FC]">همه بریف‌های ثبت‌شده ({leads.length})</span>
-                <span className="text-[#536174]">|</span>
-                <span className="text-[#00D9FF]">{newLeadsCount} درخواست در انتظار بررسی</span>
-              </div>
-              <div className="text-[11px] text-[#536174]">ثبت آنی از فرم /start-project و /contact</div>
-            </div>
-
             <div className="overflow-x-auto">
               <table className="w-full text-right text-xs">
-                <thead>
-                  <tr className="bg-[#0A1626] text-[#8C9BAD] border-b border-[#172638]">
-                    <th className="p-4 font-semibold">نام متقاضی / سازمان</th>
+                <thead className="bg-[#03070D] border-b border-[#172638] text-[#8C9BAD]">
+                  <tr>
+                    <th className="p-4 font-semibold">نام مشتری / برند</th>
                     <th className="p-4 font-semibold">شماره تماس</th>
                     <th className="p-4 font-semibold">ایمیل</th>
                     <th className="p-4 font-semibold">خدمات درخواستی</th>
@@ -421,14 +875,14 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                             <button
                               onClick={() => setSelectedLead(lead)}
                               title="مشاهده جزئیات کامل بریف"
-                              className="p-1.5 rounded bg-[#0A1626] hover:bg-[#172638] text-[#00D9FF] transition-colors"
+                              className="p-1.5 rounded bg-[#0A1626] hover:bg-[#172638] text-[#00D9FF] transition-colors cursor-pointer"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id)}
                               title="حذف"
-                              className="p-1.5 rounded bg-[#0A1626] hover:bg-[#EF4444]/20 text-[#EF4444] transition-colors"
+                              className="p-1.5 rounded bg-[#0A1626] hover:bg-[#EF4444]/20 text-[#EF4444] transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -442,88 +896,75 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
             </div>
           </div>
 
-          {/* Lead Details Modal */}
+          {/* Modal for Lead Details */}
           {selectedLead && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-              <div className="bg-[#06111F] border border-[#23364C] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-6 p-6 sm:p-8">
-                <div className="flex items-center justify-between pb-4 border-b border-[#172638]">
+              <div className="bg-[#06111F] border border-[#23364C] rounded-2xl w-full max-w-2xl p-6 sm:p-8 space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-[#172638]">
                   <div>
-                    <span className="text-xs font-mono text-[#00D9FF]">سند بریف پروژه در پیشخوان وردپرس</span>
-                    <h3 className="text-xl font-bold text-[#F5F8FC] mt-0.5">{selectedLead.name}</h3>
+                    <h3 className="text-lg font-bold text-[#F5F8FC]">جزئیات بریف پروژه: {selectedLead.name}</h3>
+                    <span className="text-xs text-[#8C9BAD] font-mono">{selectedLead.createdAt}</span>
                   </div>
-                  <button
-                    onClick={() => setSelectedLead(null)}
-                    className="p-1.5 rounded-lg text-[#8C9BAD] hover:text-white hover:bg-[#0A1626]"
-                  >
+                  <button onClick={() => setSelectedLead(null)} className="text-[#8C9BAD] hover:text-white">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div className="space-y-4 text-xs sm:text-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#0A1626] p-4 rounded-xl border border-[#172638]">
-                    <div>
-                      <span className="text-[#536174] block mb-1">شماره تماس مستقیم:</span>
-                      <a href={`tel:${selectedLead.phone}`} className="font-mono text-base font-bold text-[#00D9FF]">
-                        {selectedLead.phone}
-                      </a>
-                    </div>
-                    <div>
-                      <span className="text-[#536174] block mb-1">ایمیل:</span>
-                      <a href={`mailto:${selectedLead.email}`} className="text-white hover:underline">
-                        {selectedLead.email}
-                      </a>
-                    </div>
-                    <div>
-                      <span className="text-[#536174] block mb-1">بازه بودجه:</span>
-                      <span className="text-white">{selectedLead.budget || 'مشاوره و تعیین محدوده'}</span>
-                    </div>
-                    <div>
-                      <span className="text-[#536174] block mb-1">زمان‌بندی مد نظر:</span>
-                      <span className="text-white">{selectedLead.timeline || 'استاندارد'}</span>
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div className="p-3 bg-[#0A1626] rounded-xl border border-[#172638] space-y-1">
+                    <span className="text-[#8C9BAD] block">شماره تماس مشتری:</span>
+                    <span className="font-mono text-[#00D9FF] text-sm font-bold" dir="ltr">{selectedLead.phone}</span>
                   </div>
-
-                  <div>
-                    <strong className="text-[#F5F8FC] block mb-1">خدمات درخواستی:</strong>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedLead.services.map((s, idx) => (
-                        <span key={idx} className="bg-[#03070D] border border-[#172638] px-2.5 py-1 rounded text-xs text-[#C5D0DD]">
-                          {s}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="p-3 bg-[#0A1626] rounded-xl border border-[#172638] space-y-1">
+                    <span className="text-[#8C9BAD] block">پست الکترونیکی:</span>
+                    <span className="font-mono text-white text-sm" dir="ltr">{selectedLead.email}</span>
                   </div>
+                  <div className="p-3 bg-[#0A1626] rounded-xl border border-[#172638] space-y-1">
+                    <span className="text-[#8C9BAD] block">بودجه سرمایه‌گذاری:</span>
+                    <span className="text-white font-medium">{selectedLead.budget || 'توافقی'}</span>
+                  </div>
+                  <div className="p-3 bg-[#0A1626] rounded-xl border border-[#172638] space-y-1">
+                    <span className="text-[#8C9BAD] block">زمان‌بندی تحویل:</span>
+                    <span className="text-white font-medium">{selectedLead.timeline || 'استاندارد'}</span>
+                  </div>
+                </div>
 
-                  {selectedLead.description && (
-                    <div>
-                      <strong className="text-[#F5F8FC] block mb-1">توضیحات و چشم‌انداز مشتری:</strong>
-                      <div className="p-3 bg-[#03070D] border border-[#172638] rounded-xl text-xs text-[#C5D0DD] leading-relaxed">
-                        {selectedLead.description}
-                      </div>
-                    </div>
-                  )}
+                <div className="space-y-2 text-xs">
+                  <strong className="text-[#00D9FF] block">خدمات مورد نیاز:</strong>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLead.services.map((s) => (
+                      <span key={s} className="px-2.5 py-1 rounded-md bg-[#0A1626] border border-[#172638] text-white">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                  <div className="pt-4 border-t border-[#172638] flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-[#8C9BAD]">تغییر وضعیت:</span>
-                      <select
-                        value={selectedLead.status}
-                        onChange={(e) => handleStatusChange(selectedLead.id, e.target.value as any)}
-                        className="bg-[#0A1626] border border-[#172638] text-white rounded px-3 py-1.5 text-xs outline-none"
-                      >
-                        <option value="new">جدید (بررسی نشده)</option>
-                        <option value="reviewed">در حال بررسی فنی</option>
-                        <option value="contacted">جلسه هماهنگ شد</option>
-                      </select>
-                    </div>
+                {selectedLead.description && (
+                  <div className="space-y-1 text-xs">
+                    <strong className="text-[#00D9FF] block">چشم‌انداز و توضیحات کارفرما:</strong>
+                    <p className="p-3 bg-[#0A1626] rounded-xl border border-[#172638] text-[#C5D0DD] leading-relaxed">
+                      {selectedLead.description}
+                    </p>
+                  </div>
+                )}
 
+                <div className="pt-3 border-t border-[#172638] flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-[#8C9BAD]">تغییر وضعیت:</span>
                     <button
-                      onClick={() => setSelectedLead(null)}
-                      className="px-5 py-2 text-xs font-semibold text-white bg-[#1769FF] rounded-lg hover:bg-[#155bd8]"
+                      onClick={() => handleStatusChange(selectedLead.id, 'contacted')}
+                      className="px-3 py-1 rounded bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] hover:bg-[#22C55E]/20"
                     >
-                      بستن
+                      جلسه هماهنگ شد ✓
                     </button>
                   </div>
+                  <button
+                    onClick={() => setSelectedLead(null)}
+                    className="px-4 py-2 text-xs font-semibold text-white bg-[#1769FF] rounded-lg hover:bg-[#155bd8]"
+                  >
+                    بستن پنجره
+                  </button>
                 </div>
               </div>
             </div>
@@ -531,58 +972,87 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
         </section>
       )}
 
-      {/* TAB 3: PROJECTS MANAGER */}
+      {/* TAB 4: PROJECTS MANAGEMENT */}
       {activeTab === 'projects' && (
         <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
-                <span>&lt;CUSTOM POST TYPE: wispaar_project&gt;</span>
-                <span>·</span>
-                <span>مدیریت نمونه‌کارها در پیشخوان</span>
-              </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC]">
-                پروژه‌های ثبت‌شده در وردپرس (قابلیت ویرایش و افزودن فوری)
+                مدیریت پروژه‌ها و نمونه‌کارها (CPT: wispaar_project)
               </h2>
+              <p className="text-xs sm:text-sm text-[#8C9BAD] mt-1">
+                این پروژه‌ها مستقیماً در دیتابیس وردپرس و نمایشگاه کارهای فرانت‌اند ذخیره شده‌اند:
+              </p>
             </div>
 
             <button
               onClick={() => setShowAddProjectModal(true)}
-              className="px-5 py-2.5 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+              className="px-4 py-2.5 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-colors flex items-center gap-2 cursor-pointer shadow-md shadow-[#1769FF]/20"
             >
               <Plus className="w-4 h-4" />
-              <span>افزودن نمونه‌کار جدید به وردپرس</span>
+              <span>افزودن نمونه‌کار جدید به سایت</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allProjects.map((p) => (
-              <div key={p.id} className="bg-[#06111F] border border-[#172638] rounded-xl p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs text-[#8C9BAD] mb-2 font-latin">
-                    <span>{p.industry}</span>
-                    <span>{p.year}</span>
-                  </div>
-                  <h3 className="text-base font-bold text-[#F5F8FC] mb-1">{p.title}</h3>
-                  <div className="text-xs text-[#00D9FF] font-latin mb-2">{p.titleEn}</div>
-                  <p className="text-xs text-[#8C9BAD] line-clamp-2 leading-relaxed mb-4">
-                    {p.challenge}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-[#172638] flex items-center justify-between text-xs">
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${p.isDemo ? 'bg-[#00D9FF]/20 text-[#00D9FF]' : 'bg-[#22C55E]/20 text-[#22C55E]'}`}>
-                    {p.isDemo ? 'CONCEPT DEMO' : 'LIVE CLIENT'}
-                  </span>
-                  <button
-                    onClick={() => onNavigate('project-detail', p.slug)}
-                    className="text-[#4AA3FF] hover:underline"
-                  >
-                    مشاهده صفحه پروژه ←
-                  </button>
-                </div>
-              </div>
-            ))}
+          {/* Projects Table */}
+          <div className="bg-[#06111F] border border-[#172638] rounded-2xl overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-[#03070D] border-b border-[#172638] text-[#8C9BAD]">
+                  <tr>
+                    <th className="p-4 font-semibold">عنوان پروژه</th>
+                    <th className="p-4 font-semibold">کارفرما</th>
+                    <th className="p-4 font-semibold">صنعت</th>
+                    <th className="p-4 font-semibold">سال</th>
+                    <th className="p-4 font-semibold">شاخص ۱</th>
+                    <th className="p-4 font-semibold">شاخص ۲</th>
+                    <th className="p-4 font-semibold">نوع</th>
+                    <th className="p-4 font-semibold text-center">مشاهده</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#172638]">
+                  {allProjects.map((proj) => (
+                    <tr key={proj.id} className="hover:bg-[#0A1626]/60 transition-colors">
+                      <td className="p-4 font-bold text-[#F5F8FC] whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <span>{proj.title}</span>
+                          <span className="text-[10px] text-[#536174] font-mono" dir="ltr">({proj.titleEn})</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-[#C5D0DD] whitespace-nowrap">{proj.client}</td>
+                      <td className="p-4 text-[#8C9BAD] whitespace-nowrap">{proj.industry}</td>
+                      <td className="p-4 text-[#8C9BAD] font-mono whitespace-nowrap">{proj.year}</td>
+                      <td className="p-4 font-mono text-[#00D9FF] whitespace-nowrap">
+                        {proj.results[0]?.value} <span className="text-[10px] text-[#536174] font-sans">({proj.results[0]?.label})</span>
+                      </td>
+                      <td className="p-4 font-mono text-[#22C55E] whitespace-nowrap">
+                        {proj.results[1]?.value}
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+                        {proj.isDemo ? (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#0A1626] border border-[#23364C] text-[#00D9FF]">
+                            CONCEPT / DEMO
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">
+                            LIVE
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 whitespace-nowrap text-center">
+                        <button
+                          onClick={() => onNavigate('project-detail', proj.slug)}
+                          className="p-1.5 rounded bg-[#0A1626] hover:bg-[#1769FF]/20 text-[#00D9FF] transition-colors cursor-pointer"
+                          title="مشاهده صفحه اختصاصی اثر"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Modal to Add New Project */}
@@ -745,63 +1215,6 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
               </div>
             </div>
           )}
-        </section>
-      )}
-
-      {/* TAB 4: CONNECT TO LIVE WORDPRESS */}
-      {activeTab === 'connect' && (
-        <section className="bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-6 max-w-3xl">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-[#00D9FF] mb-1">
-              <span>&lt;REST API WEBHOOK&gt;</span>
-              <span>·</span>
-              <span>اتصال مستقیم فرانت‌اند به هاست وردپرس شما</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC]">
-              ارسال مستقیم فرم‌ها به وردپرس زنده شما
-            </h2>
-            <p className="text-sm text-[#8C9BAD] leading-relaxed mt-2">
-              اگر قالب ویسپار را روی هاست وردپرس واقعی خود نصب کرده‌اید، می‌توانید آدرس دامنه آن را در کادر زیر وارد کنید تا تمام فرم‌های بریف و تماس از این سایت مستقیماً به آدرس <code className="font-mono text-[#00D9FF]">/wp-json/wispaar/v1/brief</code> ارسال و در دیتابیس وردپرس شما ذخیره گردند.
-            </p>
-          </div>
-
-          <form onSubmit={handleSaveEndpoint} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#8C9BAD] mb-2">
-                آدرس وب‌سایت وردپرسی شما (WordPress Site URL):
-              </label>
-              <input
-                type="url"
-                placeholder="https://your-wordpress-site.com"
-                value={remoteEndpoint}
-                onChange={(e) => setRemoteEndpoint(e.target.value)}
-                className="w-full bg-[#03070D] border border-[#172638] focus:border-[#00D9FF] text-white px-4 py-3 rounded-xl text-sm outline-none font-mono"
-                dir="ltr"
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                type="submit"
-                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-colors cursor-pointer"
-              >
-                ذخیره آدرس وب‌هوک
-              </button>
-              {endpointSaved && (
-                <span className="text-xs text-[#22C55E] flex items-center gap-1">
-                  <Check className="w-4 h-4" />
-                  تنظیمات با موفقیت ذخیره شد!
-                </span>
-              )}
-            </div>
-          </form>
-
-          <div className="p-4 bg-[#0A1626] border border-[#172638] rounded-xl text-xs text-[#8C9BAD] space-y-2">
-            <strong className="text-[#00D9FF] block">نحوه عملکرد امنیتی:</strong>
-            <p>
-              قالب ویسپار دارای اندپوینت‌های امنیتی استاندارد وردپرس با اعتبارسنجی ورودی‌ها (Sanitization & Nonce) است و نیازی به نصب هیچ افزونه فرم‌ساز جانبی مانند Contact Form 7 یا Gravity Forms نخواهید داشت.
-            </p>
-          </div>
         </section>
       )}
 

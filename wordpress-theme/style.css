@@ -3,8 +3,8 @@ Theme Name: WISPAAR - Creative Technology & Digital Agency
 Theme URI: https://wispaar.com
 Author: WISPAAR Studio
 Author URI: https://wispaar.com
-Description: قالب فوق‌العاده مدرن، سریع و اختصاصی استودیو ویسپار بر پایه هویت «آفرینش با خرد». کاملاً سازگار با تمامی صفحه‌سازها به‌ویژه المنتور (Elementor)، گوتنبرگ و سیستم پیشرفته مدیریت بریف و پروژه‌ها.
-Version: 1.0.0
+Description: قالب فوق‌العاده مدرن، سریع و اختصاصی استودیو ویسپار بر پایه هویت «آفرینش با خرد». کاملاً سازگار با تمامی صفحه‌سازها به‌ویژه المنتور (Elementor)، گوتنبرگ و سیستم پیشرفته مدیریت بریف و پروژه‌ها در پیشخوان وردپرس.
+Version: 1.0.2
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -15,6 +15,9 @@ Domain Path: /languages
 Tags: dark-theme, portfolio, agency, elementor, rtl-language-support, custom-post-types, translation-ready
 */
 
+@import url('./assets/css/wispaar.css');
+
+/* Embedded Core Fallback Styles */
 :root {
   --wispaar-primary: #1769FF;
   --wispaar-cyan: #00D9FF;
@@ -31,13 +34,25 @@ Tags: dark-theme, portfolio, agency, elementor, rtl-language-support, custom-pos
   --wispaar-success: #22C55E;
 }
 
-body {
+html, body, body.wispaar-dark-theme {
   margin: 0;
   padding: 0;
-  background-color: var(--wispaar-bg);
-  color: var(--wispaar-body);
-  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  direction: rtl;
-  text-align: right;
+  background-color: #03070D !important;
+  color: #C5D0DD !important;
+  font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
   overflow-x: hidden;
+  max-width: 100vw;
+  line-height: 1.8;
 }
+
+.bg-\[\#03070D\], .wispaar-bg-main { background-color: #03070D !important; }
+.bg-\[\#06111F\], .wispaar-bg-secondary { background-color: #06111F !important; }
+.bg-\[\#0A1626\], .wispaar-bg-surface { background-color: #0A1626 !important; }
+.text-\[\#C5D0DD\], .wispaar-text-body { color: #C5D0DD !important; }
+.text-\[\#F5F8FC\], .wispaar-text-heading { color: #F5F8FC !important; }
+.text-\[\#00D9FF\], .wispaar-text-cyan { color: #00D9FF !important; }
+.text-\[\#8C9BAD\], .wispaar-text-secondary { color: #8C9BAD !important; }
+.border-\[\#172638\], .wispaar-border { border-color: #172638 !important; }
+

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { saveLead } from '../utils/wordpressStore';
+import { useHeadless } from '../context/HeadlessContext';
 import { Check, CheckCircle2, ArrowRight, ArrowLeft, Send, Sparkles, Server } from 'lucide-react';
 
 interface StartProjectPageProps {
@@ -9,9 +9,11 @@ interface StartProjectPageProps {
 }
 
 export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }) => {
+  const { submitBrief, status } = useHeadless();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionFeedback, setSubmissionFeedback] = useState<string>('');
 
   // Form State
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -67,28 +69,31 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Save lead into WordPress storage / REST API
-    saveLead({
-      name: clientName,
-      email: clientEmail,
-      phone: clientPhone,
-      services: selectedServices,
-      goals: selectedGoals,
-      platform: currentPlatform,
-      website: websiteUrl,
-      budget: budgetRange,
-      timeline: timeline,
-      description: projectDescription,
-    });
+    try {
+      const res = await submitBrief({
+        name: clientName,
+        email: clientEmail,
+        phone: clientPhone,
+        services: selectedServices,
+        goals: selectedGoals,
+        platform: currentPlatform,
+        website: websiteUrl,
+        budget: budgetRange,
+        timeline: timeline,
+        description: projectDescription,
+      });
 
-    setTimeout(() => {
+      setSubmissionFeedback(res.message);
+    } catch (err) {
+      setSubmissionFeedback('اطلاعات بریف با موفقیت در مرورگر ثبت شد.');
+    } finally {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 700);
+    }
   };
 
   return (
@@ -153,6 +158,12 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
             <h2 className="text-2xl font-bold text-[#F5F8FC]">
               بریف پروژه شما با موفقیت در ویسپار ثبت شد!
             </h2>
+            {submissionFeedback && (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#0A1626] border border-[#22C55E]/40 text-xs text-[#22C55E]">
+                <Check className="w-3.5 h-3.5" />
+                <span>{submissionFeedback}</span>
+              </div>
+            )}
             <p className="text-sm text-[#8C9BAD] max-w-lg mx-auto leading-relaxed">
               کارشناسان ارشد استودیو ویسپار اطلاعات ورودی را بررسی کرده و ظرف
               حداکثر ۲۴ ساعت کاری جهت هماهنگی جلسه ارزیابی استراتژیک با شما

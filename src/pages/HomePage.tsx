@@ -1,11 +1,10 @@
 import React from 'react';
 import { PageRoute } from '../types';
-import { projectsData } from '../data/projectsData';
 import { servicesData } from '../data/servicesData';
-import { articlesData } from '../data/articlesData';
 import { seoCaseStudiesData } from '../data/seoCaseStudiesData';
 import { ProjectCard } from '../components/ProjectCard';
 import { SeoCaseStudyCard } from '../components/SeoCaseStudyCard';
+import { useHeadless } from '../context/HeadlessContext';
 import {
   ArrowUpLeft,
   Layers,
@@ -23,6 +22,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+  const { projects, articles } = useHeadless();
   return (
     <div className="space-y-24 md:space-y-36 pb-20">
       {/* 01. HERO SECTION */}
@@ -101,10 +101,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               {/* Marquee generated studio visual */}
               <div className="relative aspect-[16/9] max-h-[560px] overflow-hidden">
                 <img
-                  src="/src/assets/images/hero_wispaar_digital_1791304917952.jpg"
+                  src="/images/hero.jpg"
                   alt="محیط استودیو خلاق و فناوری ویسپار"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to stylized SVG visual if image fails to load
+                    (e.currentTarget as HTMLImageElement).src =
+                      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='675' viewBox='0 0 1200 675'><rect width='1200' height='675' fill='%2306111F'/><circle cx='600' cy='337' r='280' fill='%231769FF' opacity='0.15'/><path d='M200 500 L600 200 L1000 500' stroke='%2300D9FF' stroke-width='3' fill='none' opacity='0.4'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23F5F8FC' font-family='sans-serif' font-size='28' font-weight='bold'>WISPAAR DIGITAL STUDIO</text></svg>";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#03070D] via-transparent to-transparent opacity-80" />
 
@@ -195,7 +200,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* Editorial Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {projectsData.slice(0, 4).map((project, idx) => (
+          {projects.slice(0, 4).map((project, idx) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -403,7 +408,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {articlesData.slice(0, 3).map((article) => (
+          {articles.slice(0, 3).map((article) => (
             <article
               key={article.id}
               onClick={() => onNavigate('article-detail', article.slug)}

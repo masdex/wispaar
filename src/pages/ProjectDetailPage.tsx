@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
-import { projectsData } from '../data/projectsData';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useHeadless } from '../context/HeadlessContext';
 import {
   ArrowUpLeft,
   ArrowRight,
@@ -23,9 +23,10 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   slug,
   onNavigate,
 }) => {
-  const currentIndex = projectsData.findIndex((p) => p.slug === slug);
-  const project = currentIndex !== -1 ? projectsData[currentIndex] : projectsData[0];
-  const nextProject = projectsData[(currentIndex + 1) % projectsData.length];
+  const { projects } = useHeadless();
+  const currentIndex = projects.findIndex((p) => p.slug === slug);
+  const project = currentIndex !== -1 ? projects[currentIndex] : projects[0];
+  const nextProject = projects[(currentIndex + 1) % projects.length];
 
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [showCmsSchema, setShowCmsSchema] = useState(false);
@@ -125,6 +126,10 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
             src={project.coverImage}
             alt={project.title}
             referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src =
+                "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'><rect width='1200' height='700' fill='%2306111F'/><rect x='60' y='60' width='1080' height='580' rx='16' fill='%230A1626' stroke='%23172638' stroke-width='2'/><circle cx='600' cy='320' r='120' fill='%231769FF' opacity='0.2'/><path d='M300 480 L600 240 L900 480' stroke='%2300D9FF' stroke-width='4' fill='none' opacity='0.5'/><text x='50%25' y='62%25' dominant-baseline='middle' text-anchor='middle' fill='%23F5F8FC' font-family='sans-serif' font-size='24' font-weight='600'>WISPAAR ARCHITECTURE PREVIEW</text></svg>";
+            }}
             className={`w-full rounded-xl object-cover shadow-2xl ${
               previewDevice === 'mobile' ? 'border-4 border-[#172638] rounded-3xl max-h-[600px]' : 'max-h-[650px]'
             }`}

@@ -24,7 +24,17 @@ import { WordPressHubPage } from './pages/WordPressHubPage';
 import { LegalPage } from './pages/LegalPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
+import { HeadlessProvider } from './context/HeadlessContext';
+
 export default function App() {
+  return (
+    <HeadlessProvider>
+      <AppContent />
+    </HeadlessProvider>
+  );
+}
+
+function AppContent() {
   const [route, setRoute] = useState<PageRoute>('home');
   const [slug, setSlug] = useState<string | undefined>(undefined);
   const [searchOpen, setSearchOpen] = useState(false);

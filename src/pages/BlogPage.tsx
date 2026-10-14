@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
-import { articlesData } from '../data/articlesData';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { ArrowUpLeft, BookOpen, Clock, Calendar, User } from 'lucide-react';
+import { ArrowUpLeft, BookOpen, Clock, Calendar, User, RefreshCw } from 'lucide-react';
+import { useHeadless } from '../context/HeadlessContext';
 
 interface BlogPageProps {
   onNavigate: (route: PageRoute, slug?: string) => void;
 }
 
 export const BlogPage: React.FC<BlogPageProps> = ({ onNavigate }) => {
+  const { articles, status, isSyncing, syncFromWordPress } = useHeadless();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = [
@@ -19,7 +20,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onNavigate }) => {
     { id: 'تجربه کاربری', label: 'تجربه کاربری و پرفورمنس' },
   ];
 
-  const filteredArticles = articlesData.filter((a) => {
+  const filteredArticles = articles.filter((a) => {
     if (selectedCategory === 'all') return true;
     return a.category === selectedCategory;
   });

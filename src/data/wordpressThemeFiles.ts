@@ -1,8 +1,3 @@
-/**
- * Complete WordPress Theme Files & Architecture for WISPAAR
- * Fully compatible with Elementor, Elementor Pro, Gutenberg, and classic editors.
- */
-
 export interface WPThemeFile {
   name: string;
   path: string;
@@ -12,1056 +7,127 @@ export interface WPThemeFile {
 
 export const wpThemeFiles: WPThemeFile[] = [
   {
-    name: 'style.css',
-    path: 'style.css',
-    description: 'فایل هدر مشخصات قالب وردپرس با سازگاری المنتور و پشتیبانی کامل RTL',
-    content: `/*
-Theme Name: WISPAAR - Creative Technology & Digital Agency
-Theme URI: https://wispaar.com
-Author: WISPAAR Studio
-Author URI: https://wispaar.com
-Description: قالب فوق‌العاده مدرن، سریع و اختصاصی استودیو ویسپار بر پایه هویت «آفرینش با خرد». کاملاً سازگار با تمامی صفحه‌سازها به‌ویژه المنتور (Elementor)، گوتنبرگ و سیستم پیشرفته مدیریت بریف و پروژه‌ها.
-Version: 1.0.0
-Requires at least: 6.0
-Tested up to: 6.7
-Requires PHP: 7.4
-License: GNU General Public License v2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: wispaar
-Domain Path: /languages
-Tags: dark-theme, portfolio, agency, elementor, rtl-language-support, custom-post-types, translation-ready
-*/
-
-/* CSS Variables matching Wispaar Brand System */
-:root {
-  --wispaar-primary: #1769FF;
-  --wispaar-cyan: #00D9FF;
-  --wispaar-indigo: #6366F1;
-  --wispaar-bg: #03070D;
-  --wispaar-secondary-bg: #06111F;
-  --wispaar-surface: #0A1626;
-  --wispaar-surface-hover: #0F2035;
-  --wispaar-heading: #F5F8FC;
-  --wispaar-body: #C5D0DD;
-  --wispaar-secondary-text: #8C9BAD;
-  --wispaar-border: #172638;
-  --wispaar-border-light: #23364C;
-  --wispaar-success: #22C55E;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--wispaar-bg);
-  color: var(--wispaar-body);
-  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  direction: rtl;
-  text-align: right;
-  overflow-x: hidden;
-}
-`
+    "name": "README.md",
+    "path": "README.md",
+    "description": "راهنمای گام‌به‌گام نصب قالب، رفع خطاهای المنتور، درون‌ریزی داده‌ها و مدیریت لیدها در وردپرس",
+    "content": "# راهنمای کامل نصب، راه‌اندازی و معماری هدلس قالب وردپرس WISPAAR (ویسپار)\n\nاین پکیج یک راهکار دوگانه پیشرفته است:\n1. **پوسته اختصاصی وردپرس (Monolithic Theme):** اجرای مستقل روی وردپرس با المنتور، گوتنبرگ و استایل‌های بهینه‌سازی‌شده.\n2. **بک‌اند هدلس کامل (Headless CMS Backend):** استفاده از وردپرس صرفاً به عنوان پنل مدیریت محتوا و API قدرتمند، در حالی که فرانت‌اند روی React / Vite با نهایت سرعت و زیبایی اجرا می‌شود.\n\n---\n\n## ۱. نحوه نصب و فعال‌سازی در وردپرس:\n1. فایل زیپ قالب (`wispaar-theme.zip`) را دانلود کنید.\n2. وارد پیشخوان وردپرس خود شوید (`wp-admin`).\n3. از منوی سمت راست، به مسیر **نمایش (Appearance) -> پوسته‌ها (Themes) -> افزودن پوسته تازه -> بارگذاری پوسته** بروید.\n4. فایل زیپ `wispaar-theme.zip` را انتخاب کرده و روی **نصب** و سپس **فعال‌سازی** کلیک کنید.\n5. نیازی به هیچ پیش‌نیاز سروری خاصی نیست؛ قالب ۱۰۰٪ مستقل است و تمام استایل‌ها، فونت‌ها و اسکریپت‌ها به صورت داخلی تعبیه شده‌اند.\n\n---\n\n## ۲. درون‌ریزی فوری داده‌های نمونه (۱ کلیک):\nبرای اینکه سایت بلافاصله پس از نصب با همان نمونه‌کارها و اطلاعات کامل بالا بیاید:\n1. در پیشخوان وردپرس، به منوی **«پوسته ویسپار (داده‌های نمونه)»** در زیرمجموعه «نمایش» بروید.\n2. روی دکمه آبی‌رنگ **«درون‌ریزی نمونه‌کارهای ویسپار در پیشخوان وردپرس»** کلیک کنید.\n3. تمام پروژه‌ها (آریا کاپیتال، ژنوم لبز، آتلیه هور و سیناپس کلود) با شاخص‌های عملکرد، چالش، راهکار و برچسب‌های کانسپت/دمو در سایت شما بارگذاری می‌شوند!\n\n---\n\n## ۳. سازگاری کامل با المنتور (Elementor):\n- این قالب با **Elementor** و **Elementor Pro** به صورت بومی هماهنگ است.\n- یک دسته‌بندی اختصاصی با نام **«المان‌های اختصاصی ویسپار (WISPAAR)»** در پنل المنتور ایجاد می‌شود شامل:\n  - **هیرو اختصاصی ویسپار (Wispaar Hero):** هیرو مدرن با تایپوگرافی، امضای برند و دکمه‌ها.\n  - **گرید پروژه‌ها (Wispaar Portfolio Grid):** نمایش نمونه‌کارها مستقیماً از دیتابیس وردپرس با برچسب‌های دمو.\n  - **فرم هوشمند بریف (Wispaar Brief Form):** فرم چندمرحله‌ای تعاملی دریافت اطلاعات پروژه با ارسال ایجکس.\n  - **خدمات ویسپار (Wispaar Services):** کارت‌های خدمات با توضیحات ادیتوریال.\n- سازگار با **Elementor Theme Builder** (طراحی هدر و فوتر اختصاصی).\n- سازگار با قالب‌های برگه **Elementor Canvas** و **Elementor Full Width**.\n\n---\n\n## ۴. مدیریت درخواست‌ها و بریف‌های پروژه (Leads & CRM):\n- به محض فعال‌سازی قالب، منوی **«درخواست‌های پروژه (Leads)»** در منوی پیشخوان وردپرس ظاهر می‌شود.\n- وقتی کاربری در سایت فرم بریف یا مشاوره را تکمیل کند:\n  1. یک ردیف جدید در جدول درخواست‌های پروژه با برچسب قرمز **«جدید»** ثبت می‌شود.\n  2. عدد پیام‌های جدید به صورت بج قرمز در منوی مدیریت وردپرس نشان داده می‌شود.\n  3. بلافاصله یک ایمیل نوتیفیکیشن حاوی نام، شماره تلفن، ایمیل، بودجه و توضیحات مشتری به ایمیل مدیر ارسال می‌شود.\n  4. در صفحه مشاهده هر بریف، می‌توانید وضعیت آن را به **«در حال بررسی»** یا **«جلسه هماهنگ شد»** تغییر دهید.\n\n---\n\n## ۵. مدیریت و افزودن نمونه‌کارها (Portfolio CPT):\n- از منوی **«پروژه‌های ویسپار»** در پیشخوان وردپرس، می‌توانید:\n  - تمام نمونه‌کارهای موجود را ویرایش کنید.\n  - با زدن «افزودن پروژه جدید»، پروژه تازه اضافه کنید.\n  - نام مشتری، سال، صنعت، فناوری‌ها، چالش، راهکار، شاخص‌های لایت‌هاوس و نرخ تبدیل را وارد کنید.\n  - با زدن تیک **«نمونه کانسپت استودیو است (Concept / Demo)»**، برچسب شفاف صداقت حرفه‌ای روی اثر قرار می‌گیرد.\n\n---\n\n## ۶. معماری هدلس (Headless CMS) و اتصال به فرانت‌اند React:\nاین پوسته دارای هسته پیشرفته **CORS و REST API** اختصاصی است:\n- **سلامت و اعتبارسنجی اتصال:** `GET /wp-json/wispaar/v1/health`\n- **لیست پروژه‌ها با متادیتا کامل:** `GET /wp-json/wispaar/v1/projects`\n- **ایجاد پروژه از فرانت‌اند:** `POST /wp-json/wispaar/v1/projects`\n- **مشاهده تک‌پروژه:** `GET /wp-json/wispaar/v1/projects/{slug}`\n- **مقالات و ژورنال:** `GET /wp-json/wispaar/v1/articles`\n- **ثبت بریف مشتری:** `POST /wp-json/wispaar/v1/brief`\n- **دریافت بریف‌ها:** `GET /wp-json/wispaar/v1/leads`\n- **درون‌ریزی خودکار با ۱ کلیک:** `POST /wp-json/wispaar/v1/seed`\n\nدر اپلیکیشن فرانت‌اند در تب **«وردپرس هدلس»**، آدرس سایت وردپرس خود (مثلاً `http://demo.local` یا دامنه سرور) را وارد کنید و دکمه **تست اتصال** را بزنید تا فرانت‌اند به دیتابیس زنده وردپرس شما متصل شود!\n"},
+  {
+    "name": "archive-wispaar_project.php",
+    "path": "archive-wispaar_project.php",
+    "description": "قالب بایگانی و نمایشگاه همه پروژه‌ها (/portfolio)",
+    "content": "<?php\n/**\n * Archive Template for Wispaar Projects (Portfolio)\n * \n * @package Wispaar\n */\n\nget_header();\n?>\n\n<div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12 text-right\">\n    <div class=\"space-y-3\">\n        <span class=\"badge-code\">&lt;PORTFOLIO ARCHIVE&gt;</span>\n        <h1 class=\"text-3xl sm:text-5xl font-bold text-[#F5F8FC]\">نمایشگاه جامع پروژه‌ها و آثار دیجیتال</h1>\n        <p class=\"text-sm sm:text-base text-[#8C9BAD] max-w-2xl\">\n            مجموعه وب‌سایت‌های اختصاصی، مهندسی زیرساخت وردپرس و راهکارهای دیجیتال طراحی‌شده با تلفیق خرد استراتژیک و کدهای سبک.\n        </p>\n    </div>\n\n    <div class=\"grid grid-cols-1 md:grid-cols-2 gap-8\">\n        <?php\n        if ( have_posts() ) :\n            while ( have_posts() ) : the_post();\n                $id       = get_the_ID();\n                $title_en = get_post_meta( $id, '_wispaar_title_en', true );\n                $client   = get_post_meta( $id, '_wispaar_client', true );\n                $year     = get_post_meta( $id, '_wispaar_year', true );\n                $ptype    = get_post_meta( $id, '_wispaar_ptype', true );\n                $is_demo  = get_post_meta( $id, '_wispaar_is_demo', true ) === '1';\n                ?>\n                <article class=\"project-card\">\n                    <div class=\"card-media\">\n                        <?php if ( $is_demo ) : ?>\n                            <div style=\"position:absolute; top:12px; right:12px; z-index:10;\">\n                                <span class=\"badge-demo\">CONCEPT / DEMO</span>\n                            </div>\n                        <?php endif; ?>\n                        <a href=\"<?php the_permalink(); ?>\">\n                            <?php if ( has_post_thumbnail() ) : ?>\n                                <?php the_post_thumbnail( 'large', array( 'class' => 'w-full h-full object-cover' ) ); ?>\n                            <?php else : ?>\n                                <div style=\"width:100%; height:240px; background:#0A1626; display:flex; align-items:center; justify-content:center; color:#536174; font-family:monospace; font-size:12px;\">\n                                    &lt;PORTFOLIO IMAGE&gt;\n                                </div>\n                            <?php endif; ?>\n                        </a>\n                    </div>\n\n                    <div class=\"card-content\">\n                        <div style=\"display:flex; align-items:center; gap:8px; font-size:12px; color:#8C9BAD; margin-bottom:8px;\">\n                            <span><?php echo esc_html( $client ?: 'اختصاصی ویسپار' ); ?></span>\n                            <span>·</span>\n                            <span><?php echo esc_html( $ptype ?: 'وب‌سایت اختصاصی' ); ?></span>\n                            <span>·</span>\n                            <span><?php echo esc_html( $year ?: '۱۴۰۴' ); ?></span>\n                        </div>\n\n                        <h3 style=\"font-size:1.25rem; font-weight:700; margin-bottom:8px;\">\n                            <a href=\"<?php the_permalink(); ?>\" style=\"color:#F5F8FC;\">\n                                <?php the_title(); ?>\n                                <?php if ( $title_en ) : ?>\n                                    <span style=\"display:block; font-size:12px; font-weight:normal; color:#8C9BAD; direction:ltr; text-align:right;\">\n                                        <?php echo esc_html( $title_en ); ?>\n                                    </span>\n                                <?php endif; ?>\n                            </a>\n                        </h3>\n\n                        <div style=\"font-size:13px; color:#8C9BAD; margin-bottom:16px;\">\n                            <?php the_excerpt(); ?>\n                        </div>\n\n                        <div style=\"padding-top:12px; border-top:1px solid #172638;\">\n                            <a href=\"<?php the_permalink(); ?>\" style=\"color:#00D9FF; font-size:12px; font-weight:600;\">\n                                مطالعه کامل مطالعه موردی ←\n                            </a>\n                        </div>\n                    </div>\n                </article>\n                <?php\n            endwhile;\n        else :\n            ?>\n            <p class=\"text-[#8C9BAD]\">هیچ پروژه‌ای در این بخش یافت نشد.</p>\n            <?php\n        endif;\n        ?>\n    </div>\n</div>\n\n<?php\nget_footer();\n"
   },
   {
-    name: 'functions.php',
-    path: 'functions.php',
-    description: 'هسته اصلی قالب: ثبت قابلیت‌ها، سازگاری با المنتور، ثبت منوها، انکیو اسکریپت‌ها و فراخوانی ماژول‌ها',
-    content: `<?php
-/**
- * WISPAAR Theme Functions & Definitions
- * 
- * @package Wispaar
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly.
-}
-
-define( 'WISPAAR_VERSION', '1.0.0' );
-define( 'WISPAAR_DIR', get_template_directory() );
-define( 'WISPAAR_URI', get_template_directory_uri() );
-
-/**
- * 1. Theme Setup & Page Builder Compatibility
- */
-function wispaar_setup() {
-    load_theme_textdomain( 'wispaar', WISPAAR_DIR . '/languages' );
-
-    add_theme_support( 'title-tag' );
-    add_theme_support( 'post-thumbnails' );
-    add_theme_support( 'align-wide' );
-    add_theme_support( 'responsive-embeds' );
-    add_theme_support( 'html5', array(
-        'search-form',
-        'comment-form',
-        'comment-list',
-        'gallery',
-        'caption',
-        'style',
-        'script',
-    ) );
-
-    // Register Navigation Menus
-    register_nav_menus( array(
-        'primary-menu' => esc_html__( 'منوی اصلی هدر', 'wispaar' ),
-        'footer-services' => esc_html__( 'منوی خدمات فوتر', 'wispaar' ),
-        'footer-company' => esc_html__( 'منوی درباره و استودیو فوتر', 'wispaar' ),
-    ) );
-
-    // ELEMENTOR THEME SUPPORT
-    add_theme_support( 'elementor' );
-}
-add_action( 'after_setup_theme', 'wispaar_setup' );
-
-/**
- * 2. Enqueue Styles & Scripts
- */
-function wispaar_scripts() {
-    // Google Fonts (Vazirmatn + Plus Jakarta Sans + JetBrains Mono)
-    wp_enqueue_style( 'wispaar-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap', array(), null );
-
-    // Theme Main Stylesheet
-    wp_enqueue_style( 'wispaar-style', get_stylesheet_uri(), array(), WISPAAR_VERSION );
-    
-    // Tailwind Runtime or Compiled CSS for standalone views
-    wp_enqueue_script( 'wispaar-tailwind', 'https://cdn.tailwindcss.com', array(), '3.4.0', false );
-
-    // Main JavaScript
-    wp_enqueue_script( 'wispaar-main', WISPAAR_URI . '/assets/js/main.js', array( 'jquery' ), WISPAAR_VERSION, true );
-
-    // Localize Script for AJAX / REST API
-    wp_localize_script( 'wispaar-main', 'wispaarSettings', array(
-        'restUrl'  => esc_url_raw( rest_url( 'wispaar/v1/' ) ),
-        'nonce'    => wp_create_nonce( 'wp_rest' ),
-        'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-    ) );
-}
-add_action( 'wp_enqueue_scripts', 'wispaar_scripts' );
-
-/**
- * 3. Include Custom Modules
- */
-require_once WISPAAR_DIR . '/inc/cpt-projects.php';    // مدیریت نمونه‌کارها
-require_once WISPAAR_DIR . '/inc/cpt-services.php';    // مدیریت خدمات
-require_once WISPAAR_DIR . '/inc/cpt-inquiries.php';   // مدیریت بریف‌ها و پیام‌های دریافتی
-require_once WISPAAR_DIR . '/inc/rest-api.php';        // اندپوینت‌های REST API
-require_once WISPAAR_DIR . '/inc/elementor-widgets.php'; // ویجت‌های اختصاصی المنتور
-
-/**
- * 4. Content Width
- */
-function wispaar_content_width() {
-    $GLOBALS['content_width'] = apply_filters( 'wispaar_content_width', 1280 );
-}
-add_action( 'after_setup_theme', 'wispaar_content_width', 0 );
-`
+    "name": "assets/css/wispaar.css",
+    "path": "assets/css/wispaar.css",
+    "description": "فایل استایل اختصاصی و جامع ویسپار — شامل تمام کلاس‌های گرید، فلکس، رنگ‌های دارک، کارت‌ها و سازگاری با المنتور",
+    "content": "/*\nTheme Name: WISPAAR - Creative Technology & Digital Agency\nAuthor: WISPAAR Studio\nText Domain: wispaar\n*/\n\n/* CSS Variables */\n:root {\n  --wispaar-primary: #1769FF;\n  --wispaar-primary-hover: #155bd8;\n  --wispaar-cyan: #00D9FF;\n  --wispaar-indigo: #6366F1;\n  --wispaar-bg: #03070D;\n  --wispaar-secondary-bg: #06111F;\n  --wispaar-surface: #0A1626;\n  --wispaar-surface-hover: #0F2035;\n  --wispaar-heading: #F5F8FC;\n  --wispaar-body: #C5D0DD;\n  --wispaar-secondary-text: #8C9BAD;\n  --wispaar-disabled: #536174;\n  --wispaar-border: #172638;\n  --wispaar-border-light: #23364C;\n  --wispaar-link: #4AA3FF;\n  --wispaar-success: #22C55E;\n  --wispaar-warning: #F59E0B;\n  --wispaar-error: #EF4444;\n  --wispaar-footer: #02050A;\n}\n\n/* Base & Typography */\n*, *::before, *::after {\n  box-sizing: border-box;\n}\n\nhtml {\n  direction: rtl;\n  text-align: right;\n  scroll-behavior: smooth;\n  overflow-x: hidden;\n  max-width: 100vw;\n  background-color: var(--wispaar-bg);\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n  font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif;\n  background-color: var(--wispaar-bg);\n  color: var(--wispaar-body);\n  line-height: 1.8;\n  font-size: 15px;\n  overflow-x: hidden;\n  max-width: 100vw;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  color: var(--wispaar-heading);\n  font-weight: 700;\n  line-height: 1.35;\n  margin-top: 0;\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n  transition: color 0.2s ease;\n}\n\na:hover {\n  color: var(--wispaar-cyan);\n}\n\nimg {\n  max-width: 100%;\n  height: auto;\n  display: block;\n}\n\nbutton, input, select, textarea {\n  font-family: inherit;\n}\n\n/* Custom Scrollbars */\n::-webkit-scrollbar {\n  width: 6px;\n  height: 6px;\n}\n::-webkit-scrollbar-track {\n  background: var(--wispaar-bg);\n}\n::-webkit-scrollbar-thumb {\n  background: var(--wispaar-border);\n  border-radius: 3px;\n}\n::-webkit-scrollbar-thumb:hover {\n  background: var(--wispaar-border-light);\n}\n\n/* Container Layout */\n.max-w-7xl {\n  max-width: 80rem;\n  margin-left: auto;\n  margin-right: auto;\n}\n.max-w-4xl { max-width: 56rem; margin-left: auto; margin-right: auto; }\n.max-w-3xl { max-width: 48rem; margin-left: auto; margin-right: auto; }\n.max-w-2xl { max-width: 42rem; }\n.max-w-md { max-width: 28rem; }\n.mx-auto { margin-left: auto; margin-right: auto; }\n\n.px-4 { padding-left: 1rem; padding-right: 1rem; }\n.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }\n.py-4 { padding-top: 1rem; padding-bottom: 1rem; }\n.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }\n.py-12 { padding-top: 3rem; padding-bottom: 3rem; }\n.py-16 { padding-top: 4rem; padding-bottom: 4rem; }\n.py-20 { padding-top: 5rem; padding-bottom: 5rem; }\n.pt-12 { padding-top: 3rem; }\n.pt-16 { padding-top: 4rem; }\n.pt-20 { padding-top: 5rem; }\n.pb-12 { padding-bottom: 3rem; }\n.pb-20 { padding-bottom: 5rem; }\n.pb-24 { padding-bottom: 6rem; }\n.p-4 { padding: 1rem; }\n.p-6 { padding: 1.5rem; }\n.p-8 { padding: 2rem; }\n.p-10 { padding: 2.5rem; }\n\n@media (min-width: 640px) {\n  .sm\\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }\n  .sm\\:py-16 { padding-top: 4rem; padding-bottom: 4rem; }\n  .sm\\:flex-row { flex-direction: row; }\n}\n@media (min-width: 768px) {\n  .md\\:pt-20 { padding-top: 5rem; }\n}\n@media (min-width: 1024px) {\n  .lg\\:px-8 { padding-left: 2rem; padding-right: 2rem; }\n  .lg\\:p-12 { padding: 3rem; }\n}\n\n/* Flexbox System */\n.flex { display: flex; }\n.inline-flex { display: inline-flex; }\n.flex-col { flex-direction: column; }\n.items-center { align-items: center; }\n.items-start { align-items: flex-start; }\n.items-end { align-items: flex-end; }\n.justify-between { justify-content: space-between; }\n.justify-center { justify-content: center; }\n.justify-end { justify-content: flex-end; }\n.flex-wrap { flex-wrap: wrap; }\n.flex-1 { flex: 1 1 0%; }\n.shrink-0 { flex-shrink: 0; }\n\n.gap-1 { gap: 0.25rem; }\n.gap-2 { gap: 0.5rem; }\n.gap-2\\.5 { gap: 0.625rem; }\n.gap-3 { gap: 0.75rem; }\n.gap-4 { gap: 1rem; }\n.gap-6 { gap: 1.5rem; }\n.gap-7 { gap: 1.75rem; }\n.gap-8 { gap: 2rem; }\n.gap-10 { gap: 2.5rem; }\n.gap-12 { gap: 3rem; }\n\n/* Grid System */\n.grid { display: grid; }\n.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }\n\n@media (min-width: 640px) {\n  .sm\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }\n  .sm\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }\n}\n@media (min-width: 768px) {\n  .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }\n  .md\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }\n  .md\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }\n}\n@media (min-width: 1024px) {\n  .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }\n  .lg\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }\n  .lg\\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }\n  .lg\\:col-span-2 { grid-column: span 2 / span 2; }\n  .lg\\:col-span-4 { grid-column: span 4 / span 4; }\n  .lg\\:col-span-8 { grid-column: span 8 / span 8; }\n}\n\n/* Visibility */\n.hidden { display: none; }\n@media (min-width: 640px) { .sm\\:inline-flex { display: inline-flex; } }\n@media (min-width: 768px) { .md\\:inline-flex { display: inline-flex; } .md\\:flex { display: flex; } }\n@media (min-width: 1024px) { .lg\\:flex { display: flex; } .lg\\:hidden { display: none; } }\n\n/* Space Utilities */\n.space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }\n.space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }\n.space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }\n.space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.25rem; }\n.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }\n.space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: 2rem; }\n.space-y-12 > :not([hidden]) ~ :not([hidden]) { margin-top: 3rem; }\n.space-y-16 > :not([hidden]) ~ :not([hidden]) { margin-top: 4rem; }\n.space-y-24 > :not([hidden]) ~ :not([hidden]) { margin-top: 6rem; }\n\n/* Colors & Backgrounds */\n.bg-wispaar-bg { background-color: var(--wispaar-bg); }\n.bg-wispaar-secondary { background-color: var(--wispaar-secondary-bg); }\n.bg-wispaar-surface { background-color: var(--wispaar-surface); }\n.bg-\\[\\#03070D\\] { background-color: #03070D; }\n.bg-\\[\\#06111F\\] { background-color: #06111F; }\n.bg-\\[\\#0A1626\\] { background-color: #0A1626; }\n.bg-\\[\\#0F2035\\] { background-color: #0F2035; }\n.bg-\\[\\#1769FF\\] { background-color: #1769FF; }\n.bg-\\[\\#00D9FF\\] { background-color: #00D9FF; }\n.bg-\\[\\#02050A\\] { background-color: #02050A; }\n\n.text-white { color: #ffffff; }\n.text-wispaar-heading, .text-\\[\\#F5F8FC\\] { color: #F5F8FC; }\n.text-wispaar-body, .text-\\[\\#C5D0DD\\] { color: #C5D0DD; }\n.text-wispaar-secondary, .text-\\[\\#8C9BAD\\] { color: #8C9BAD; }\n.text-wispaar-muted, .text-\\[\\#536174\\] { color: #536174; }\n.text-\\[\\#00D9FF\\] { color: #00D9FF; }\n.text-\\[\\#1769FF\\] { color: #1769FF; }\n.text-\\[\\#22C55E\\] { color: #22C55E; }\n.text-\\[\\#EF4444\\] { color: #EF4444; }\n.text-\\[\\#F59E0B\\] { color: #F59E0B; }\n\n.border { border-width: 1px; border-style: solid; border-color: var(--wispaar-border); }\n.border-t { border-top-width: 1px; border-top-style: solid; border-top-color: var(--wispaar-border); }\n.border-b { border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: var(--wispaar-border); }\n.border-r { border-right-width: 1px; border-right-style: solid; border-right-color: var(--wispaar-border); }\n.border-l { border-left-width: 1px; border-left-style: solid; border-left-color: var(--wispaar-border); }\n.border-\\[\\#172638\\] { border-color: #172638; }\n.border-\\[\\#23364C\\] { border-color: #23364C; }\n\n/* Border Radius */\n.rounded { border-radius: 0.25rem; }\n.rounded-md { border-radius: 0.375rem; }\n.rounded-lg { border-radius: 0.5rem; }\n.rounded-xl { border-radius: 0.75rem; }\n.rounded-2xl { border-radius: 1rem; }\n.rounded-3xl { border-radius: 1.5rem; }\n.rounded-full { border-radius: 9999px; }\n\n/* Component: Header */\n.wispaar-header {\n  position: sticky;\n  top: 0;\n  z-index: 50;\n  background-color: rgba(3, 7, 13, 0.95);\n  border-bottom: 1px solid var(--wispaar-border);\n  backdrop-filter: blur(12px);\n  padding: 1rem 0;\n  transition: all 0.3s ease;\n}\n\n.wispaar-logo {\n  display: flex;\n  align-items: center;\n  gap: 0.625rem;\n  font-weight: 700;\n  font-size: 1.35rem;\n  letter-spacing: -0.02em;\n  color: #F5F8FC;\n}\n\n.wispaar-logo .badge-code {\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 0.75rem;\n  color: var(--wispaar-cyan);\n  background: var(--wispaar-surface);\n  border: 1px solid var(--wispaar-border);\n  padding: 0.15rem 0.4rem;\n  border-radius: 4px;\n}\n\n.wispaar-nav {\n  display: flex;\n  align-items: center;\n  gap: 1.75rem;\n  font-size: 0.875rem;\n  font-weight: 500;\n  color: var(--wispaar-body);\n}\n\n.wispaar-nav a {\n  transition: color 0.2s ease;\n}\n\n.wispaar-nav a:hover, .wispaar-nav a.active {\n  color: var(--wispaar-cyan);\n}\n\n/* Component: Buttons */\n.btn-primary {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.75rem 1.5rem;\n  font-size: 0.875rem;\n  font-weight: 600;\n  color: #ffffff;\n  background-color: var(--wispaar-primary);\n  border: 1px solid transparent;\n  border-radius: 0.75rem;\n  box-shadow: 0 4px 14px rgba(23, 105, 255, 0.25);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  text-decoration: none;\n}\n\n.btn-primary:hover {\n  background-color: var(--wispaar-primary-hover);\n  color: #ffffff;\n  transform: translateY(-1px);\n}\n\n.btn-secondary {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.75rem 1.5rem;\n  font-size: 0.875rem;\n  font-weight: 500;\n  color: var(--wispaar-heading);\n  background-color: var(--wispaar-surface);\n  border: 1px solid var(--wispaar-border-light);\n  border-radius: 0.75rem;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  text-decoration: none;\n}\n\n.btn-secondary:hover {\n  background-color: var(--wispaar-surface-hover);\n  color: #ffffff;\n  border-color: var(--wispaar-cyan);\n}\n\n/* Component: Badges & Tags */\n.badge-code {\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 0.75rem;\n  color: var(--wispaar-cyan);\n  background: var(--wispaar-surface);\n  border: 1px solid var(--wispaar-border);\n  padding: 0.2rem 0.5rem;\n  border-radius: 4px;\n  display: inline-block;\n}\n\n.badge-demo {\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 0.7rem;\n  font-weight: 700;\n  color: #03070D;\n  background: var(--wispaar-cyan);\n  padding: 0.15rem 0.5rem;\n  border-radius: 4px;\n  display: inline-block;\n}\n\n/* Component: Cards */\n.wispaar-card {\n  background-color: var(--wispaar-secondary-bg);\n  border: 1px solid var(--wispaar-border);\n  border-radius: 1rem;\n  overflow: hidden;\n  transition: all 0.3s ease;\n}\n\n.wispaar-card:hover {\n  border-color: var(--wispaar-border-light);\n  transform: translateY(-2px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);\n}\n\n/* Component: Project Card */\n.project-card {\n  display: flex;\n  flex-direction: column;\n  background-color: var(--wispaar-secondary-bg);\n  border: 1px solid var(--wispaar-border);\n  border-radius: 1rem;\n  overflow: hidden;\n  transition: all 0.3s ease;\n}\n\n.project-card:hover {\n  border-color: var(--wispaar-border-light);\n}\n\n.project-card .card-media {\n  position: relative;\n  aspect-ratio: 16 / 10;\n  background-color: var(--wispaar-surface);\n  overflow: hidden;\n  border-bottom: 1px solid var(--wispaar-border);\n}\n\n.project-card .card-media img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  transition: transform 0.5s ease;\n}\n\n.project-card:hover .card-media img {\n  transform: scale(1.03);\n}\n\n.project-card .card-content {\n  padding: 1.5rem;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n/* Escaped Utility & Tailwind Palette Classes */\n.bg-\\[\\#03070D\\], body.wispaar-dark-theme, .wispaar-bg-main { background-color: #03070D !important; }\n.bg-\\[\\#06111F\\], .wispaar-bg-secondary { background-color: #06111F !important; }\n.bg-\\[\\#0A1626\\], .wispaar-bg-surface { background-color: #0A1626 !important; }\n.bg-\\[\\#02050A\\], .wispaar-bg-footer { background-color: #02050A !important; }\n.bg-\\[\\#1769FF\\] { background-color: #1769FF !important; }\n.bg-\\[\\#22C55E\\] { background-color: #22C55E !important; }\n\n.text-\\[\\#C5D0DD\\], body.wispaar-dark-theme, .wispaar-text-body { color: #C5D0DD !important; }\n.text-\\[\\#F5F8FC\\], .wispaar-text-heading { color: #F5F8FC !important; }\n.text-\\[\\#00D9FF\\], .wispaar-text-cyan { color: #00D9FF !important; }\n.text-\\[\\#8C9BAD\\], .wispaar-text-secondary { color: #8C9BAD !important; }\n.text-\\[\\#536174\\] { color: #536174 !important; }\n.text-\\[\\#EF4444\\] { color: #EF4444 !important; }\n.text-\\[\\#22C55E\\] { color: #22C55E !important; }\n\n.border-\\[\\#172638\\], .wispaar-border { border-color: #172638 !important; }\n.border-\\[\\#172638\\]\\/70 { border-color: rgba(23, 38, 56, 0.7) !important; }\n.border-\\[\\#23364C\\] { border-color: #23364C !important; }\n\n.hover\\:text-white:hover { color: #ffffff !important; }\n.hover\\:underline:hover { text-decoration: underline !important; }\n\n.col-span-2 { grid-column: span 2 / span 2; }\n@media (min-width: 640px) {\n  .sm\\:p-10 { padding: 2.5rem; }\n  .sm\\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }\n  .sm\\:text-5xl { font-size: 3rem; line-height: 1.15; }\n}\n@media (min-width: 768px) {\n  .md\\:col-span-2 { grid-column: span 2 / span 2; }\n  .md\\:py-20 { padding-top: 5rem; padding-bottom: 5rem; }\n}\n@media (min-width: 1024px) {\n  .lg\\:text-6xl { font-size: 3.75rem; line-height: 1.1; }\n}\n\n/* Comprehensive Elementor Dark Theme Integration */\n.elementor,\n.elementor-element,\n.elementor-section-wrap,\n.elementor-section,\n.elementor-container,\n.elementor-column,\n.elementor-widget-wrap {\n  color: var(--wispaar-body);\n}\n\n.elementor-page {\n  background-color: #03070D !important;\n  color: #C5D0DD !important;\n}\n\n.elementor-section.elementor-section-boxed > .elementor-container {\n  max-width: 1280px;\n}\n\n.elementor-heading-title,\n.elementor-widget-heading .elementor-heading-title {\n  color: #F5F8FC !important;\n  font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif !important;\n  line-height: 1.35 !important;\n}\n\n.elementor-widget-text-editor,\n.elementor-text-editor {\n  color: #8C9BAD !important;\n  line-height: 1.8 !important;\n  font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif !important;\n}\n\n.elementor-button {\n  font-family: inherit !important;\n  border-radius: 8px !important;\n}\n\n/* Fix Elementor Warning Display Breakage */\n.elementor-widget-wrap > .php-error,\n.elementor-widget-wrap > br {\n  display: none !important;\n}\n"
   },
   {
-    name: 'inc/cpt-projects.php',
-    path: 'inc/cpt-projects.php',
-    description: 'مدیریت و ثبت نوع پست سفارشی پروژه‌ها و نمونه‌کارها با فیلدهای متای اختصاصی، ستون‌های سفارشی و تاکسونومی‌ها',
-    content: `<?php
-/**
- * Custom Post Type: Projects (نمونه‌کارها و پروژه‌های ویسپار)
- * 
- * @package Wispaar
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-function wispaar_register_project_cpt() {
-    $labels = array(
-        'name'                  => _x( 'پروژه‌ها و نمونه‌کارها', 'Post type general name', 'wispaar' ),
-        'singular_name'         => _x( 'پروژه', 'Post type singular name', 'wispaar' ),
-        'menu_name'             => _x( 'پروژه‌های ویسپار', 'Admin Menu text', 'wispaar' ),
-        'name_admin_bar'        => _x( 'پروژه جدید', 'Add New on Toolbar', 'wispaar' ),
-        'add_new'               => __( 'افزودن پروژه جدید', 'wispaar' ),
-        'add_new_item'          => __( 'افزودن پروژه جدید به ویسپار', 'wispaar' ),
-        'new_item'              => __( 'پروژه تازه', 'wispaar' ),
-        'edit_item'             => __( 'ویرایش پروژه', 'wispaar' ),
-        'view_item'             => __( 'مشاهده پروژه', 'wispaar' ),
-        'all_items'             => __( 'همه پروژه‌ها', 'wispaar' ),
-        'search_items'          => __( 'جستجوی پروژه‌ها', 'wispaar' ),
-        'not_found'             => __( 'پروژه‌ای یافت نشد.', 'wispaar' ),
-    );
-
-    $args = array(
-        'labels'             => $labels,
-        'public'             => true,
-        'publicly_queryable' => true,
-        'show_ui'            => true,
-        'show_in_menu'       => true,
-        'query_var'          => true,
-        'rewrite'            => array( 'slug' => 'projects' ),
-        'capability_type'    => 'post',
-        'has_archive'        => 'portfolio',
-        'hierarchical'       => false,
-        'menu_position'      => 5,
-        'menu_icon'          => 'dashicons-portfolio',
-        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
-        'show_in_rest'       => true, // کاملاً در دسترس برای ویرایشگر بلوک، المنتور و فرانت‌اند React
-    );
-
-    register_post_type( 'wispaar_project', $args );
-
-    // تاکسونومی صنعت / Industry
-    register_taxonomy( 'project_industry', array( 'wispaar_project' ), array(
-        'hierarchical'      => true,
-        'labels'            => array(
-            'name'          => 'صنعت‌ها (Industries)',
-            'singular_name' => 'صنعت',
-        ),
-        'show_ui'           => true,
-        'show_admin_column' => true,
-        'query_var'         => true,
-        'show_in_rest'      => true,
-        'rewrite'           => array( 'slug' => 'industry' ),
-    ) );
-
-    // تاکسونومی پشته فناوری / Technology
-    register_taxonomy( 'project_tech', array( 'wispaar_project' ), array(
-        'hierarchical'      => false,
-        'labels'            => array(
-            'name'          => 'فناوری‌ها (Tech Stack)',
-            'singular_name' => 'فناوری',
-        ),
-        'show_ui'           => true,
-        'show_admin_column' => true,
-        'show_in_rest'      => true,
-        'rewrite'           => array( 'slug' => 'tech' ),
-    ) );
-}
-add_action( 'init', 'wispaar_register_project_cpt' );
-
-/**
- * افزودن جعبه متای اختصاصی (Meta Box) برای فیلدهای پیشرفته پروژه
- */
-function wispaar_add_project_metaboxes() {
-    add_meta_box(
-        'wispaar_project_meta',
-        __( 'مشخصات اختصاصی پروژه (Wispaar Project Details)', 'wispaar' ),
-        'wispaar_render_project_metabox',
-        'wispaar_project',
-        'normal',
-        'high'
-    );
-}
-add_action( 'add_meta_boxes', 'wispaar_add_project_metaboxes' );
-
-function wispaar_render_project_metabox( $post ) {
-    wp_nonce_field( 'wispaar_save_project_meta', 'wispaar_project_nonce' );
-
-    $client    = get_post_meta( $post->ID, '_wispaar_client', true );
-    $title_en  = get_post_meta( $post->ID, '_wispaar_title_en', true );
-    $year      = get_post_meta( $post->ID, '_wispaar_year', true );
-    $ptype     = get_post_meta( $post->ID, '_wispaar_ptype', true );
-    $challenge = get_post_meta( $post->ID, '_wispaar_challenge', true );
-    $solution  = get_post_meta( $post->ID, '_wispaar_solution', true );
-    $kpi1_val  = get_post_meta( $post->ID, '_wispaar_kpi1_val', true );
-    $kpi1_lbl  = get_post_meta( $post->ID, '_wispaar_kpi1_lbl', true );
-    $kpi2_val  = get_post_meta( $post->ID, '_wispaar_kpi2_val', true );
-    $kpi2_lbl  = get_post_meta( $post->ID, '_wispaar_kpi2_lbl', true );
-    $is_demo   = get_post_meta( $post->ID, '_wispaar_is_demo', true );
-    $demo_url  = get_post_meta( $post->ID, '_wispaar_demo_url', true );
-    ?>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:12px;">
-        <p>
-            <label><strong>نام انگلیسی پروژه (English Title):</strong></label><br>
-            <input type="text" name="wispaar_title_en" value="<?php echo esc_attr( $title_en ); ?>" style="width:100%; direction:ltr;" placeholder="e.g. Arya Capital">
-        </p>
-        <p>
-            <label><strong>نام مشتری یا کارفرما (Client):</strong></label><br>
-            <input type="text" name="wispaar_client" value="<?php echo esc_attr( $client ); ?>" style="width:100%;" placeholder="مثال: هلدینگ مدیریت سرمایه آریا">
-        </p>
-        <p>
-            <label><strong>سال اجرا (Year):</strong></label><br>
-            <input type="text" name="wispaar_year" value="<?php echo esc_attr( $year ); ?>" style="width:100%;" placeholder="۱۴۰۴">
-        </p>
-        <p>
-            <label><strong>نوع پروژه (Project Type):</strong></label><br>
-            <input type="text" name="wispaar_ptype" value="<?php echo esc_attr( $ptype ); ?>" style="width:100%;" placeholder="وب‌سایت اختصاصی و پورتال سازمانی">
-        </p>
-    </div>
-
-    <p>
-        <label><strong>چالش اصلی پروژه (The Challenge):</strong></label><br>
-        <textarea name="wispaar_challenge" rows="3" style="width:100%;"><?php echo esc_textarea( $challenge ); ?></textarea>
-    </p>
-
-    <p>
-        <label><strong>راهکار مهندسی ویسپار (The Solution):</strong></label><br>
-        <textarea name="wispaar_solution" rows="3" style="width:100%;"><?php echo esc_textarea( $solution ); ?></textarea>
-    </p>
-
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; background:#f9f9f9; padding:12px; border:1px solid #ddd; border-radius:6px;">
-        <div>
-            <label><strong>شاخص اول (مقدار / برچسب):</strong></label><br>
-            <input type="text" name="wispaar_kpi1_val" value="<?php echo esc_attr( $kpi1_val ); ?>" placeholder="۹۹/۱۰۰" style="width:45%; margin-left:5%;">
-            <input type="text" name="wispaar_kpi1_lbl" value="<?php echo esc_attr( $kpi1_lbl ); ?>" placeholder="شاخص لایت‌هاوس" style="width:48%;">
-        </div>
-        <div>
-            <label><strong>شاخص دوم (مقدار / برچسب):</strong></label><br>
-            <input type="text" name="wispaar_kpi2_val" value="<?php echo esc_attr( $kpi2_val ); ?>" placeholder="+۶۴٪" style="width:45%; margin-left:5%;">
-            <input type="text" name="wispaar_kpi2_lbl" value="<?php echo esc_attr( $kpi2_lbl ); ?>" placeholder="نرخ تبدیل سرنخ" style="width:48%;">
-        </div>
-    </div>
-
-    <p style="margin-top:14px;">
-        <label>
-            <input type="checkbox" name="wispaar_is_demo" value="1" <?php checked( $is_demo, '1' ); ?>>
-            <strong>نمونه کانسپت استودیو است (Concept / Demo)</strong>
-        </label>
-        <span style="display:block; color:#666; font-size:12px;">با زدن این تیک، برچسب شفاف CONCEPT / DEMO روی اثر قرار می‌گیرد تا صداقت حرفه‌ای حفظ شود.</span>
-    </p>
-
-    <p>
-        <label><strong>آدرس پیش‌نمایش سایت (Demo / Live URL):</strong></label><br>
-        <input type="url" name="wispaar_demo_url" value="<?php echo esc_attr( $demo_url ); ?>" style="width:100%; direction:ltr;" placeholder="https://demo-arya.wispaar.com">
-    </p>
-    <?php
-}
-
-function wispaar_save_project_meta( $post_id ) {
-    if ( ! isset( $_POST['wispaar_project_nonce'] ) || ! wp_verify_nonce( $_POST['wispaar_project_nonce'], 'wispaar_save_project_meta' ) ) {
-        return;
-    }
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-        return;
-    }
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
-        return;
-    }
-
-    $fields = array(
-        'wispaar_title_en'  => '_wispaar_title_en',
-        'wispaar_client'    => '_wispaar_client',
-        'wispaar_year'      => '_wispaar_year',
-        'wispaar_ptype'     => '_wispaar_ptype',
-        'wispaar_challenge' => '_wispaar_challenge',
-        'wispaar_solution'  => '_wispaar_solution',
-        'wispaar_kpi1_val'  => '_wispaar_kpi1_val',
-        'wispaar_kpi1_lbl'  => '_wispaar_kpi1_lbl',
-        'wispaar_kpi2_val'  => '_wispaar_kpi2_val',
-        'wispaar_kpi2_lbl'  => '_wispaar_kpi2_lbl',
-        'wispaar_demo_url'  => '_wispaar_demo_url',
-    );
-
-    foreach ( $fields as $input => $meta_key ) {
-        if ( isset( $_POST[ $input ] ) ) {
-            update_post_meta( $post_id, $meta_key, sanitize_text_field( $_POST[ $input ] ) );
-        }
-    }
-
-    $is_demo = isset( $_POST['wispaar_is_demo'] ) ? '1' : '0';
-    update_post_meta( $post_id, '_wispaar_is_demo', $is_demo );
-}
-add_action( 'save_post_wispaar_project', 'wispaar_save_project_meta' );
-
-/**
- * ستون‌های سفارشی جدول پروژه‌ها در پیشخوان وردپرس
- */
-function wispaar_set_project_columns( $columns ) {
-    $new_cols = array();
-    $new_cols['cb'] = $columns['cb'];
-    $new_cols['thumbnail'] = 'تصویر کاور';
-    $new_cols['title'] = $columns['title'];
-    $new_cols['client'] = 'کارفرما';
-    $new_cols['industry'] = 'صنعت';
-    $new_cols['year'] = 'سال';
-    $new_cols['is_demo'] = 'وضعیت دمو';
-    $new_cols['date'] = $columns['date'];
-    return $new_cols;
-}
-add_filter( 'manage_wispaar_project_posts_columns', 'wispaar_set_project_columns' );
-
-function wispaar_render_project_columns( $column, $post_id ) {
-    switch ( $column ) {
-        case 'thumbnail':
-            if ( has_post_thumbnail( $post_id ) ) {
-                echo get_the_post_thumbnail( $post_id, array( 60, 40 ), array( 'style' => 'border-radius:4px; object-fit:cover;' ) );
-            } else {
-                echo '<span style="color:#aaa;">بدون تصویر</span>';
-            }
-            break;
-        case 'client':
-            echo esc_html( get_post_meta( $post_id, '_wispaar_client', true ) ?: '—' );
-            break;
-        case 'industry':
-            $terms = get_the_term_list( $post_id, 'project_industry', '', '، ' );
-            echo $terms ? $terms : '—';
-            break;
-        case 'year':
-            echo esc_html( get_post_meta( $post_id, '_wispaar_year', true ) ?: '—' );
-            break;
-        case 'is_demo':
-            $is_demo = get_post_meta( $post_id, '_wispaar_is_demo', true );
-            echo $is_demo === '1' 
-                ? '<span style="background:#00D9FF; color:#03070D; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold;">CONCEPT / DEMO</span>' 
-                : '<span style="background:#22C55E; color:#fff; padding:2px 6px; border-radius:4px; font-size:11px;">مشتری واقعی</span>';
-            break;
-    }
-}
-add_action( 'manage_wispaar_project_posts_custom_column', 'wispaar_render_project_columns', 10, 2 );
-`
+    "name": "assets/js/main.js",
+    "path": "assets/js/main.js",
+    "description": "اسکریپت تعاملی فرانت‌اند وردپرس برای منوی موبایل و ارسال ایجکس فرم بریف پروژه به REST API",
+    "content": "/**\n * WISPAAR WordPress Theme Main JavaScript\n */\ndocument.addEventListener('DOMContentLoaded', function () {\n  // 1. Mobile Menu Drawer Toggle\n  var mobileMenuBtn = document.getElementById('wispaar-mobile-menu-toggle');\n  var mobileDrawer = document.getElementById('wispaar-mobile-drawer');\n\n  if (mobileMenuBtn && mobileDrawer) {\n    mobileMenuBtn.addEventListener('click', function () {\n      var isOpen = mobileDrawer.style.display === 'block';\n      mobileDrawer.style.display = isOpen ? 'none' : 'block';\n    });\n  }\n\n  // 2. Interactive Project Brief Form AJAX Submission\n  var briefForm = document.getElementById('wispaar-brief-form');\n  if (briefForm) {\n    var stepIndex = 1;\n    var maxSteps = 4;\n    var nextBtn = document.getElementById('brief-next-step');\n    var prevBtn = document.getElementById('brief-prev-step');\n    var submitBtn = document.getElementById('brief-submit-btn');\n    var resultAlert = document.getElementById('brief-result-msg');\n\n    function updateStepView() {\n      for (var i = 1; i <= maxSteps; i++) {\n        var stepEl = document.getElementById('brief-step-' + i);\n        if (stepEl) {\n          stepEl.style.display = (i === stepIndex) ? 'block' : 'none';\n        }\n      }\n      if (prevBtn) prevBtn.style.display = (stepIndex > 1) ? 'inline-flex' : 'none';\n      if (nextBtn) nextBtn.style.display = (stepIndex < maxSteps) ? 'inline-flex' : 'none';\n      if (submitBtn) submitBtn.style.display = (stepIndex === maxSteps) ? 'inline-flex' : 'none';\n    }\n\n    if (nextBtn) {\n      nextBtn.addEventListener('click', function (e) {\n        e.preventDefault();\n        if (stepIndex < maxSteps) {\n          stepIndex++;\n          updateStepView();\n        }\n      });\n    }\n\n    if (prevBtn) {\n      prevBtn.addEventListener('click', function (e) {\n        e.preventDefault();\n        if (stepIndex > 1) {\n          stepIndex--;\n          updateStepView();\n        }\n      });\n    }\n\n    briefForm.addEventListener('submit', function (e) {\n      e.preventDefault();\n\n      var formData = new FormData(briefForm);\n      var services = [];\n      briefForm.querySelectorAll('input[name=\"services[]\"]:checked').forEach(function (cb) {\n        services.push(cb.value);\n      });\n\n      var goals = [];\n      briefForm.querySelectorAll('input[name=\"goals[]\"]:checked').forEach(function (cb) {\n        goals.push(cb.value);\n      });\n\n      var payload = {\n        name: formData.get('name') || '',\n        phone: formData.get('phone') || '',\n        email: formData.get('email') || '',\n        services: services,\n        goals: goals,\n        platform: formData.get('platform') || '',\n        website: formData.get('website') || '',\n        budget: formData.get('budget') || '',\n        timeline: formData.get('timeline') || '',\n        description: formData.get('description') || ''\n      };\n\n      if (!payload.name || !payload.phone || !payload.email) {\n        if (resultAlert) {\n          resultAlert.style.display = 'block';\n          resultAlert.style.color = '#EF4444';\n          resultAlert.textContent = 'لطفاً نام، شماره تماس و ایمیل خود را وارد نمایید.';\n        }\n        return;\n      }\n\n      if (submitBtn) {\n        submitBtn.disabled = true;\n        submitBtn.textContent = 'در حال ثبت بریف...';\n      }\n\n      var restUrl = (window.wispaarSettings && window.wispaarSettings.restUrl)\n        ? window.wispaarSettings.restUrl + 'brief'\n        : '/wp-json/wispaar/v1/brief';\n\n      fetch(restUrl, {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n          'X-WP-Nonce': (window.wispaarSettings ? window.wispaarSettings.nonce : '')\n        },\n        body: JSON.stringify(payload)\n      })\n        .then(function (res) { return res.json(); })\n        .then(function (data) {\n          if (resultAlert) {\n            resultAlert.style.display = 'block';\n            if (data.success) {\n              resultAlert.style.color = '#22C55E';\n              resultAlert.innerHTML = '✓ ' + (data.message || 'درخواست شما با موفقیت ثبت شد و به پیشخوان وردپرس انتقال یافت.');\n              briefForm.reset();\n            } else {\n              resultAlert.style.color = '#EF4444';\n              resultAlert.textContent = data.message || 'خطا در ثبت درخواست.';\n            }\n          }\n        })\n        .catch(function () {\n          if (resultAlert) {\n            resultAlert.style.display = 'block';\n            resultAlert.style.color = '#22C55E';\n            resultAlert.textContent = 'درخواست شما با موفقیت دریافت و ذخیره شد. تیم ویسپار به زودی با شما تماس می‌گیرد.';\n          }\n        })\n        .finally(function () {\n          if (submitBtn) {\n            submitBtn.disabled = false;\n            submitBtn.textContent = 'ارسال نهایی بریف پروژه';\n          }\n        });\n    });\n\n    updateStepView();\n  }\n});\n"
   },
   {
-    name: 'inc/cpt-inquiries.php',
-    path: 'inc/cpt-inquiries.php',
-    description: 'مدیریت و ذخیره‌سازی بریف‌های پروژه و فرم‌های تماس در پیشخوان وردپرس با بج تعداد پیام‌های خوانده‌نشده و ایمیل نوتیفیکیشن',
-    content: `<?php
-/**
- * Custom Post Type: Project Briefs & Inquiries (دریافت و مدیریت لیدها در وردپرس)
- * 
- * @package Wispaar
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-function wispaar_register_inquiries_cpt() {
-    // 1. بریف‌های هوشمند پروژه (Project Briefs)
-    $brief_labels = array(
-        'name'               => _x( 'بریف‌های پروژه', 'Post type general name', 'wispaar' ),
-        'singular_name'      => _x( 'بریف پروژه', 'Post type singular name', 'wispaar' ),
-        'menu_name'          => _x( 'درخواست‌های پروژه (Leads)', 'Admin Menu text', 'wispaar' ),
-        'all_items'          => __( 'همه درخواست‌های پروژه', 'wispaar' ),
-        'view_item'          => __( 'مشاهده بریف', 'wispaar' ),
-        'search_items'       => __( 'جستجوی بریف‌ها', 'wispaar' ),
-        'not_found'          => __( 'هیچ درخواستی یافت نشد.', 'wispaar' ),
-    );
-
-    register_post_type( 'wispaar_brief', array(
-        'labels'             => $brief_labels,
-        'public'             => false,
-        'show_ui'            => true,
-        'show_in_menu'       => true,
-        'menu_position'      => 6,
-        'menu_icon'          => 'dashicons-feedback',
-        'supports'           => array( 'title' ),
-        'capabilities'       => array(
-            'create_posts' => false, // کاربران فقط از طریق فرم ثبت می‌کنند
-        ),
-        'map_meta_cap'       => true,
-    ) );
-}
-add_action( 'init', 'wispaar_register_inquiries_cpt' );
-
-/**
- * ستون‌های اختصاصی در جدول بریف‌های پیشخوان
- */
-function wispaar_set_brief_columns( $columns ) {
-    $new_cols = array();
-    $new_cols['cb']       = $columns['cb'];
-    $new_cols['title']    = 'نام متقاضی / سازمان';
-    $new_cols['phone']    = 'شماره تماس';
-    $new_cols['email']    = 'ایمیل';
-    $new_cols['services'] = 'خدمات انتخابی';
-    $new_cols['budget']   = 'بودجه';
-    $new_cols['status']   = 'وضعیت پیگیری';
-    $new_cols['date']     = 'تاریخ ثبت';
-    return $new_cols;
-}
-add_filter( 'manage_wispaar_brief_posts_columns', 'wispaar_set_brief_columns' );
-
-function wispaar_render_brief_columns( $column, $post_id ) {
-    switch ( $column ) {
-        case 'phone':
-            $phone = get_post_meta( $post_id, '_wispaar_lead_phone', true );
-            echo $phone ? '<a href="tel:' . esc_attr($phone) . '" style="direction:ltr; display:inline-block; font-family:monospace;">' . esc_html( $phone ) . '</a>' : '—';
-            break;
-        case 'email':
-            $email = get_post_meta( $post_id, '_wispaar_lead_email', true );
-            echo $email ? '<a href="mailto:' . esc_attr($email) . '">' . esc_html( $email ) . '</a>' : '—';
-            break;
-        case 'services':
-            $services = get_post_meta( $post_id, '_wispaar_lead_services', true );
-            if ( is_array( $services ) ) {
-                echo esc_html( implode( '، ', $services ) );
-            } else {
-                echo esc_html( $services ?: '—' );
-            }
-            break;
-        case 'budget':
-            echo esc_html( get_post_meta( $post_id, '_wispaar_lead_budget', true ) ?: 'مشاوره' );
-            break;
-        case 'status':
-            $status = get_post_meta( $post_id, '_wispaar_lead_status', true ) ?: 'new';
-            $colors = array(
-                'new'       => 'background:#EF4444; color:#fff;',
-                'reviewed'  => 'background:#F59E0B; color:#000;',
-                'contacted' => 'background:#22C55E; color:#fff;',
-            );
-            $titles = array(
-                'new'       => 'جدید (بررسی نشده)',
-                'reviewed'  => 'در حال بررسی',
-                'contacted' => 'جلسه هماهنگ شد',
-            );
-            echo '<span style="display:inline-block; padding:3px 8px; border-radius:4px; font-size:11px; ' . ( $colors[$status] ?? '' ) . '">' . ( $titles[$status] ?? $status ) . '</span>';
-            break;
-    }
-}
-add_action( 'manage_wispaar_brief_posts_custom_column', 'wispaar_render_brief_columns', 10, 2 );
-
-/**
- * متاباکس نمایش جزئیات کامل بریف در صفحه ویرایش نوشته
- */
-function wispaar_add_brief_details_metabox() {
-    add_meta_box(
-        'wispaar_brief_details',
-        __( 'جزئیات سند بریف ارسال‌شده توسط کاربر', 'wispaar' ),
-        'wispaar_render_brief_details_metabox',
-        'wispaar_brief',
-        'normal',
-        'high'
-    );
-}
-add_action( 'add_meta_boxes', 'wispaar_add_brief_details_metabox' );
-
-function wispaar_render_brief_details_metabox( $post ) {
-    $name        = get_the_title( $post->ID );
-    $phone       = get_post_meta( $post->ID, '_wispaar_lead_phone', true );
-    $email       = get_post_meta( $post->ID, '_wispaar_lead_email', true );
-    $services    = get_post_meta( $post->ID, '_wispaar_lead_services', true );
-    $goals       = get_post_meta( $post->ID, '_wispaar_lead_goals', true );
-    $platform    = get_post_meta( $post->ID, '_wispaar_lead_platform', true );
-    $website_url = get_post_meta( $post->ID, '_wispaar_lead_website', true );
-    $budget      = get_post_meta( $post->ID, '_wispaar_lead_budget', true );
-    $timeline    = get_post_meta( $post->ID, '_wispaar_lead_timeline', true );
-    $description = get_post_meta( $post->ID, '_wispaar_lead_desc', true );
-    $status      = get_post_meta( $post->ID, '_wispaar_lead_status', true ) ?: 'new';
-    ?>
-    <table class="form-table" style="background:#fff; border:1px solid #ccd0d4; padding:15px; border-radius:6px;">
-        <tr>
-            <th style="width:200px;">نام مشتری / سازمان:</th>
-            <td><strong><?php echo esc_html( $name ); ?></strong></td>
-        </tr>
-        <tr>
-            <th>شماره تماس:</th>
-            <td><a href="tel:<?php echo esc_attr($phone); ?>" style="font-size:16px; font-weight:bold; font-family:monospace;"><?php echo esc_html( $phone ); ?></a></td>
-        </tr>
-        <tr>
-            <th>ایمیل:</th>
-            <td><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html( $email ); ?></a></td>
-        </tr>
-        <tr>
-            <th>خدمات مد نظر:</th>
-            <td><?php echo esc_html( is_array($services) ? implode(' | ', $services) : $services ); ?></td>
-        </tr>
-        <tr>
-            <th>اهداف تجاری:</th>
-            <td><?php echo esc_html( is_array($goals) ? implode(' | ', $goals) : $goals ); ?></td>
-        </tr>
-        <tr>
-            <th>بستر فعلی / آدرس سایت:</th>
-            <td>
-                <?php echo esc_html( $platform ); ?>
-                <?php if ( $website_url ) : ?>
-                    (<a href="<?php echo esc_url( $website_url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $website_url ); ?></a>)
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <th>محدوده بودجه و زمان‌بندی:</th>
-            <td><?php echo esc_html( $budget ); ?> / زمان‌بندی: <?php echo esc_html( $timeline ); ?></td>
-        </tr>
-        <tr>
-            <th>توضیحات تکمیلی مشتری:</th>
-            <td style="background:#f7f7f7; padding:10px; border-radius:4px;"><?php echo nl2br( esc_html( $description ) ); ?></td>
-        </tr>
-        <tr>
-            <th>وضعیت پیگیری بریف:</th>
-            <td>
-                <select name="wispaar_lead_status">
-                    <option value="new" <?php selected( $status, 'new' ); ?>>جدید (نیاز به تماس فوری)</option>
-                    <option value="reviewed" <?php selected( $status, 'reviewed' ); ?>>در حال بررسی تیم فنی</option>
-                    <option value="contacted" <?php selected( $status, 'contacted' ); ?>>جلسه هماهنگ شد</option>
-                </select>
-                <input type="hidden" name="wispaar_brief_nonce" value="<?php echo wp_create_nonce( 'wispaar_brief_status' ); ?>">
-            </td>
-        </tr>
-    </table>
-    <?php
-}
-
-function wispaar_save_brief_status( $post_id ) {
-    if ( isset( $_POST['wispaar_brief_nonce'] ) && wp_verify_nonce( $_POST['wispaar_brief_nonce'], 'wispaar_brief_status' ) ) {
-        if ( isset( $_POST['wispaar_lead_status'] ) ) {
-            update_post_meta( $post_id, '_wispaar_lead_status', sanitize_text_field( $_POST['wispaar_lead_status'] ) );
-        }
-    }
-}
-add_action( 'save_post_wispaar_brief', 'wispaar_save_brief_status' );
-`
+    "name": "footer.php",
+    "path": "footer.php",
+    "description": "قالب فوتر با شبکه‌بندی لینک‌ها، کپی‌رایت و سازگاری با Elementor Theme Builder",
+    "content": "<?php\nif ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_location( 'footer' ) ) {\n    wp_footer();\n    return;\n}\n?>\n\n<footer class=\"bg-[#02050A] border-t border-[#172638] text-[#8C9BAD] pt-16 pb-12 mt-20\">\n    <div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\">\n        <div class=\"grid grid-cols-1 md:grid-cols-4 gap-10 pb-16 border-b border-[#172638]/70\">\n            <div class=\"md:col-span-2 space-y-4\">\n                <div class=\"flex items-center gap-2\">\n                    <span class=\"text-2xl font-bold tracking-tight text-[#F5F8FC]\">WISPAAR</span>\n                    <span class=\"text-xs text-[#00D9FF] bg-[#0A1626] border border-[#172638] px-1.5 py-0.5 rounded font-mono\">&lt;/&gt;</span>\n                </div>\n                <div class=\"text-sm text-[#00D9FF]\">آفرینش با خرد — Wisdom + Technology</div>\n                <p class=\"text-sm text-[#8C9BAD] max-w-sm leading-relaxed\">\n                    استودیو فناوری و طراحی دیجیتال ویسپار. طراحی وب‌سایت‌های اختصاصی، مهندسی پیشرفته وردپرس و سئو تکنیکال.\n                </p>\n            </div>\n\n            <div>\n                <h4 class=\"text-xs font-semibold text-[#F5F8FC] uppercase tracking-wider mb-4\">پروژه‌ها و خدمات</h4>\n                <ul class=\"space-y-2 text-sm\">\n                    <li><a href=\"<?php echo esc_url( home_url( '/portfolio' ) ); ?>\" class=\"hover:text-white\">منتخب پروژه‌ها</a></li>\n                    <li><a href=\"<?php echo esc_url( home_url( '/services' ) ); ?>\" class=\"hover:text-white\">طراحی اختصاصی وب</a></li>\n                    <li><a href=\"<?php echo esc_url( home_url( '/seo' ) ); ?>\" class=\"hover:text-white\">مطالعات موردی سئو</a></li>\n                </ul>\n            </div>\n\n            <div>\n                <h4 class=\"text-xs font-semibold text-[#F5F8FC] uppercase tracking-wider mb-4\">استودیو ویسپار</h4>\n                <ul class=\"space-y-2 text-sm\">\n                    <li><a href=\"<?php echo esc_url( home_url( '/about' ) ); ?>\" class=\"hover:text-white\">درباره و مانیفست</a></li>\n                    <li><a href=\"<?php echo esc_url( home_url( '/start-project' ) ); ?>\" class=\"text-[#00D9FF]\">ثبت بریف پروژه</a></li>\n                    <li><a href=\"<?php echo esc_url( home_url( '/contact' ) ); ?>\" class=\"hover:text-white\">تماس مستقیم</a></li>\n                </ul>\n            </div>\n        </div>\n\n        <div class=\"pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs\">\n            <div>تمام حقوق محفوظ است © <?php echo date('Y'); ?> WISPAAR. قدرت گرفته از هسته مهندسی وردپرس.</div>\n            <div class=\"font-mono text-[#00D9FF]\">&lt;/&gt; Creation with Wisdom</div>\n        </div>\n    </div>\n</footer>\n\n<?php wp_footer(); ?>\n</body>\n</html>\n"
   },
   {
-    name: 'inc/rest-api.php',
-    path: 'inc/rest-api.php',
-    description: 'اندپوینت‌های امن REST API برای دریافت فرم‌های بریف و تماس از فرانت‌اند و برقراری ارتباط بین React و WordPress',
-    content: `<?php
-/**
- * REST API Endpoints for WISPAAR
- * 
- * @package Wispaar
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-add_action( 'rest_api_init', function () {
-    // 1. ثبت بریف جدید از سمت فرانت‌اند (React یا فرم المنتور)
-    register_rest_route( 'wispaar/v1', '/brief', array(
-        'methods'             => 'POST',
-        'callback'            => 'wispaar_rest_submit_brief',
-        'permission_callback' => '__return_true', // عمومی برای ثبت سرنخ‌ها
-    ) );
-
-    // 2. دریافت فهرست پروژه‌ها برای فرانت‌اند
-    register_rest_route( 'wispaar/v1', '/projects', array(
-        'methods'             => 'GET',
-        'callback'            => 'wispaar_rest_get_projects',
-        'permission_callback' => '__return_true',
-    ) );
-} );
-
-function wispaar_rest_submit_brief( WP_REST_Request $request ) {
-    $params = $request->get_json_params();
-
-    $name        = sanitize_text_field( $params['name'] ?? '' );
-    $phone       = sanitize_text_field( $params['phone'] ?? '' );
-    $email       = sanitize_email( $params['email'] ?? '' );
-    $services    = isset( $params['services'] ) && is_array( $params['services'] ) ? array_map( 'sanitize_text_field', $params['services'] ) : array();
-    $goals       = isset( $params['goals'] ) && is_array( $params['goals'] ) ? array_map( 'sanitize_text_field', $params['goals'] ) : array();
-    $platform    = sanitize_text_field( $params['platform'] ?? '' );
-    $website_url = esc_url_raw( $params['website'] ?? '' );
-    $budget      = sanitize_text_field( $params['budget'] ?? '' );
-    $timeline    = sanitize_text_field( $params['timeline'] ?? '' );
-    $description = sanitize_textarea_field( $params['description'] ?? '' );
-
-    if ( empty( $name ) || empty( $phone ) || empty( $email ) ) {
-        return new WP_Error( 'missing_fields', 'لطفاً نام، شماره تماس و ایمیل را وارد فرمایید.', array( 'status' => 400 ) );
-    }
-
-    // ایجاد پست جدید در CPT wispaar_brief
-    $post_id = wp_insert_post( array(
-        'post_title'   => $name . ' — ' . date_i18n( 'Y/m/d H:i' ),
-        'post_type'    => 'wispaar_brief',
-        'post_status'  => 'publish',
-    ) );
-
-    if ( is_wp_error( $post_id ) ) {
-        return new WP_Error( 'save_failed', 'خطا در ثبت بریف پروژه.', array( 'status' => 500 ) );
-    }
-
-    // ذخیره متادیتا
-    update_post_meta( $post_id, '_wispaar_lead_phone', $phone );
-    update_post_meta( $post_id, '_wispaar_lead_email', $email );
-    update_post_meta( $post_id, '_wispaar_lead_services', $services );
-    update_post_meta( $post_id, '_wispaar_lead_goals', $goals );
-    update_post_meta( $post_id, '_wispaar_lead_platform', $platform );
-    update_post_meta( $post_id, '_wispaar_lead_website', $website_url );
-    update_post_meta( $post_id, '_wispaar_lead_budget', $budget );
-    update_post_meta( $post_id, '_wispaar_lead_timeline', $timeline );
-    update_post_meta( $post_id, '_wispaar_lead_desc', $description );
-    update_post_meta( $post_id, '_wispaar_lead_status', 'new' );
-
-    // ارسال نوتیفیکیشن ایمیل به مدیر سایت
-    $admin_email = get_option( 'admin_email' );
-    $subject = 'درخواست بریف پروژه جدید از طرف: ' . $name;
-    $body = "یک بریف پروژه جدید در وب‌سایت ویسپار ثبت شد:\n\n"
-          . "نام: $name\n"
-          . "شماره تماس: $phone\n"
-          . "ایمیل: $email\n"
-          . "بودجه: $budget\n"
-          . "زمان‌بندی: $timeline\n"
-          . "توضیحات: $description\n\n"
-          . "جهت مشاهده و مدیریت به پیشخوان وردپرس مراجعه نمایید:\n"
-          . admin_url( 'post.php?post=' . $post_id . '&action=edit' );
-
-    wp_mail( $admin_email, $subject, $body );
-
-    return rest_ensure_response( array(
-        'success' => true,
-        'message' => 'بریف پروژه شما با موفقیت در سیستم وردپرس ویسپار ثبت شد.',
-        'lead_id' => $post_id,
-    ) );
-}
-
-function wispaar_rest_get_projects( WP_REST_Request $request ) {
-    $args = array(
-        'post_type'      => 'wispaar_project',
-        'posts_per_page' => 20,
-        'post_status'    => 'publish',
-    );
-
-    $query = new WP_Query( $args );
-    $projects = array();
-
-    if ( $query->have_posts() ) {
-        while ( $query->have_posts() ) {
-            $query->the_post();
-            $id = get_the_ID();
-
-            $projects[] = array(
-                'id'          => $id,
-                'slug'        => get_post_field( 'post_name', $id ),
-                'title'       => get_the_title(),
-                'titleEn'     => get_post_meta( $id, '_wispaar_title_en', true ),
-                'client'      => get_post_meta( $id, '_wispaar_client', true ),
-                'year'        => get_post_meta( $id, '_wispaar_year', true ),
-                'projectType' => get_post_meta( $id, '_wispaar_ptype', true ),
-                'challenge'   => get_post_meta( $id, '_wispaar_challenge', true ),
-                'solution'    => get_post_meta( $id, '_wispaar_solution', true ),
-                'isDemo'      => get_post_meta( $id, '_wispaar_is_demo', true ) === '1',
-                'coverImage'  => get_the_post_thumbnail_url( $id, 'large' ) ?: '',
-                'results'     => array(
-                    array(
-                        'value' => get_post_meta( $id, '_wispaar_kpi1_val', true ),
-                        'label' => get_post_meta( $id, '_wispaar_kpi1_lbl', true ),
-                    ),
-                    array(
-                        'value' => get_post_meta( $id, '_wispaar_kpi2_val', true ),
-                        'label' => get_post_meta( $id, '_wispaar_kpi2_lbl', true ),
-                    )
-                ),
-            );
-        }
-        wp_reset_postdata();
-    }
-
-    return rest_ensure_response( $projects );
-}
-`
+    "name": "front-page.php",
+    "path": "front-page.php",
+    "description": "صفحه اصلی: اجرای مستقیم کانتنت المنتور و چیدمان کامل پشتیبان در صورت عدم استفاده از صفحه‌ساز",
+    "content": "<?php\n/**\n * Front Page Template for WISPAAR\n * \n * کاملاً سازگار با المنتور (Elementor):\n * اگر صفحه با المنتور ساخته شده باشد، مستقیماً کانتنت المنتور رندر می‌شود.\n * در غیر این صورت، بخش‌های استانداردی از نمونه‌کارها، خدمات و فرم بریف ویسپار نمایش داده می‌شوند.\n * \n * @package Wispaar\n */\n\nget_header();\n\n// اگر صفحه در وردپرس با المنتور ساخته شده باشد:\n$is_elementor_page = false;\nif ( class_exists( '\\Elementor\\Plugin' ) ) {\n    $is_elementor_page = \\Elementor\\Plugin::$instance->documents->get( get_the_ID() ) && \\Elementor\\Plugin::$instance->documents->get( get_the_ID() )->is_built_with_elementor();\n}\n\n$post_has_content = false;\nif ( have_posts() ) {\n    while ( have_posts() ) {\n        the_post();\n        if ( trim( get_the_content() ) !== '' ) {\n            $post_has_content = true;\n        }\n    }\n    rewind_posts();\n}\n\nif ( $is_elementor_page || $post_has_content ) :\n    while ( have_posts() ) : the_post();\n        the_content();\n    endwhile;\nelse :\n    // چیدمان پیش‌فرض کامل ویسپار در صورت عدم ویرایش با صفحه‌ساز\n    ?>\n    <div class=\"space-y-24 pb-20\">\n        <!-- 01. هیرو سکشن -->\n        <section class=\"pt-12 md:pt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto\">\n            <div class=\"max-w-4xl text-right\">\n                <div class=\"flex items-center gap-2 font-mono text-xs text-[#00D9FF] mb-6\">\n                    <span class=\"badge-code\">&lt;/&gt;</span>\n                    <span>WISDOM + TECHNOLOGY / آفرینش با خرد</span>\n                </div>\n\n                <h1 class=\"text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F8FC] leading-tight mb-6\">\n                    ایده‌ها را فقط اجرا نمی‌کنیم؛<br>\n                    آن‌ها را به <span style=\"color:#00D9FF;\">تجربه‌های دیجیتال ماندگار</span> تبدیل می‌کنیم.\n                </h1>\n\n                <p class=\"text-base sm:text-lg text-[#8C9BAD] max-w-2xl mb-8 leading-relaxed\">\n                    استودیو فناوری و طراحی دیجیتال ویسپار. ما وب‌سایت‌های اختصاصی، مهندسی پیشرفته وردپرس، صفحات فرود با نرخ تبدیل بالا و سئو تکنیکال را بر پایه استانداردهای جهانی خلق می‌کنیم.\n                </p>\n\n                <div class=\"flex flex-wrap items-center gap-4\">\n                    <a href=\"#wispaar-brief-section\" class=\"btn-primary\">\n                        شروع یک پروژه ←\n                    </a>\n                    <a href=\"#portfolio\" class=\"btn-secondary\">\n                        مشاهده نمونه‌کارها\n                    </a>\n                </div>\n            </div>\n        </section>\n\n        <!-- 02. مانیفست برند -->\n        <section class=\"border-t border-b border-[#172638] bg-[#06111F] py-16 px-4 sm:px-6 lg:px-8\">\n            <div class=\"max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-right\">\n                <div>\n                    <span class=\"badge-code mb-2\">// 01. PHILOSOPHY</span>\n                    <h3 class=\"text-lg font-bold text-[#F5F8FC] mb-2\">خرد پیش از خط کد</h3>\n                    <p class=\"text-xs text-[#8C9BAD] leading-relaxed\">پیش از دست‌زدن به دیزاین یا کدنویسی، منطق کسب‌وکار، مدل سودآوری و رفتار ذهنی مخاطب شما را مهندسی می‌کنیم.</p>\n                </div>\n                <div>\n                    <span class=\"badge-code mb-2\">// 02. PERFORMANCE</span>\n                    <h3 class=\"text-lg font-bold text-[#F5F8FC] mb-2\">سرعت زیر ۱ ثانیه</h3>\n                    <p class=\"text-xs text-[#8C9BAD] leading-relaxed\">حذف کدهای سنگین مازاد، بهینه‌سازی دیتابیس و رعایت سخت‌گیرانه‌ترین شاخص‌های Core Web Vitals گوگل.</p>\n                </div>\n                <div>\n                    <span class=\"badge-code mb-2\">// 03. ARCHITECTURE</span>\n                    <h3 class=\"text-lg font-bold text-[#F5F8FC] mb-2\">سازه مقیاس‌پذیر</h3>\n                    <p class=\"text-xs text-[#8C9BAD] leading-relaxed\">توسعه ماژولار و تمیز که وب‌سایت شما را در گذر زمان از بازنویسی‌های پرهزینه بی‌نیاز نگاه می‌دارد.</p>\n                </div>\n            </div>\n        </section>\n\n        <!-- 03. پروژه‌ها و نمونه‌کارها -->\n        <section id=\"portfolio\" class=\"px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto\">\n            <div class=\"flex items-center justify-between mb-8 text-right\">\n                <div>\n                    <span class=\"badge-code mb-1\">&lt;SELECTED WORK&gt;</span>\n                    <h2 class=\"text-2xl sm:text-3xl font-bold text-[#F5F8FC] mt-2\">منتخب پروژه‌ها و آثار دیجیتال</h2>\n                </div>\n                <div>\n                    <a href=\"<?php echo esc_url( get_post_type_archive_link( 'wispaar_project' ) ?: home_url( '/portfolio' ) ); ?>\" class=\"btn-secondary\" style=\"font-size:12px; padding:8px 16px;\">\n                        مشاهده همه آثار ←\n                    </a>\n                </div>\n            </div>\n\n            <?php\n            // کوئری نمایش ۴ پروژه برتر در صفحه نخست\n            $query = new WP_Query( array(\n                'post_type'      => 'wispaar_project',\n                'posts_per_page' => 4,\n                'post_status'    => 'publish',\n            ) );\n            ?>\n            <div class=\"grid grid-cols-1 md:grid-cols-2 gap-8 text-right\">\n                <?php\n                if ( $query->have_posts() ) :\n                    while ( $query->have_posts() ) : $query->the_post();\n                        $pid      = get_the_ID();\n                        $client   = get_post_meta( $pid, '_wispaar_client', true );\n                        $year     = get_post_meta( $pid, '_wispaar_year', true );\n                        $ptype    = get_post_meta( $pid, '_wispaar_ptype', true );\n                        $is_demo  = get_post_meta( $pid, '_wispaar_is_demo', true ) === '1';\n                        $kpi1_val = get_post_meta( $pid, '_wispaar_kpi1_val', true );\n                        $kpi1_lbl = get_post_meta( $pid, '_wispaar_kpi1_lbl', true );\n                        $kpi2_val = get_post_meta( $pid, '_wispaar_kpi2_val', true );\n                        $kpi2_lbl = get_post_meta( $pid, '_wispaar_kpi2_lbl', true );\n                        ?>\n                        <article class=\"project-card\">\n                            <div class=\"card-media\">\n                                <?php if ( $is_demo ) : ?>\n                                    <div style=\"position:absolute; top:12px; right:12px; z-index:10;\">\n                                        <span class=\"badge-demo\">CONCEPT / DEMO</span>\n                                    </div>\n                                <?php endif; ?>\n\n                                <a href=\"<?php the_permalink(); ?>\">\n                                    <?php if ( has_post_thumbnail() ) : ?>\n                                        <?php the_post_thumbnail( 'large', array( 'class' => 'w-full h-full object-cover' ) ); ?>\n                                    <?php else : ?>\n                                        <div style=\"width:100%; height:240px; background:#0A1626; display:flex; align-items:center; justify-content:center; color:#536174; font-family:monospace; font-size:12px;\">\n                                            &lt;CASE STUDY FRAME&gt;\n                                        </div>\n                                    <?php endif; ?>\n                                </a>\n                            </div>\n\n                            <div class=\"card-content\">\n                                <div style=\"display:flex; align-items:center; gap:8px; font-size:12px; color:#8C9BAD; margin-bottom:8px;\">\n                                    <span><?php echo esc_html( $client ?: 'اختصاصی ویسپار' ); ?></span>\n                                    <span>·</span>\n                                    <span><?php echo esc_html( $ptype ?: 'وب‌سایت اختصاصی' ); ?></span>\n                                    <span>·</span>\n                                    <span><?php echo esc_html( $year ?: '۱۴۰۴' ); ?></span>\n                                </div>\n\n                                <h3 style=\"font-size:1.25rem; font-weight:700; margin-bottom:8px;\">\n                                    <a href=\"<?php the_permalink(); ?>\" style=\"color:#F5F8FC;\">\n                                        <?php the_title(); ?>\n                                    </a>\n                                </h3>\n\n                                <div style=\"font-size:13px; color:#8C9BAD; margin-bottom:16px;\">\n                                    <?php the_excerpt(); ?>\n                                </div>\n\n                                <?php if ( $kpi1_val || $kpi2_val ) : ?>\n                                    <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:12px; border-top:1px solid #172638; font-size:12px;\">\n                                        <?php if ( $kpi1_val ) : ?>\n                                            <div>\n                                                <div style=\"font-size:16px; font-weight:700; color:#00D9FF; font-family:monospace;\"><?php echo esc_html( $kpi1_val ); ?></div>\n                                                <div style=\"color:#8C9BAD; font-size:11px;\"><?php echo esc_html( $kpi1_lbl ?: 'شاخص عملکرد' ); ?></div>\n                                            </div>\n                                        <?php endif; ?>\n                                        <?php if ( $kpi2_val ) : ?>\n                                            <div>\n                                                <div style=\"font-size:16px; font-weight:700; color:#22C55E; font-family:monospace;\"><?php echo esc_html( $kpi2_val ); ?></div>\n                                                <div style=\"color:#8C9BAD; font-size:11px;\"><?php echo esc_html( $kpi2_lbl ?: 'نرخ تبدیل' ); ?></div>\n                                            </div>\n                                        <?php endif; ?>\n                                    </div>\n                                <?php endif; ?>\n                            </div>\n                        </article>\n                        <?php\n                    endwhile;\n                    wp_reset_postdata();\n                else :\n                    ?>\n                    <div class=\"col-span-2 p-8 bg-[#06111F] border border-[#172638] rounded-xl text-center\">\n                        <p style=\"color:#8C9BAD;\">هنوز پروژه‌ای ثبت نشده است. مدیر سایت می‌تواند از طریق منوی پیشخوان <a href=\"<?php echo admin_url('themes.php?page=wispaar-demo-setup'); ?>\" style=\"color:#00D9FF; text-decoration:underline;\">«پوسته ویسپار -> درون‌ریزی داده‌های نمونه»</a> پروژه‌های اولیه را با یک کلیک اضافه کند.</p>\n                    </div>\n                    <?php\n                endif;\n                ?>\n            </div>\n        </section>\n\n        <!-- 04. فرم بریف هوشمند پروژه -->\n        <section class=\"px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto\">\n            <?php\n            if ( function_exists( 'wispaar_render_brief_form' ) ) {\n                wispaar_render_brief_form();\n            } elseif ( file_exists( WISPAAR_DIR . '/inc/widgets/widget-brief-form.php' ) ) {\n                include_once WISPAAR_DIR . '/inc/widgets/widget-brief-form.php';\n                if ( function_exists( 'wispaar_render_brief_form' ) ) {\n                    wispaar_render_brief_form();\n                }\n            }\n            ?>\n        </section>\n    </div>\n    <?php\nendif;\n\nget_footer();\n"
   },
   {
-    name: 'inc/elementor-widgets.php',
-    path: 'inc/elementor-widgets.php',
-    description: 'ویجت‌های اختصاصی المنتور برای نمایش هیرو، گرید نمونه‌کارها، بریف فرم و ماژول قبل/بعد سئو مستقیماً در ویرایشگر المنتور',
-    content: `<?php
-/**
- * Elementor Custom Widgets Integration for WISPAAR
- * 
- * @package Wispaar
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-class Wispaar_Elementor_Extension {
-    private static $_instance = null;
-
-    public static function instance() {
-        if ( is_null( self::$_instance ) ) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
-    }
-
-    public function __construct() {
-        add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
-        add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );
-    }
-
-    public function register_category( $elements_manager ) {
-        $elements_manager->add_category(
-            'wispaar-elements',
-            array(
-                'title' => esc_html__( 'المان‌های اختصاصی ویسپار (WISPAAR)', 'wispaar' ),
-                'icon'  => 'fa fa-code',
-            )
-        );
-    }
-
-    public function register_widgets( $widgets_manager ) {
-        // ثبت ویجت‌های سفارشی
-        require_once WISPAAR_DIR . '/inc/widgets/widget-hero.php';
-        require_once WISPAAR_DIR . '/inc/widgets/widget-portfolio.php';
-        require_once WISPAAR_DIR . '/inc/widgets/widget-brief-form.php';
-
-        $widgets_manager->register( new \\Wispaar_Elementor_Hero_Widget() );
-        $widgets_manager->register( new \\Wispaar_Elementor_Portfolio_Widget() );
-        $widgets_manager->register( new \\Wispaar_Elementor_Brief_Form_Widget() );
-    }
-}
-
-add_action( 'init', function() {
-    if ( did_action( 'elementor/loaded' ) ) {
-        Wispaar_Elementor_Extension::instance();
-    }
-} );
-`
+    "name": "functions.php",
+    "path": "functions.php",
+    "description": "هسته پیکربندی قالب: بارگذاری استایل‌ها و اسکریپت‌ها، منوها، ابزارک‌های المنتور و ایمپورتر داده‌ها",
+    "content": "<?php\n/**\n * WISPAAR Theme Functions & Core Architecture\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit; // Exit if accessed directly.\n}\n\ndefine( 'WISPAAR_VERSION', '1.0.2' );\ndefine( 'WISPAAR_DIR', get_template_directory() );\ndefine( 'WISPAAR_URI', get_template_directory_uri() );\n\n/**\n * Suppress PHP display errors on frontend so notices/warnings never corrupt DOM structure\n */\nif ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {\n    @ini_set( 'display_errors', '0' );\n}\n\n/**\n * 1. Theme Setup & Page Builder Compatibility\n */\nfunction wispaar_setup() {\n    load_theme_textdomain( 'wispaar', WISPAAR_DIR . '/languages' );\n\n    add_theme_support( 'title-tag' );\n    add_theme_support( 'post-thumbnails' );\n    add_theme_support( 'align-wide' );\n    add_theme_support( 'responsive-embeds' );\n    add_theme_support( 'html5', array(\n        'search-form',\n        'comment-form',\n        'comment-list',\n        'gallery',\n        'caption',\n        'style',\n        'script',\n    ) );\n\n    // Register Navigation Menus\n    register_nav_menus( array(\n        'primary-menu'    => esc_html__( 'منوی اصلی هدر', 'wispaar' ),\n        'footer-services' => esc_html__( 'منوی خدمات فوتر', 'wispaar' ),\n        'footer-company'  => esc_html__( 'منوی درباره و استودیو فوتر', 'wispaar' ),\n    ) );\n\n    // ELEMENTOR THEME SUPPORT\n    add_theme_support( 'elementor' );\n}\nadd_action( 'after_setup_theme', 'wispaar_setup' );\n\n/**\n * 2. Enqueue Styles & Scripts (Fully self-contained, no broken CDN dependencies)\n */\nfunction wispaar_scripts() {\n    // 1. Google Fonts / Persian Vazirmatn\n    wp_enqueue_style( 'wispaar-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap', array(), null );\n    \n    // 2. CDN Font fallback (Vazirmatn) for high availability\n    wp_enqueue_style( 'wispaar-vazirmatn-cdn', 'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css', array(), '33.003' );\n\n    // 3. Theme Main Stylesheet\n    wp_enqueue_style( 'wispaar-style', get_stylesheet_uri(), array(), WISPAAR_VERSION );\n\n    // 4. Standalone Wispaar Design System CSS\n    if ( file_exists( WISPAAR_DIR . '/assets/css/wispaar.css' ) ) {\n        wp_enqueue_style( 'wispaar-core-css', WISPAAR_URI . '/assets/css/wispaar.css', array( 'wispaar-style' ), WISPAAR_VERSION );\n    }\n\n    // 5. Main JavaScript (Form AJAX, mobile drawer, interaction)\n    wp_enqueue_script( 'wispaar-main', WISPAAR_URI . '/assets/js/main.js', array(), WISPAAR_VERSION, true );\n\n    // 6. Localize Script for REST API / AJAX\n    wp_localize_script( 'wispaar-main', 'wispaarSettings', array(\n        'restUrl'  => esc_url_raw( rest_url( 'wispaar/v1/' ) ),\n        'nonce'    => wp_create_nonce( 'wp_rest' ),\n        'ajaxUrl'  => admin_url( 'admin-ajax.php' ),\n    ) );\n}\nadd_action( 'wp_enqueue_scripts', 'wispaar_scripts' );\n\n/**\n * 3. Include Custom Modules\n */\nrequire_once WISPAAR_DIR . '/inc/cpt-projects.php';       // مدیریت پروژه‌ها و نمونه‌کارها\nrequire_once WISPAAR_DIR . '/inc/cpt-inquiries.php';      // مدیریت لیدها و بریف‌های دریافتی\nrequire_once WISPAAR_DIR . '/inc/rest-api.php';           // اندپوینت‌های امن REST API\nrequire_once WISPAAR_DIR . '/inc/elementor-widgets.php';  // ابزارک‌های اختصاصی المنتور\nrequire_once WISPAAR_DIR . '/inc/demo-importer.php';      // درون‌ریزی ۱ کلیک پروژه‌های دمو\n\n/**\n * 4. Content Width\n */\nfunction wispaar_content_width() {\n    $GLOBALS['content_width'] = apply_filters( 'wispaar_content_width', 1280 );\n}\nadd_action( 'after_setup_theme', 'wispaar_content_width', 0 );\n"
   },
   {
-    name: 'header.php',
-    path: 'header.php',
-    description: 'قالب هدر با پشتیبانی از هدر اختصاصی المنتور (Theme Builder) و هدر پیش‌فرض مدرن ویسپار',
-    content: `<!doctype html>
-<html <?php language_attributes(); ?> dir="rtl">
-<head>
-    <meta charset="<?php bloginfo( 'charset' ); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="profile" href="https://gmpg.org/xfn/11">
-    <?php wp_head(); ?>
-</head>
-<body <?php body_class( 'bg-[#03070D] text-[#C5D0DD] antialiased selection:bg-[#1769FF]/30 selection:text-white' ); ?>>
-<?php wp_body_open(); ?>
-
-<?php
-// اگر کاربر از Elementor Theme Builder هدر ساخته بود، آن را لود کن
-if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_location( 'header' ) ) {
-    return;
-}
-?>
-
-<header class="sticky top-0 z-50 bg-[#03070D]/95 border-b border-[#172638] backdrop-blur-md py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <!-- Logo -->
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-2.5">
-            <span class="text-2xl font-bold tracking-tight text-[#F5F8FC]">WISPAAR</span>
-            <span class="text-xs text-[#00D9FF] bg-[#0A1626] border border-[#172638] px-1.5 py-0.5 rounded font-mono">&lt;/&gt;</span>
-        </a>
-
-        <!-- Menu -->
-        <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-[#C5D0DD]">
-            <?php
-            if ( has_nav_menu( 'primary-menu' ) ) {
-                wp_nav_menu( array(
-                    'theme_location' => 'primary-menu',
-                    'container'      => false,
-                    'items_wrap'     => '%3$s',
-                    'fallback_cb'    => false,
-                ) );
-            } else {
-                echo '<a href="' . esc_url( home_url( '/' ) ) . '" class="text-[#00D9FF]">خانه</a>';
-                echo '<a href="' . esc_url( home_url( '/portfolio' ) ) . '">پروژه‌ها</a>';
-                echo '<a href="' . esc_url( home_url( '/services' ) ) . '">خدمات</a>';
-                echo '<a href="' . esc_url( home_url( '/about' ) ) . '">درباره ویسپار</a>';
-                echo '<a href="' . esc_url( home_url( '/contact' ) ) . '">تماس</a>';
-            }
-            ?>
-        </nav>
-
-        <!-- CTA Action -->
-        <div class="flex items-center gap-3">
-            <a href="<?php echo esc_url( home_url( '/start-project' ) ); ?>" class="px-4 py-2 text-xs font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-lg transition-all shadow-sm">
-                شروع یک پروژه ←
-            </a>
-        </div>
-    </div>
-</header>
-`
+    "name": "header.php",
+    "path": "header.php",
+    "description": "قالب هدر با ناوبری ریسپانسیو، لوگوی ویسپار، دکمه CTA و سازگاری با Elementor Theme Builder",
+    "content": "<!doctype html>\n<html <?php language_attributes(); ?> dir=\"rtl\">\n<head>\n    <meta charset=\"<?php bloginfo( 'charset' ); ?>\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <link rel=\"profile\" href=\"https://gmpg.org/xfn/11\">\n    <?php wp_head(); ?>\n</head>\n<body <?php body_class( 'wispaar-dark-theme wispaar-body-theme bg-[#03070D] text-[#C5D0DD] antialiased' ); ?>>\n<?php wp_body_open(); ?>\n\n<?php\nif ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_location( 'header' ) ) {\n    return;\n}\n?>\n\n<header class=\"wispaar-header\">\n    <div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between\">\n        <a href=\"<?php echo esc_url( home_url( '/' ) ); ?>\" class=\"wispaar-logo\">\n            <span>WISPAAR</span>\n            <span class=\"badge-code\">&lt;/&gt;</span>\n        </a>\n\n        <nav class=\"hidden lg:flex items-center gap-7 text-sm font-medium text-[#C5D0DD]\">\n            <?php\n            if ( has_nav_menu( 'primary-menu' ) ) {\n                wp_nav_menu( array(\n                    'theme_location' => 'primary-menu',\n                    'container'      => false,\n                    'items_wrap'     => '%3$s',\n                    'fallback_cb'    => false,\n                ) );\n            } else {\n                echo '<a href=\"' . esc_url( home_url( '/' ) ) . '\" class=\"text-[#00D9FF]\">خانه</a>';\n                echo '<a href=\"' . esc_url( home_url( '/#portfolio' ) ) . '\">پروژه‌ها</a>';\n                echo '<a href=\"' . esc_url( home_url( '/services' ) ) . '\">خدمات</a>';\n                echo '<a href=\"' . esc_url( home_url( '/about' ) ) . '\">درباره ویسپار</a>';\n                echo '<a href=\"' . esc_url( home_url( '/contact' ) ) . '\">تماس</a>';\n            }\n            ?>\n        </nav>\n\n        <div class=\"flex items-center gap-3\">\n            <a href=\"<?php echo esc_url( home_url( '/#wispaar-brief-section' ) ); ?>\" class=\"btn-primary\" style=\"padding:0.5rem 1rem; font-size:0.75rem;\">\n                شروع یک پروژه ←\n            </a>\n\n            <button id=\"wispaar-mobile-menu-toggle\" class=\"lg:hidden p-2 text-[#C5D0DD] hover:text-white rounded-lg\" style=\"background:#0A1626; border:1px solid #172638; cursor:pointer;\" aria-label=\"منو\">\n                <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"></line><line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"></line><line x1=\"3\" y1=\"18\" x2=\"21\" y2=\"18\"></line></svg>\n            </button>\n        </div>\n    </div>\n\n    <!-- Mobile Drawer -->\n    <div id=\"wispaar-mobile-drawer\" style=\"display:none; background:#06111F; border-top:1px solid #172638; padding:1.5rem; margin-top:0.75rem;\">\n        <div style=\"display:flex; flex-direction:column; gap:1rem; text-align:right;\">\n            <a href=\"<?php echo esc_url( home_url( '/' ) ); ?>\" style=\"color:#00D9FF; font-weight:600;\">خانه</a>\n            <a href=\"<?php echo esc_url( home_url( '/#portfolio' ) ); ?>\">پروژه‌ها</a>\n            <a href=\"<?php echo esc_url( home_url( '/services' ) ); ?>\">خدمات</a>\n            <a href=\"<?php echo esc_url( home_url( '/about' ) ); ?>\">درباره ویسپار</a>\n            <a href=\"<?php echo esc_url( home_url( '/contact' ) ); ?>\">تماس</a>\n            <a href=\"<?php echo esc_url( home_url( '/#wispaar-brief-section' ) ); ?>\" class=\"btn-primary\" style=\"text-align:center; justify-content:center; margin-top:0.5rem;\">ثبت بریف پروژه</a>\n        </div>\n    </div>\n</header>\n"
   },
   {
-    name: 'footer.php',
-    path: 'footer.php',
-    description: 'قالب فوتر با پشتیبانی از فوتر المنتور و ترکیب ادیتوریال ویسپار',
-    content: `<?php
-// اگر فوتر المنتور فعال بود
-if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_location( 'footer' ) ) {
-    wp_footer();
-    return;
-}
-?>
-
-<footer class="bg-[#02050A] border-t border-[#172638] text-[#8C9BAD] pt-16 pb-12 mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-16 border-b border-[#172638]/70">
-            <div class="md:col-span-2 space-y-4">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl font-bold tracking-tight text-[#F5F8FC]">WISPAAR</span>
-                    <span class="text-xs text-[#00D9FF] bg-[#0A1626] border border-[#172638] px-1.5 py-0.5 rounded font-mono">&lt;/&gt;</span>
-                </div>
-                <div class="text-sm text-[#00D9FF]">آفرینش با خرد — Wisdom + Technology</div>
-                <p class="text-sm text-[#8C9BAD] max-w-sm leading-relaxed">
-                    استودیو فناوری و طراحی دیجیتال ویسپار. طراحی وب‌سایت‌های اختصاصی، مهندسی پیشرفته وردپرس و سئو تکنیکال.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-xs font-semibold text-[#F5F8FC] uppercase tracking-wider mb-4">پروژه‌ها و خدمات</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="<?php echo esc_url( home_url( '/portfolio' ) ); ?>" class="hover:text-white">منتخب پروژه‌ها</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/services' ) ); ?>" class="hover:text-white">طراحی اختصاصی وب</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/seo' ) ); ?>" class="hover:text-white">مطالعات موردی سئو</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-xs font-semibold text-[#F5F8FC] uppercase tracking-wider mb-4">استودیو ویسپار</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="<?php echo esc_url( home_url( '/about' ) ); ?>" class="hover:text-white">درباره و مانیفست</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/start-project' ) ); ?>" class="text-[#00D9FF]">ثبت بریف پروژه</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="hover:text-white">تماس مستقیم</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <div>تمام حقوق محفوظ است © <?php echo date('Y'); ?> WISPAAR. قدرت گرفته از هسته مهندسی وردپرس.</div>
-            <div class="font-mono text-[#00D9FF]">&lt;/&gt; Creation with Wisdom</div>
-        </div>
-    </div>
-</footer>
-
-<?php wp_footer(); ?>
-</body>
-</html>
-`
+    "name": "inc/cpt-inquiries.php",
+    "path": "inc/cpt-inquiries.php",
+    "description": "پست تایپ سفارشی بریف‌ها و لیدها با بج قرمز پیام جدید و ارسال ایمیل به مدیر سایت",
+    "content": "<?php\n/**\n * Custom Post Type: Project Briefs & Inquiries (دریافت و مدیریت لیدها در وردپرس)\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nfunction wispaar_register_inquiries_cpt() {\n    $brief_labels = array(\n        'name'               => _x( 'بریف‌های پروژه', 'Post type general name', 'wispaar' ),\n        'singular_name'      => _x( 'بریف پروژه', 'Post type singular name', 'wispaar' ),\n        'menu_name'          => _x( 'درخواست‌های پروژه (Leads)', 'Admin Menu text', 'wispaar' ),\n        'all_items'          => __( 'همه درخواست‌های پروژه', 'wispaar' ),\n        'view_item'          => __( 'مشاهده بریف', 'wispaar' ),\n        'search_items'       => __( 'جستجوی بریف‌ها', 'wispaar' ),\n        'not_found'          => __( 'هیچ درخواستی یافت نشد.', 'wispaar' ),\n    );\n\n    register_post_type( 'wispaar_brief', array(\n        'labels'             => $brief_labels,\n        'public'             => false,\n        'show_ui'            => true,\n        'show_in_menu'       => true,\n        'menu_position'      => 6,\n        'menu_icon'          => 'dashicons-feedback',\n        'supports'           => array( 'title' ),\n        'capabilities'       => array(\n            'create_posts' => false,\n        ),\n        'map_meta_cap'       => true,\n    ) );\n}\nadd_action( 'init', 'wispaar_register_inquiries_cpt' );\n\nfunction wispaar_set_brief_columns( $columns ) {\n    $new_cols = array();\n    $new_cols['cb']       = $columns['cb'];\n    $new_cols['title']    = 'نام متقاضی / سازمان';\n    $new_cols['phone']    = 'شماره تماس';\n    $new_cols['email']    = 'ایمیل';\n    $new_cols['services'] = 'خدمات انتخابی';\n    $new_cols['budget']   = 'بودجه';\n    $new_cols['status']   = 'وضعیت پیگیری';\n    $new_cols['date']     = 'تاریخ ثبت';\n    return $new_cols;\n}\nadd_filter( 'manage_wispaar_brief_posts_columns', 'wispaar_set_brief_columns' );\n\nfunction wispaar_render_brief_columns( $column, $post_id ) {\n    switch ( $column ) {\n        case 'phone':\n            $phone = get_post_meta( $post_id, '_wispaar_lead_phone', true );\n            echo $phone ? '<a href=\"tel:' . esc_attr($phone) . '\" style=\"direction:ltr; display:inline-block; font-family:monospace;\">' . esc_html( $phone ) . '</a>' : '—';\n            break;\n        case 'email':\n            $email = get_post_meta( $post_id, '_wispaar_lead_email', true );\n            echo $email ? '<a href=\"mailto:' . esc_attr($email) . '\">' . esc_html( $email ) . '</a>' : '—';\n            break;\n        case 'services':\n            $services = get_post_meta( $post_id, '_wispaar_lead_services', true );\n            echo is_array( $services ) ? esc_html( implode( '، ', $services ) ) : esc_html( $services ?: '—' );\n            break;\n        case 'budget':\n            echo esc_html( get_post_meta( $post_id, '_wispaar_lead_budget', true ) ?: 'مشاوره' );\n            break;\n        case 'status':\n            $status = get_post_meta( $post_id, '_wispaar_lead_status', true ) ?: 'new';\n            $colors = array(\n                'new'       => 'background:#EF4444; color:#fff;',\n                'reviewed'  => 'background:#F59E0B; color:#000;',\n                'contacted' => 'background:#22C55E; color:#fff;',\n            );\n            $titles = array(\n                'new'       => 'جدید (بررسی نشده)',\n                'reviewed'  => 'در حال بررسی',\n                'contacted' => 'جلسه هماهنگ شد',\n            );\n            echo '<span style=\"display:inline-block; padding:3px 8px; border-radius:4px; font-size:11px; ' . ( $colors[$status] ?? '' ) . '\">' . ( $titles[$status] ?? $status ) . '</span>';\n            break;\n    }\n}\nadd_action( 'manage_wispaar_brief_posts_custom_column', 'wispaar_render_brief_columns', 10, 2 );\n"
   },
   {
-    name: 'front-page.php',
-    path: 'front-page.php',
-    description: 'صفحه اصلی سازگار با تمام صفحه‌سازها (Elementor Canvas / Elementor Full Width) و محتوای پیش‌فرض',
-    content: `<?php
-/**
- * Front Page Template
- * 
- * کاملاً سازگار با المنتور: اگر صفحه در المنتور ویرایش شود، المنتور خروجی را مدیریت می‌کند.
- * در غیر این صورت، بخش‌های استانداردی از نمونه‌کارها و خدمات لود می‌شوند.
- * 
- * @package Wispaar
- */
-
-get_header();
-
-// اگر صفحه با المنتور ساخته شده، مستقیماً کانتنت المنتور رندر می‌شود:
-if ( have_posts() ) :
-    while ( have_posts() ) : the_post();
-        the_content();
-    endwhile;
-endif;
-
-get_footer();
-`
+    "name": "inc/cpt-projects.php",
+    "path": "inc/cpt-projects.php",
+    "description": "پست تایپ سفارشی پروژه‌ها و نمونه‌کارها همراه با متاباکس مشخصات و ستون‌های سفارشی پیشخوان",
+    "content": "<?php\n/**\n * Custom Post Type: Projects (نمونه‌کارها و پروژه‌های ویسپار)\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nfunction wispaar_register_project_cpt() {\n    $labels = array(\n        'name'                  => _x( 'پروژه‌ها و نمونه‌کارها', 'Post type general name', 'wispaar' ),\n        'singular_name'         => _x( 'پروژه', 'Post type singular name', 'wispaar' ),\n        'menu_name'             => _x( 'پروژه‌های ویسپار', 'Admin Menu text', 'wispaar' ),\n        'name_admin_bar'        => _x( 'پروژه جدید', 'Add New on Toolbar', 'wispaar' ),\n        'add_new'               => __( 'افزودن پروژه جدید', 'wispaar' ),\n        'add_new_item'          => __( 'افزودن پروژه جدید به ویسپار', 'wispaar' ),\n        'new_item'              => __( 'پروژه تازه', 'wispaar' ),\n        'edit_item'             => __( 'ویرایش پروژه', 'wispaar' ),\n        'view_item'             => __( 'مشاهده پروژه', 'wispaar' ),\n        'all_items'             => __( 'همه پروژه‌ها', 'wispaar' ),\n        'search_items'          => __( 'جستجوی پروژه‌ها', 'wispaar' ),\n        'not_found'             => __( 'پروژه‌ای یافت نشد.', 'wispaar' ),\n    );\n\n    $args = array(\n        'labels'             => $labels,\n        'public'             => true,\n        'publicly_queryable' => true,\n        'show_ui'            => true,\n        'show_in_menu'       => true,\n        'query_var'          => true,\n        'rewrite'            => array( 'slug' => 'projects' ),\n        'capability_type'    => 'post',\n        'has_archive'        => 'portfolio',\n        'hierarchical'       => false,\n        'menu_position'      => 5,\n        'menu_icon'          => 'dashicons-portfolio',\n        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ),\n        'show_in_rest'       => true,\n    );\n\n    register_post_type( 'wispaar_project', $args );\n\n    register_taxonomy( 'project_industry', array( 'wispaar_project' ), array(\n        'hierarchical'      => true,\n        'labels'            => array(\n            'name'          => 'صنعت‌ها (Industries)',\n            'singular_name' => 'صنعت',\n        ),\n        'show_ui'           => true,\n        'show_admin_column' => true,\n        'query_var'         => true,\n        'show_in_rest'      => true,\n        'rewrite'           => array( 'slug' => 'industry' ),\n    ) );\n}\nadd_action( 'init', 'wispaar_register_project_cpt' );\n\nfunction wispaar_add_project_metaboxes() {\n    add_meta_box(\n        'wispaar_project_meta',\n        __( 'مشخصات اختصاصی پروژه (Wispaar Project Details)', 'wispaar' ),\n        'wispaar_render_project_metabox',\n        'wispaar_project',\n        'normal',\n        'high'\n    );\n}\nadd_action( 'add_meta_boxes', 'wispaar_add_project_metaboxes' );\n\nfunction wispaar_render_project_metabox( $post ) {\n    wp_nonce_field( 'wispaar_save_project_meta', 'wispaar_project_nonce' );\n\n    $client    = get_post_meta( $post->ID, '_wispaar_client', true );\n    $title_en  = get_post_meta( $post->ID, '_wispaar_title_en', true );\n    $year      = get_post_meta( $post->ID, '_wispaar_year', true );\n    $ptype     = get_post_meta( $post->ID, '_wispaar_ptype', true );\n    $challenge = get_post_meta( $post->ID, '_wispaar_challenge', true );\n    $solution  = get_post_meta( $post->ID, '_wispaar_solution', true );\n    $kpi1_val  = get_post_meta( $post->ID, '_wispaar_kpi1_val', true );\n    $kpi1_lbl  = get_post_meta( $post->ID, '_wispaar_kpi1_lbl', true );\n    $kpi2_val  = get_post_meta( $post->ID, '_wispaar_kpi2_val', true );\n    $kpi2_lbl  = get_post_meta( $post->ID, '_wispaar_kpi2_lbl', true );\n    $is_demo   = get_post_meta( $post->ID, '_wispaar_is_demo', true );\n    $demo_url  = get_post_meta( $post->ID, '_wispaar_demo_url', true );\n    ?>\n    <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:12px;\">\n        <p>\n            <label><strong>نام انگلیسی پروژه (English Title):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_title_en\" value=\"<?php echo esc_attr( $title_en ); ?>\" style=\"width:100%; direction:ltr;\" placeholder=\"e.g. Arya Capital\">\n        </p>\n        <p>\n            <label><strong>نام مشتری یا کارفرما (Client):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_client\" value=\"<?php echo esc_attr( $client ); ?>\" style=\"width:100%;\" placeholder=\"مثال: هلدینگ مدیریت سرمایه آریا\">\n        </p>\n        <p>\n            <label><strong>سال اجرا (Year):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_year\" value=\"<?php echo esc_attr( $year ); ?>\" style=\"width:100%;\" placeholder=\"۱۴۰۴\">\n        </p>\n        <p>\n            <label><strong>نوع پروژه (Project Type):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_ptype\" value=\"<?php echo esc_attr( $ptype ); ?>\" style=\"width:100%;\" placeholder=\"وب‌سایت اختصاصی و پورتال سازمانی\">\n        </p>\n    </div>\n\n    <p>\n        <label><strong>چالش اصلی پروژه (The Challenge):</strong></label><br>\n        <textarea name=\"wispaar_challenge\" rows=\"3\" style=\"width:100%;\"><?php echo esc_textarea( $challenge ); ?></textarea>\n    </p>\n\n    <p>\n        <label><strong>راهکار مهندسی ویسپار (The Solution):</strong></label><br>\n        <textarea name=\"wispaar_solution\" rows=\"3\" style=\"width:100%;\"><?php echo esc_textarea( $solution ); ?></textarea>\n    </p>\n\n    <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:16px; background:#f9f9f9; padding:12px; border:1px solid #ddd; border-radius:6px;\">\n        <div>\n            <label><strong>شاخص اول (مقدار / برچسب):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_kpi1_val\" value=\"<?php echo esc_attr( $kpi1_val ); ?>\" placeholder=\"۹۹/۱۰۰\" style=\"width:45%; margin-left:5%;\">\n            <input type=\"text\" name=\"wispaar_kpi1_lbl\" value=\"<?php echo esc_attr( $kpi1_lbl ); ?>\" placeholder=\"شاخص لایت‌هاوس\" style=\"width:48%;\">\n        </div>\n        <div>\n            <label><strong>شاخص دوم (مقدار / برچسب):</strong></label><br>\n            <input type=\"text\" name=\"wispaar_kpi2_val\" value=\"<?php echo esc_attr( $kpi2_val ); ?>\" placeholder=\"+۶۴٪\" style=\"width:45%; margin-left:5%;\">\n            <input type=\"text\" name=\"wispaar_kpi2_lbl\" value=\"<?php echo esc_attr( $kpi2_lbl ); ?>\" placeholder=\"نرخ تبدیل سرنخ\" style=\"width:48%;\">\n        </div>\n    </div>\n\n    <p style=\"margin-top:14px;\">\n        <label>\n            <input type=\"checkbox\" name=\"wispaar_is_demo\" value=\"1\" <?php checked( $is_demo, '1' ); ?>>\n            <strong>نمونه کانسپت استودیو است (Concept / Demo)</strong>\n        </label>\n    </p>\n\n    <p>\n        <label><strong>آدرس پیش‌نمایش سایت (Demo URL):</strong></label><br>\n        <input type=\"url\" name=\"wispaar_demo_url\" value=\"<?php echo esc_attr( $demo_url ); ?>\" style=\"width:100%; direction:ltr;\" placeholder=\"https://demo-arya.wispaar.com\">\n    </p>\n    <?php\n}\n\nfunction wispaar_save_project_meta( $post_id ) {\n    if ( ! isset( $_POST['wispaar_project_nonce'] ) || ! wp_verify_nonce( $_POST['wispaar_project_nonce'], 'wispaar_save_project_meta' ) ) {\n        return;\n    }\n    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {\n        return;\n    }\n    if ( ! current_user_can( 'edit_post', $post_id ) ) {\n        return;\n    }\n\n    $fields = array(\n        'wispaar_title_en'  => '_wispaar_title_en',\n        'wispaar_client'    => '_wispaar_client',\n        'wispaar_year'      => '_wispaar_year',\n        'wispaar_ptype'     => '_wispaar_ptype',\n        'wispaar_challenge' => '_wispaar_challenge',\n        'wispaar_solution'  => '_wispaar_solution',\n        'wispaar_kpi1_val'  => '_wispaar_kpi1_val',\n        'wispaar_kpi1_lbl'  => '_wispaar_kpi1_lbl',\n        'wispaar_kpi2_val'  => '_wispaar_kpi2_val',\n        'wispaar_kpi2_lbl'  => '_wispaar_kpi2_lbl',\n        'wispaar_demo_url'  => '_wispaar_demo_url',\n    );\n\n    foreach ( $fields as $input => $meta_key ) {\n        if ( isset( $_POST[ $input ] ) ) {\n            update_post_meta( $post_id, $meta_key, sanitize_text_field( $_POST[ $input ] ) );\n        }\n    }\n\n    $is_demo = isset( $_POST['wispaar_is_demo'] ) ? '1' : '0';\n    update_post_meta( $post_id, '_wispaar_is_demo', $is_demo );\n}\nadd_action( 'save_post_wispaar_project', 'wispaar_save_project_meta' );\n"
   },
   {
-    name: 'single-wispaar_project.php',
-    path: 'single-wispaar_project.php',
-    description: 'قالب اختصاصی تک پروژه در وردپرس با تمام فیلدهای سفارشی (کارفرما، چالش، راهکار و نتایج)',
-    content: `<?php
-/**
- * Single Project Template
- * 
- * @package Wispaar
- */
-
-get_header();
-
-while ( have_posts() ) : the_post();
-    $post_id   = get_the_ID();
-    $client    = get_post_meta( $post_id, '_wispaar_client', true );
-    $title_en  = get_post_meta( $post_id, '_wispaar_title_en', true );
-    $year      = get_post_meta( $post_id, '_wispaar_year', true );
-    $ptype     = get_post_meta( $post_id, '_wispaar_ptype', true );
-    $challenge = get_post_meta( $post_id, '_wispaar_challenge', true );
-    $solution  = get_post_meta( $post_id, '_wispaar_solution', true );
-    $kpi1_val  = get_post_meta( $post_id, '_wispaar_kpi1_val', true );
-    $kpi1_lbl  = get_post_meta( $post_id, '_wispaar_kpi1_lbl', true );
-    $kpi2_val  = get_post_meta( $post_id, '_wispaar_kpi2_val', true );
-    $kpi2_lbl  = get_post_meta( $post_id, '_wispaar_kpi2_lbl', true );
-    $is_demo   = get_post_meta( $post_id, '_wispaar_is_demo', true ) === '1';
-    $demo_url  = get_post_meta( $post_id, '_wispaar_demo_url', true );
-?>
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-    <div class="space-y-4">
-        <div class="flex items-center gap-2 text-xs font-mono text-[#00D9FF]">
-            <span>&lt;/&gt;</span>
-            <span>CASE STUDY / <?php echo esc_html( $title_en ?: get_the_title() ); ?></span>
-            <?php if ( $is_demo ) : ?>
-                <span class="bg-[#03070D] border border-[#23364C] px-2 py-0.5 rounded text-[#00D9FF]">CONCEPT / DEMO</span>
-            <?php endif; ?>
-        </div>
-        <h1 class="text-3xl sm:text-5xl font-bold text-[#F5F8FC]"><?php the_title(); ?></h1>
-    </div>
-
-    <!-- Cover Image -->
-    <?php if ( has_post_thumbnail() ) : ?>
-        <div class="rounded-2xl overflow-hidden border border-[#172638] max-h-[600px]">
-            <?php the_post_thumbnail( 'full', array( 'class' => 'w-full object-cover' ) ); ?>
-        </div>
-    <?php endif; ?>
-
-    <!-- Meta specs -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 bg-[#06111F] border border-[#172638] rounded-xl p-6 text-xs">
-        <div>
-            <div class="text-[#536174] mb-1">کارفرما</div>
-            <div class="text-[#F5F8FC] font-medium"><?php echo esc_html( $client ?: 'اختصاصی ویسپار' ); ?></div>
-        </div>
-        <div>
-            <div class="text-[#536174] mb-1">سال اجرا</div>
-            <div class="text-[#F5F8FC] font-medium font-mono"><?php echo esc_html( $year ?: '۱۴۰۴' ); ?></div>
-        </div>
-        <div>
-            <div class="text-[#536174] mb-1">نوع اثر</div>
-            <div class="text-[#F5F8FC] font-medium"><?php echo esc_html( $ptype ?: 'وب‌سایت اختصاصی' ); ?></div>
-        </div>
-        <div>
-            <div class="text-[#536174] mb-1">پیش‌نمایش آنلاین</div>
-            <div>
-                <?php if ( $demo_url ) : ?>
-                    <a href="<?php echo esc_url($demo_url); ?>" target="_blank" class="text-[#00D9FF] hover:underline">مشاهده سایت دمو ←</a>
-                <?php else : ?>
-                    <span class="text-[#8C9BAD]">در دسترس در سرور استیجینگ</span>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Challenge and Solution -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-3">
-            <h3 class="text-sm font-bold text-[#EF4444] uppercase tracking-wider">چالش اساسی پروژه</h3>
-            <p class="text-sm text-[#8C9BAD] leading-relaxed"><?php echo esc_html( $challenge ); ?></p>
-        </div>
-        <div class="bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-3">
-            <h3 class="text-sm font-bold text-[#00D9FF] uppercase tracking-wider">راهکار مهندسی ویسپار</h3>
-            <p class="text-sm text-[#8C9BAD] leading-relaxed"><?php echo esc_html( $solution ); ?></p>
-        </div>
-    </div>
-
-    <!-- Post Content if any -->
-    <div class="prose prose-invert max-w-none text-base leading-relaxed text-[#C5D0DD]">
-        <?php the_content(); ?>
-    </div>
-</div>
-
-<?php
-endwhile;
-
-get_footer();
-`
+    "name": "inc/demo-importer.php",
+    "path": "inc/demo-importer.php",
+    "description": "ابزار درون‌ریزی ۱ کلیک پروژه‌های اولیه در پیشخوان وردپرس",
+    "content": "<?php\n/**\n * One-Click Demo Content Importer for WISPAAR\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nfunction wispaar_admin_menu_demo() {\n    add_theme_page(\n        __( 'تنظیمات و داده‌های نمونه ویسپار', 'wispaar' ),\n        __( 'پوسته ویسپار (داده‌های نمونه)', 'wispaar' ),\n        'manage_options',\n        'wispaar-demo-setup',\n        'wispaar_render_demo_setup_page'\n    );\n}\nadd_action( 'admin_menu', 'wispaar_admin_menu_demo' );\n\nfunction wispaar_render_demo_setup_page() {\n    $imported = false;\n    if ( isset( $_POST['wispaar_import_demo_action'] ) && check_admin_referer( 'wispaar_demo_nonce' ) ) {\n        wispaar_run_demo_import();\n        $imported = true;\n    }\n    ?>\n    <div class=\"wrap\" style=\"max-width:850px; direction:rtl; text-align:right;\">\n        <h1>پیکربندی و راه‌اندازی پوسته ویسپار (WISPAAR)</h1>\n        \n        <?php if ( $imported ) : ?>\n            <div class=\"notice notice-success is-dismissible\" style=\"padding:12px; margin:16px 0;\">\n                <p><strong>✓ نمونه‌کارهای اولیه با موفقیت در سیستم وردپرس ثبت شدند!</strong> اکنون می‌توانید آن‌ها را در منوی «پروژه‌های ویسپار» مشاهده یا ویرایش نمایید.</p>\n            </div>\n        <?php endif; ?>\n\n        <div style=\"background:#fff; border:1px solid #ccd0d4; padding:24px; border-radius:8px; margin-top:20px; box-shadow:0 1px 3px rgba(0,0,0,0.05);\">\n            <h2 style=\"margin-top:0;\">درون‌ریزی خودکار پروژه‌های نمونه (۱ کلیک)</h2>\n            <p style=\"color:#555; line-height:1.7;\">\n                برای اینکه سایت شما پس از نصب قالب بلافاصله با تمام نمونه‌کارهای طراحی‌شده، مشخصات کارفرماها، چالش‌ها، راهکارها و شاخص‌های لایت‌هاوس بالا بیاید، دکمه زیر را فشار دهید:\n            </p>\n\n            <form method=\"post\" style=\"margin-top:20px;\">\n                <?php wp_nonce_field( 'wispaar_demo_nonce' ); ?>\n                <input type=\"hidden\" name=\"wispaar_import_demo_action\" value=\"1\">\n                <button type=\"submit\" class=\"button button-primary button-hero\" style=\"background:#1769FF; border-color:#155bd8;\">\n                    درون‌ریزی نمونه‌کارهای ویسپار در پیشخوان وردپرس\n                </button>\n            </form>\n        </div>\n\n        <div style=\"background:#fff; border:1px solid #ccd0d4; padding:24px; border-radius:8px; margin-top:20px;\">\n            <h3 style=\"margin-top:0;\">راهنمای استفاده از المنتور با قالب ویسپار:</h3>\n            <ol style=\"line-height:2; color:#444;\">\n                <li>وارد برگه <strong>«خانه»</strong> شوید و روی <strong>«ویرایش با المنتور»</strong> کلیک کنید.</li>\n                <li>در پنل ابزارک‌های المنتور، به دسته جدید <strong>«المان‌های اختصاصی ویسپار (WISPAAR)»</strong> بروید.</li>\n                <li>ابزارک‌های <strong>هیرو اختصاصی</strong>، <strong>گرید پروژه‌ها</strong> و <strong>فرم بریف</strong> را بکشید و رها کنید.</li>\n                <li>تمام استایل‌های دارک، واکنش‌گرا و مدرن به صورت خودکار اعمال خواهند شد.</li>\n            </ol>\n        </div>\n    </div>\n    <?php\n}\n\nfunction wispaar_run_demo_import() {\n    $demo_projects = array(\n        array(\n            'title'     => 'آریا کاپیتال',\n            'title_en'  => 'Arya Capital',\n            'client'    => 'هلدینگ مدیریت سرمایه و ثروت آریا',\n            'industry'  => 'فین‌تک و خدمات مالی بین‌المللی',\n            'year'      => '۱۴۰۴',\n            'ptype'     => 'وب‌سایت اختصاصی و پورتال سازمانی',\n            'challenge' => 'نیاز به سامانه‌ای مدرن، بدون پیچیدگی‌های گیج‌کننده و با سرعت بارگذاری زیر ۱ ثانیه که بتواند گزارش‌های مالی تحلیلی را به مخاطبان نخبه تجاری عرضه کند.',\n            'solution'  => 'طراحی یک نظام بصری دارک و مینی‌مال مبتنی بر گرید هندسی دقیق، حذف المان‌های مازاد و بهینه‌سازی کدهای کلاینت.',\n            'kpi1_val'  => '۹۹/۱۰۰',\n            'kpi1_lbl'  => 'شاخص لایت‌هاوس',\n            'kpi2_val'  => '+۶۴٪',\n            'kpi2_lbl'  => 'نرخ تبدیل سرنخ',\n            'is_demo'   => '1',\n            'demo_url'  => 'https://demo-arya.wispaar.com',\n        ),\n        array(\n            'title'     => 'ژنوم لبز',\n            'title_en'  => 'Genome Labs',\n            'client'    => 'مرکز تحقیقاتی بیوتکنولوژی و ژنتیک ژنوم',\n            'industry'  => 'سلامت و علوم زیستی',\n            'year'      => '۱۴۰۳',\n            'ptype'     => 'وب‌سایت علمی و سامانه پذیرش آزمون',\n            'challenge' => 'ارائه بیش از ۳۰۰ نوع تست ژنتیک و مقالات بالینی در قالب یک ساختار ساده بدون سردرگمی کاربر.',\n            'solution'  => 'ایجاد سیستم جستجو و فیلترینگ چندلایه، قالب وردپرس فوق‌العاده سبک با زمان اجرای بهینه کوئری‌ها.',\n            'kpi1_val'  => '-۷۵٪',\n            'kpi1_lbl'  => 'سرعت دسترسی به نتایج',\n            'kpi2_val'  => '۱۰۰٪',\n            'kpi2_lbl'  => 'پایداری سرور در ترافیک',\n            'is_demo'   => '1',\n            'demo_url'  => 'https://demo-genome.wispaar.com',\n        ),\n        array(\n            'title'     => 'آتلیه معماری هور',\n            'title_en'  => 'Hoor Atelier',\n            'client'    => 'استودیو معماری منظر و طراحی داخلی هور',\n            'industry'  => 'معماری و دکوراسیون لوکس',\n            'year'      => '۱۴۰۴',\n            'ptype'     => 'سایت پورتفولیو و آتلیه برند',\n            'challenge' => 'نمایش تصاویر پروژه‌های ساختمانی با رزولوشن ۴K بدون افت وحشتناک سرعت لود در اینترنت همراه.',\n            'solution'  => 'سیستم بارگذاری تطبیقی، فریم‌های ادیتوریال مینیمال و بهینه‌سازی خودکار فرمت‌های نسل جدید.',\n            'kpi1_val'  => '۸۲۰KB',\n            'kpi1_lbl'  => 'حجم کلی صفحه نخست',\n            'kpi2_val'  => '+۸۸٪',\n            'kpi2_lbl'  => 'رشد فرم‌های مشاوره',\n            'is_demo'   => '1',\n            'demo_url'  => 'https://demo-hoor.wispaar.com',\n        ),\n        array(\n            'title'     => 'سیناپس کلود',\n            'title_en'  => 'Synapse Cloud',\n            'client'    => 'ارائه‌دهنده راهکارهای یکپارچه‌سازی سرور و دیتا سنتر',\n            'industry'  => 'فناوری اطلاعات و زیرساخت ابری',\n            'year'      => '۱۴۰۳',\n            'ptype'     => 'لندینگ پیج سازمانی و خدمات ابری',\n            'challenge' => 'مشتریان سازمانی در نگاه اول ارزش فنی زیرساخت ابری را متوجه نمی‌شدند و نرخ پرش بالا بود.',\n            'solution'  => 'بازطراحی کامل روایت صفحه فرود از درد مشتری به راهکار مهندسی و کال‌تواکشن‌های هدفمند.',\n            'kpi1_val'  => '۴.۸٪',\n            'kpi1_lbl'  => 'نرخ تبدیل لندینگ',\n            'kpi2_val'  => '-۳۸٪',\n            'kpi2_lbl'  => 'کاهش بانس ریت',\n            'is_demo'   => '1',\n            'demo_url'  => 'https://demo-synapse.wispaar.com',\n        )\n    );\n\n    foreach ( $demo_projects as $item ) {\n        // بررسی عدم تکرار\n        $existing = get_page_by_title( $item['title'], OBJECT, 'wispaar_project' );\n        if ( ! $existing ) {\n            $post_id = wp_insert_post( array(\n                'post_title'   => $item['title'],\n                'post_type'    => 'wispaar_project',\n                'post_status'  => 'publish',\n                'post_content' => '<p>' . esc_html( $item['solution'] ) . '</p>',\n                'post_excerpt' => $item['challenge'],\n            ) );\n\n            if ( $post_id && ! is_wp_error( $post_id ) ) {\n                update_post_meta( $post_id, '_wispaar_title_en', $item['title_en'] );\n                update_post_meta( $post_id, '_wispaar_client', $item['client'] );\n                update_post_meta( $post_id, '_wispaar_year', $item['year'] );\n                update_post_meta( $post_id, '_wispaar_ptype', $item['ptype'] );\n                update_post_meta( $post_id, '_wispaar_challenge', $item['challenge'] );\n                update_post_meta( $post_id, '_wispaar_solution', $item['solution'] );\n                update_post_meta( $post_id, '_wispaar_kpi1_val', $item['kpi1_val'] );\n                update_post_meta( $post_id, '_wispaar_kpi1_lbl', $item['kpi1_lbl'] );\n                update_post_meta( $post_id, '_wispaar_kpi2_val', $item['kpi2_val'] );\n                update_post_meta( $post_id, '_wispaar_kpi2_lbl', $item['kpi2_lbl'] );\n                update_post_meta( $post_id, '_wispaar_is_demo', $item['is_demo'] );\n                update_post_meta( $post_id, '_wispaar_demo_url', $item['demo_url'] );\n\n                // اختصاص تاکسونومی صنعت\n                wp_set_object_terms( $post_id, $item['industry'], 'project_industry', true );\n            }\n        }\n    }\n}\n"
   },
   {
-    name: 'README.md',
-    path: 'README.md',
-    description: 'راهنمای گام‌به‌گام نصب قالب در وردپرس و فعال‌سازی ویجت‌های المنتور',
-    content: `# راهنمای نصب و راه‌اندازی قالب وردپرس WISPAAR (ویسپار)
-
-این پکیج شامل قالب کامل وردپرس **WISPAAR** با پشتیبانی کامل از المنتور (Elementor)، انواع پست‌های سفارشی (Custom Post Types)، پنل مدیریت بریف‌ها و اندپوینت‌های REST API است.
-
-## مراحل نصب در وردپرس:
-1. فایل زیپ قالب (\`wispaar-theme.zip\`) را از دکمه تعبیه‌شده در سایت دانلود کنید.
-2. وارد پیشخوان وردپرس خود شوید: \`wp-admin\`
-3. از منوی سمت راست به مسیر **نمایش (Appearance) -> پوسته‌ها (Themes) -> افزودن پوسته تازه -> بارگذاری پوسته** بروید.
-4. فایل زیپ را انتخاب و روی دکمه **«نصب»** و سپس **«فعال‌سازی»** کلیک کنید.
-
-## افزونه‌های پیشنهادی و سازگار:
-- **Elementor** (رایگان یا پرو): برای طراحی آسان صفحات با استفاده از ویجت‌های اختصاصی ویسپار.
-- **Advanced Custom Fields (ACF)** (اختیاری): فیلدهای پروژه بدون نیاز به پلاگین به‌صورت بومی در کد قالب تعبیه شده‌اند، اما با ACF نیز کاملاً هماهنگ است.
-
-## مدیریت بریف‌ها و درخواست‌های پروژه:
-- پس از فعال‌سازی، منوی جدیدی به نام **«درخواست‌های پروژه (Leads)»** در پیشخوان وردپرس ظاهر می‌شود.
-- به محض اینکه کاربری در سایت فرم بریف یا تماس را پر کند:
-  1. درخواست مستقیماً در این جدول ثبت شده و وضعیت «جدید» می‌گیرد.
-  2. ایمیل نوتیفیکیشن برای مدیر سایت ارسال می‌شود.
-  3. مدیر می‌تواند وضعیت لید را به «در حال بررسی» یا «جلسه هماهنگ شد» تغییر دهد.
-
-## ویرایش و افزودن نمونه‌کارها:
-- از منوی **«پروژه‌های ویسپار»** می‌توانید پروژه‌های فعلی را ویرایش کرده یا با کلیک روی **«افزودن پروژه جدید»**، پروژه‌های جدید همراه با مشخصات کارفرما، سال، صنعت، تصاویر، چالش و راهکار را ثبت کنید.
-`
+    "name": "inc/elementor-widgets.php",
+    "path": "inc/elementor-widgets.php",
+    "description": "ثبت ایمن دسته‌بندی، ابزارک‌های سفارشی ویسپار در المنتور و رفع خودکار خطای خط ۸۲۳ المنتور",
+    "content": "<?php\n/**\n * Elementor Custom Widgets Integration for WISPAAR\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nclass Wispaar_Elementor_Extension {\n    private static $_instance = null;\n\n    public static function instance() {\n        if ( is_null( self::$_instance ) ) {\n            self::$_instance = new self();\n        }\n        return self::$_instance;\n    }\n\n    public function __construct() {\n        add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );\n        add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );\n    }\n\n    public function register_category( $elements_manager ) {\n        $elements_manager->add_category(\n            'wispaar-elements',\n            array(\n                'title' => esc_html__( 'المان‌های اختصاصی ویسپار (WISPAAR)', 'wispaar' ),\n                'icon'  => 'fa fa-code',\n            )\n        );\n    }\n\n    public function register_widgets( $widgets_manager ) {\n        // Hero widget\n        if ( file_exists( WISPAAR_DIR . '/inc/widgets/widget-hero.php' ) ) {\n            require_once WISPAAR_DIR . '/inc/widgets/widget-hero.php';\n            if ( class_exists( 'Wispaar_Elementor_Hero_Widget' ) ) {\n                $widgets_manager->register( new \\Wispaar_Elementor_Hero_Widget() );\n            }\n        }\n\n        // Portfolio widget\n        if ( file_exists( WISPAAR_DIR . '/inc/widgets/widget-portfolio.php' ) ) {\n            require_once WISPAAR_DIR . '/inc/widgets/widget-portfolio.php';\n            if ( class_exists( 'Wispaar_Elementor_Portfolio_Widget' ) ) {\n                $widgets_manager->register( new \\Wispaar_Elementor_Portfolio_Widget() );\n            }\n        }\n\n        // Brief Form widget\n        if ( file_exists( WISPAAR_DIR . '/inc/widgets/widget-brief-form.php' ) ) {\n            require_once WISPAAR_DIR . '/inc/widgets/widget-brief-form.php';\n            if ( class_exists( 'Wispaar_Elementor_Brief_Form_Widget' ) ) {\n                $widgets_manager->register( new \\Wispaar_Elementor_Brief_Form_Widget() );\n            }\n        }\n\n        // Services widget\n        if ( file_exists( WISPAAR_DIR . '/inc/widgets/widget-services.php' ) ) {\n            require_once WISPAAR_DIR . '/inc/widgets/widget-services.php';\n            if ( class_exists( 'Wispaar_Elementor_Services_Widget' ) ) {\n                $widgets_manager->register( new \\Wispaar_Elementor_Services_Widget() );\n            }\n        }\n    }\n}\n\n/**\n * Universal Elementor Render Attribute Sanitizer\n * Solves: \"Warning: Array to string conversion in elementor/includes/base/element-base.php on line 823\"\n * Recursively flattens any nested array in render_attributes before Elementor calls implode()\n */\nadd_action( 'elementor/frontend/before_render', function( $element ) {\n    if ( ! is_object( $element ) ) {\n        return;\n    }\n\n    try {\n        $reflector = new \\ReflectionClass( $element );\n        if ( $reflector->hasProperty( 'render_attributes' ) ) {\n            $prop = $reflector->getProperty( 'render_attributes' );\n            $prop->setAccessible( true );\n            $raw_attrs = $prop->getValue( $element );\n\n            if ( is_array( $raw_attrs ) && ! empty( $raw_attrs ) ) {\n                $sanitized = array();\n                foreach ( $raw_attrs as $el_key => $el_attributes ) {\n                    if ( ! is_array( $el_attributes ) ) {\n                        continue;\n                    }\n                    $sanitized[ $el_key ] = array();\n                    foreach ( $el_attributes as $attr_name => $attr_values ) {\n                        if ( is_array( $attr_values ) ) {\n                            $flat_strings = array();\n                            array_walk_recursive( $attr_values, function( $item ) use ( &$flat_strings ) {\n                                if ( is_scalar( $item ) ) {\n                                    $flat_strings[] = (string) $item;\n                                } elseif ( is_object( $item ) && method_exists( $item, '__toString' ) ) {\n                                    $flat_strings[] = (string) $item;\n                                }\n                            } );\n                            $sanitized[ $el_key ][ $attr_name ] = $flat_strings;\n                        } elseif ( is_scalar( $attr_values ) ) {\n                            $sanitized[ $el_key ][ $attr_name ] = array( (string) $attr_values );\n                        }\n                    }\n                }\n                $prop->setValue( $element, $sanitized );\n            }\n        }\n    } catch ( \\Throwable $th ) {\n        // Safe failover\n    }\n}, 0 );\n\nadd_action( 'init', function() {\n    if ( did_action( 'elementor/loaded' ) ) {\n        Wispaar_Elementor_Extension::instance();\n    }\n} );\n"
+  },
+  {
+    "name": "inc/rest-api.php",
+    "path": "inc/rest-api.php",
+    "description": "اندپوینت‌های امن REST API برای دریافت فرم‌های بریف و ارسال اطلاعات پروژه‌ها",
+    "content": "<?php\n/**\n * WISPAAR Headless CMS REST API Core\n * \n * Provides complete endpoints for decoupled React frontends,\n * including CORS headers, Health check, Projects CPT, Articles/Posts,\n * Briefs/Leads, and Auto-seeding.\n * \n * @package Wispaar\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\n/**\n * 1. Global CORS Headers for Headless Frontends\n */\nadd_action( 'init', function() {\n    // Enable CORS for all incoming requests (Localhost, React Dev Server, Production Domain)\n    if ( ! headers_sent() ) {\n        header( 'Access-Control-Allow-Origin: *' );\n        header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );\n        header( 'Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin' );\n        header( 'Access-Control-Allow-Credentials: true' );\n    }\n\n    // Handle OPTIONS Preflight early\n    if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'OPTIONS' === $_SERVER['REQUEST_METHOD'] ) {\n        status_header( 200 );\n        exit;\n    }\n} );\n\nadd_filter( 'rest_pre_serve_request', function( $served, $result, $request, $server ) {\n    header( 'Access-Control-Allow-Origin: *' );\n    header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );\n    header( 'Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin' );\n    return $served;\n}, 10, 4 );\n\n/**\n * 2. Register REST Routes under wispaar/v1\n */\nadd_action( 'rest_api_init', function () {\n    $namespace = 'wispaar/v1';\n\n    // Health & Diagnostic Endpoint\n    register_rest_route( $namespace, '/health', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_health_check',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Projects (Headless Portfolio)\n    register_rest_route( $namespace, '/projects', array(\n        array(\n            'methods'             => 'GET',\n            'callback'            => 'wispaar_rest_get_projects',\n            'permission_callback' => '__return_true',\n        ),\n        array(\n            'methods'             => 'POST',\n            'callback'            => 'wispaar_rest_create_project',\n            'permission_callback' => '__return_true', // In production, add auth checks or application passwords\n        ),\n    ) );\n\n    register_rest_route( $namespace, '/projects/(?P<slug>[a-zA-Z0-9-]+)', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_get_single_project',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Articles / Blog (Headless Journal)\n    register_rest_route( $namespace, '/articles', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_get_articles',\n        'permission_callback' => '__return_true',\n    ) );\n\n    register_rest_route( $namespace, '/articles/(?P<slug>[a-zA-Z0-9-]+)', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_get_single_article',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Project Brief Submission (Lead Gen)\n    register_rest_route( $namespace, '/brief', array(\n        'methods'             => 'POST',\n        'callback'            => 'wispaar_rest_submit_brief',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Leads / Briefs Query (Admin / Dashboard)\n    register_rest_route( $namespace, '/leads', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_get_leads',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Database Seeder (One-Click Setup)\n    register_rest_route( $namespace, '/seed', array(\n        'methods'             => 'POST',\n        'callback'            => 'wispaar_rest_seed_database',\n        'permission_callback' => '__return_true',\n    ) );\n\n    // Site Settings & Meta\n    register_rest_route( $namespace, '/settings', array(\n        'methods'             => 'GET',\n        'callback'            => 'wispaar_rest_get_settings',\n        'permission_callback' => '__return_true',\n    ) );\n} );\n\n/**\n * 3. Health Check\n */\nfunction wispaar_rest_health_check() {\n    $projects_count = wp_count_posts( 'wispaar_project' );\n    $posts_count    = wp_count_posts( 'post' );\n    $leads_count    = wp_count_posts( 'wispaar_brief' );\n\n    return rest_ensure_response( array(\n        'status'         => 'ok',\n        'mode'           => 'headless-cms',\n        'engine'         => 'WISPAAR Headless WordPress Engine',\n        'wp_version'     => get_bloginfo( 'version' ),\n        'site_name'      => get_bloginfo( 'name' ),\n        'site_url'       => get_site_url(),\n        'rest_url'       => rest_url( 'wispaar/v1' ),\n        'cors_enabled'   => true,\n        'timestamp'      => current_time( 'mysql' ),\n        'timezone'       => wp_timezone_string(),\n        'counts'         => array(\n            'projects' => (int) ( $projects_count->publish ?? 0 ),\n            'articles' => (int) ( $posts_count->publish ?? 0 ),\n            'leads'    => (int) ( $leads_count->publish ?? 0 ),\n        ),\n        'features'       => array(\n            'rest_projects' => true,\n            'rest_articles' => true,\n            'rest_brief'    => true,\n            'auto_seeder'   => true,\n        )\n    ) );\n}\n\n/**\n * 4. Format Project Post Object to Match React Interface\n */\nfunction wispaar_format_project( $post ) {\n    $post_id   = $post->ID;\n    $thumbnail = get_the_post_thumbnail_url( $post_id, 'full' );\n    \n    // Industries\n    $industries = wp_get_post_terms( $post_id, 'project_industry', array( 'fields' => 'names' ) );\n    $industry   = ! empty( $industries ) && ! is_wp_error( $industries ) ? $industries[0] : ( get_post_meta( $post_id, '_wispaar_industry', true ) ?: 'فین‌تک و خدمات مالی' );\n\n    // Technology\n    $tech_meta = get_post_meta( $post_id, '_wispaar_tech', true );\n    if ( is_string( $tech_meta ) && ! empty( $tech_meta ) ) {\n        $technology = array_map( 'trim', explode( ',', $tech_meta ) );\n    } elseif ( is_array( $tech_meta ) ) {\n        $technology = $tech_meta;\n    } else {\n        $technology = array( 'WordPress Headless', 'React', 'Tailwind CSS', 'REST API' );\n    }\n\n    // Services\n    $srv_meta = get_post_meta( $post_id, '_wispaar_services', true );\n    if ( is_string( $srv_meta ) && ! empty( $srv_meta ) ) {\n        $services = array_map( 'trim', explode( ',', $srv_meta ) );\n    } elseif ( is_array( $srv_meta ) ) {\n        $services = $srv_meta;\n    } else {\n        $services = array( 'طراحی اختصاصی UI/UX', 'توسعه وردپرس مهندسی‌شده' );\n    }\n\n    $kpi1_lbl = get_post_meta( $post_id, '_wispaar_kpi1_lbl', true ) ?: 'شاخص عملکرد لایت‌هاوس';\n    $kpi1_val = get_post_meta( $post_id, '_wispaar_kpi1_val', true ) ?: '۹۹/۱۰۰';\n    $kpi2_lbl = get_post_meta( $post_id, '_wispaar_kpi2_lbl', true ) ?: 'نرخ تبدیل لندینگ';\n    $kpi2_val = get_post_meta( $post_id, '_wispaar_kpi2_val', true ) ?: '+۷۵٪';\n\n    return array(\n        'id'                    => (string) $post_id,\n        'slug'                  => $post->post_name,\n        'title'                 => $post->post_title,\n        'titleEn'               => get_post_meta( $post_id, '_wispaar_title_en', true ) ?: $post->post_name,\n        'client'                => get_post_meta( $post_id, '_wispaar_client', true ) ?: 'سفارشی ویسپار',\n        'industry'              => $industry,\n        'services'              => $services,\n        'technology'            => $technology,\n        'year'                  => get_post_meta( $post_id, '_wispaar_year', true ) ?: '۱۴۰۴',\n        'projectType'           => get_post_meta( $post_id, '_wispaar_ptype', true ) ?: 'وب‌سایت اختصاصی و سیستم هویت برند',\n        'coverImage'            => $thumbnail ?: '/images/fintech.jpg',\n        'isDemo'                => (bool) get_post_meta( $post_id, '_wispaar_is_demo', true ),\n        'editorialQuote'        => get_post_meta( $post_id, '_wispaar_quote', true ) ?: '«آفریده‌شده با تلفیق خرد و فناوری در استودیو ویسپار.»',\n        'challenge'             => get_post_meta( $post_id, '_wispaar_challenge', true ) ?: wp_trim_words( $post->post_excerpt ?: $post->post_content, 35 ),\n        'solution'              => get_post_meta( $post_id, '_wispaar_solution', true ) ?: 'پیاده‌سازی دیزاین سیستم مینیمال، بهینه‌سازی کدهای فرانت‌اند و معماری دیتای سریع.',\n        'results'               => array(\n            array(\n                'label'  => $kpi1_lbl,\n                'value'  => $kpi1_val,\n                'detail' => 'شاخص عملکرد',\n            ),\n            array(\n                'label'  => $kpi2_lbl,\n                'value'  => $kpi2_val,\n                'detail' => 'شاخص رشد',\n            ),\n        ),\n        'websiteUrlPlaceholder' => get_post_meta( $post_id, '_wispaar_demo_url', true ) ?: 'https://demo.wispaar.com',\n        'tags'                  => array( $industry, 'وردپرس هدلس' ),\n        'source'                => 'wordpress',\n    );\n}\n\n/**\n * 5. GET /projects\n */\nfunction wispaar_rest_get_projects() {\n    $args = array(\n        'post_type'      => 'wispaar_project',\n        'post_status'    => 'publish',\n        'posts_per_page' => 100,\n        'orderby'        => 'date',\n        'order'          => 'DESC',\n    );\n\n    $query = new WP_Query( $args );\n    $projects = array();\n\n    if ( $query->have_posts() ) {\n        while ( $query->have_posts() ) {\n            $query->the_post();\n            $projects[] = wispaar_format_project( $query->post );\n        }\n        wp_reset_postdata();\n    }\n\n    return rest_ensure_response( array(\n        'success'  => true,\n        'count'    => count( $projects ),\n        'projects' => $projects,\n    ) );\n}\n\n/**\n * 6. GET /projects/{slug}\n */\nfunction wispaar_rest_get_single_project( WP_REST_Request $request ) {\n    $slug = sanitize_title( $request->get_param( 'slug' ) );\n\n    $args = array(\n        'name'        => $slug,\n        'post_type'   => 'wispaar_project',\n        'post_status' => 'publish',\n        'numberposts' => 1,\n    );\n\n    $posts = get_posts( $args );\n    if ( empty( $posts ) ) {\n        return new WP_Error( 'not_found', 'پروژه مورد نظر یافت نشد.', array( 'status' => 404 ) );\n    }\n\n    return rest_ensure_response( array(\n        'success' => true,\n        'project' => wispaar_format_project( $posts[0] ),\n    ) );\n}\n\n/**\n * 7. POST /projects (Create Project from Frontend)\n */\nfunction wispaar_rest_create_project( WP_REST_Request $request ) {\n    $params = $request->get_json_params();\n\n    $title     = sanitize_text_field( $params['title'] ?? '' );\n    $title_en  = sanitize_text_field( $params['titleEn'] ?? '' );\n    $client    = sanitize_text_field( $params['client'] ?? '' );\n    $industry  = sanitize_text_field( $params['industry'] ?? 'فین‌تک و خدمات مالی' );\n    $year      = sanitize_text_field( $params['year'] ?? '۱۴۰۴' );\n    $ptype     = sanitize_text_field( $params['projectType'] ?? 'وب‌سایت اختصاصی' );\n    $challenge = sanitize_textarea_field( $params['challenge'] ?? '' );\n    $solution  = sanitize_textarea_field( $params['solution'] ?? '' );\n    $kpi1_val  = sanitize_text_field( $params['kpi1Value'] ?? '۹۹/۱۰۰' );\n    $kpi1_lbl  = sanitize_text_field( $params['kpi1Label'] ?? 'شاخص لایت‌هاوس' );\n    $kpi2_val  = sanitize_text_field( $params['kpi2Value'] ?? '+۷۵٪' );\n    $kpi2_lbl  = sanitize_text_field( $params['kpi2Label'] ?? 'نرخ تبدیل' );\n\n    if ( empty( $title ) ) {\n        return new WP_Error( 'missing_title', 'عنوان پروژه الزامی است.', array( 'status' => 400 ) );\n    }\n\n    $slug = sanitize_title( $title_en ?: $title );\n    if ( empty( $slug ) ) {\n        $slug = 'project-' . time();\n    }\n\n    $post_id = wp_insert_post( array(\n        'post_title'   => $title,\n        'post_name'    => $slug,\n        'post_type'    => 'wispaar_project',\n        'post_status'  => 'publish',\n        'post_content' => $solution,\n        'post_excerpt' => $challenge,\n    ) );\n\n    if ( is_wp_error( $post_id ) ) {\n        return new WP_Error( 'create_failed', 'خطا در ایجاد پروژه.', array( 'status' => 500 ) );\n    }\n\n    update_post_meta( $post_id, '_wispaar_title_en', $title_en );\n    update_post_meta( $post_id, '_wispaar_client', $client );\n    update_post_meta( $post_id, '_wispaar_industry', $industry );\n    update_post_meta( $post_id, '_wispaar_year', $year );\n    update_post_meta( $post_id, '_wispaar_ptype', $ptype );\n    update_post_meta( $post_id, '_wispaar_challenge', $challenge );\n    update_post_meta( $post_id, '_wispaar_solution', $solution );\n    update_post_meta( $post_id, '_wispaar_kpi1_val', $kpi1_val );\n    update_post_meta( $post_id, '_wispaar_kpi1_lbl', $kpi1_lbl );\n    update_post_meta( $post_id, '_wispaar_kpi2_val', $kpi2_val );\n    update_post_meta( $post_id, '_wispaar_kpi2_lbl', $kpi2_lbl );\n    update_post_meta( $post_id, '_wispaar_is_demo', 1 );\n\n    // Register industry taxonomy term if available\n    if ( taxonomy_exists( 'project_industry' ) && ! empty( $industry ) ) {\n        wp_set_object_terms( $post_id, $industry, 'project_industry' );\n    }\n\n    $created_post = get_post( $post_id );\n\n    return rest_ensure_response( array(\n        'success' => true,\n        'message' => 'پروژه با موفقیت در وردپرس هدلس ایجاد شد.',\n        'project' => wispaar_format_project( $created_post ),\n    ) );\n}\n\n/**\n * 8. Format Article Post Object to Match React Interface\n */\nfunction wispaar_format_article( $post ) {\n    $post_id    = $post->ID;\n    $categories = wp_get_post_categories( $post_id, array( 'fields' => 'names' ) );\n    $category   = ! empty( $categories ) ? $categories[0] : 'طراحی وب';\n\n    // Estimate read time\n    $word_count = str_word_count( strip_tags( $post->post_content ) );\n    $minutes    = max( 2, (int) ceil( $word_count / 180 ) );\n    $read_time  = $minutes . ' دقیقه مطالعه';\n\n    // Tags\n    $post_tags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );\n\n    return array(\n        'id'            => (string) $post_id,\n        'slug'          => $post->post_name,\n        'title'         => $post->post_title,\n        'category'      => $category,\n        'readTime'      => $read_time,\n        'publishedDate' => get_the_date( 'j F Y', $post ),\n        'author'        => array(\n            'name' => get_the_author_meta( 'display_name', $post->post_author ) ?: 'تیم فنی ویسپار',\n            'role' => 'استودیو ویسپار',\n        ),\n        'excerpt'       => $post->post_excerpt ?: wp_trim_words( strip_tags( $post->post_content ), 30 ),\n        'contentParagraphs' => array(\n            array(\n                'subheading' => 'خلاصه و تحلیل تخصصی',\n                'text'       => strip_tags( $post->post_content ),\n            )\n        ),\n        'tags'          => ! empty( $post_tags ) ? $post_tags : array( 'وردپرس هدلس', 'سئو', 'توسعه اختصاصی' ),\n        'source'        => 'wordpress',\n    );\n}\n\n/**\n * 9. GET /articles\n */\nfunction wispaar_rest_get_articles() {\n    $args = array(\n        'post_type'      => 'post',\n        'post_status'    => 'publish',\n        'posts_per_page' => 50,\n        'orderby'        => 'date',\n        'order'          => 'DESC',\n    );\n\n    $query = new WP_Query( $args );\n    $articles = array();\n\n    if ( $query->have_posts() ) {\n        while ( $query->have_posts() ) {\n            $query->the_post();\n            $articles[] = wispaar_format_article( $query->post );\n        }\n        wp_reset_postdata();\n    }\n\n    return rest_ensure_response( array(\n        'success'  => true,\n        'count'    => count( $articles ),\n        'articles' => $articles,\n    ) );\n}\n\n/**\n * 10. GET /articles/{slug}\n */\nfunction wispaar_rest_get_single_article( WP_REST_Request $request ) {\n    $slug = sanitize_title( $request->get_param( 'slug' ) );\n\n    $args = array(\n        'name'        => $slug,\n        'post_type'   => 'post',\n        'post_status' => 'publish',\n        'numberposts' => 1,\n    );\n\n    $posts = get_posts( $args );\n    if ( empty( $posts ) ) {\n        return new WP_Error( 'not_found', 'مقاله مورد نظر یافت نشد.', array( 'status' => 404 ) );\n    }\n\n    return rest_ensure_response( array(\n        'success' => true,\n        'article' => wispaar_format_article( $posts[0] ),\n    ) );\n}\n\n/**\n * 11. POST /brief (Submit Project Brief / Lead)\n */\nfunction wispaar_rest_submit_brief( WP_REST_Request $request ) {\n    $params = $request->get_json_params();\n\n    $name        = sanitize_text_field( $params['name'] ?? '' );\n    $phone       = sanitize_text_field( $params['phone'] ?? '' );\n    $email       = sanitize_email( $params['email'] ?? '' );\n    $services    = isset( $params['services'] ) && is_array( $params['services'] ) ? array_map( 'sanitize_text_field', $params['services'] ) : array();\n    $goals       = isset( $params['goals'] ) && is_array( $params['goals'] ) ? array_map( 'sanitize_text_field', $params['goals'] ) : array();\n    $platform    = sanitize_text_field( $params['platform'] ?? '' );\n    $website     = sanitize_text_field( $params['website'] ?? '' );\n    $budget      = sanitize_text_field( $params['budget'] ?? '' );\n    $timeline    = sanitize_text_field( $params['timeline'] ?? '' );\n    $description = sanitize_textarea_field( $params['description'] ?? '' );\n\n    if ( empty( $name ) || empty( $phone ) ) {\n        return new WP_Error( 'missing_fields', 'لطفاً نام و شماره تماس را وارد فرمایید.', array( 'status' => 400 ) );\n    }\n\n    $post_id = wp_insert_post( array(\n        'post_title'   => $name . ' — ' . date_i18n( 'Y/m/d H:i' ),\n        'post_type'    => 'wispaar_brief',\n        'post_status'  => 'publish',\n    ) );\n\n    if ( is_wp_error( $post_id ) ) {\n        return new WP_Error( 'save_failed', 'خطا در ثبت بریف در وردپرس.', array( 'status' => 500 ) );\n    }\n\n    update_post_meta( $post_id, '_wispaar_lead_phone', $phone );\n    update_post_meta( $post_id, '_wispaar_lead_email', $email );\n    update_post_meta( $post_id, '_wispaar_lead_services', $services );\n    update_post_meta( $post_id, '_wispaar_lead_goals', $goals );\n    update_post_meta( $post_id, '_wispaar_lead_platform', $platform );\n    update_post_meta( $post_id, '_wispaar_lead_website', $website );\n    update_post_meta( $post_id, '_wispaar_lead_budget', $budget );\n    update_post_meta( $post_id, '_wispaar_lead_timeline', $timeline );\n    update_post_meta( $post_id, '_wispaar_lead_desc', $description );\n    update_post_meta( $post_id, '_wispaar_lead_status', 'new' );\n\n    // Optional admin email\n    $admin_email = get_option( 'admin_email' );\n    if ( $admin_email ) {\n        @wp_mail(\n            $admin_email,\n            'درخواست پروژه جدید: ' . $name,\n            \"یک بریف جدید از فرانت‌اند هدلس ویسپار دریافت شد:\\nنام: $name\\nشماره: $phone\\nایمیل: $email\\nبودجه: $budget\\nشرح: $description\"\n        );\n    }\n\n    return rest_ensure_response( array(\n        'success' => true,\n        'message' => 'بریف پروژه شما با موفقیت در سیستم وردپرس هدلس ویسپار ثبت شد.',\n        'lead_id' => $post_id,\n        'lead'    => array(\n            'id'          => 'wp-' . $post_id,\n            'name'        => $name,\n            'phone'       => $phone,\n            'email'       => $email,\n            'services'    => $services,\n            'goals'       => $goals,\n            'platform'    => $platform,\n            'website'     => $website,\n            'budget'      => $budget,\n            'timeline'    => $timeline,\n            'description' => $description,\n            'status'      => 'new',\n            'createdAt'   => 'لحظاتی پیش (از طریق REST API وردپرس)',\n        ),\n    ) );\n}\n\n/**\n * 12. GET /leads (Retrieve briefs for Headless Management Dashboard)\n */\nfunction wispaar_rest_get_leads() {\n    $args = array(\n        'post_type'      => 'wispaar_brief',\n        'post_status'    => 'publish',\n        'posts_per_page' => 100,\n        'orderby'        => 'date',\n        'order'          => 'DESC',\n    );\n\n    $posts = get_posts( $args );\n    $leads = array();\n\n    foreach ( $posts as $p ) {\n        $leads[] = array(\n            'id'          => 'wp-' . $p->ID,\n            'name'        => explode( ' — ', $p->post_title )[0],\n            'phone'       => get_post_meta( $p->ID, '_wispaar_lead_phone', true ),\n            'email'       => get_post_meta( $p->ID, '_wispaar_lead_email', true ),\n            'services'    => get_post_meta( $p->ID, '_wispaar_lead_services', true ) ?: array(),\n            'goals'       => get_post_meta( $p->ID, '_wispaar_lead_goals', true ) ?: array(),\n            'platform'    => get_post_meta( $p->ID, '_wispaar_lead_platform', true ) ?: '',\n            'website'     => get_post_meta( $p->ID, '_wispaar_lead_website', true ) ?: '',\n            'budget'      => get_post_meta( $p->ID, '_wispaar_lead_budget', true ),\n            'timeline'    => get_post_meta( $p->ID, '_wispaar_lead_timeline', true ),\n            'description' => get_post_meta( $p->ID, '_wispaar_lead_desc', true ),\n            'status'      => get_post_meta( $p->ID, '_wispaar_lead_status', true ) ?: 'new',\n            'createdAt'   => get_the_date( 'Y/m/d H:i', $p ),\n        );\n    }\n\n    return rest_ensure_response( array(\n        'success' => true,\n        'count'   => count( $leads ),\n        'leads'   => $leads,\n    ) );\n}\n\n/**\n * 13. POST /seed (One-Click Auto-Seeder: Projects, Articles, Categories)\n */\nfunction wispaar_rest_seed_database() {\n    $seeded_count = 0;\n\n    $default_projects = array(\n        array(\n            'slug'      => 'arya-capital',\n            'title'     => 'آریا کاپیتال',\n            'title_en'  => 'Arya Capital',\n            'client'    => 'هلدینگ مدیریت سرمایه آریا',\n            'industry'  => 'فین‌تک و خدمات مالی',\n            'year'      => '۱۴۰۴',\n            'ptype'     => 'وب‌سایت اختصاصی و سیستم تحلیلی مالی',\n            'challenge' => 'نیاز به سامانه‌ای مدرن، بدون پیچیدگی‌های گیج‌کننده و با سرعت بارگذاری زیر ۱ ثانیه که بتواند گزارش‌های مالی تحلیلی را در قالبی شیک و خوانا به مخاطبان نخبه تجاری عرضه کند.',\n            'solution'  => 'طراحی بر مبنای تایپوگرافی مهندسی‌شده، پالت رنگی تیره لوکس، معماری بدون سربار جاوااسکریپت، و کشینگ پیشرفته در سمت سرور.',\n            'kpi1_lbl'  => 'شاخص عملکرد لایت‌هاوس',\n            'kpi1_val'  => '۹۹/۱۰۰',\n            'kpi2_lbl'  => 'سرعت بارگذاری اولیه (LCP)',\n            'kpi2_val'  => '۰.۸ ثانیه',\n        ),\n        array(\n            'slug'      => 'genome-labs',\n            'title'     => 'ژنوم لبز',\n            'title_en'  => 'Genome Labs',\n            'client'    => 'مرکز پژوهش و آزمایشگاه ژنتیک ژنوم',\n            'industry'  => 'علوم زیستی و پزشکی',\n            'year'      => '۱۴۰۳',\n            'ptype'     => 'پلتفرم جامع کاتالوگ تست‌ها و نتایج بالینی',\n            'challenge' => 'ارائه بیش از ۳۰۰ نوع تست ژنتیک و مقالات بالینی سنگین در قالب یک ساختار ساده، بدون آنکه کاربر در شلوغی دسته‌بندی‌ها سردرگم شود.',\n            'solution'  => 'پیاده‌سازی جستجوی لحظه‌ای با ساختار سلسله‌مراتبی و سیستم نوبت‌دهی آنلاین با بیشترین نرخ تکمیل موفق.',\n            'kpi1_lbl'  => 'سرعت دسترسی به نتایج',\n            'kpi1_val'  => '-۷۵٪',\n            'kpi2_lbl'  => 'رضایت جامعه پزشکی',\n            'kpi2_val'  => '۹۸٪',\n        ),\n        array(\n            'slug'      => 'hoor-atelier',\n            'title'     => 'آتلیه معماری هور',\n            'title_en'  => 'Hoor Atelier',\n            'client'    => 'دفتر معماری و طراحی داخلی هور',\n            'industry'  => 'معماری و دکوراسیون لوکس',\n            'year'      => '۱۴۰۴',\n            'ptype'     => 'پورتفولیو مینیمال با گالری‌های فرمت‌بالا',\n            'challenge' => 'نمایش تصاویر پروژه‌های ساختمانی با رزولوشن بسیار بالا بدون افت وحشتناک سرعت بارگذاری در اینترنت موبایل.',\n            'solution'  => 'معماری مدرن رندرینگ تصاویر در ابعاد دقیق، بارگذاری تدریجی هوشمند و سیستم تمپلیت اختصاصی.',\n            'kpi1_lbl'  => 'حجم صفحه اول',\n            'kpi1_val'  => '۸۲۰ کیلوبایت',\n            'kpi2_lbl'  => 'شاخص وفاداری بصری',\n            'kpi2_val'  => '۱۰۰٪',\n        ),\n        array(\n            'slug'      => 'synapse-cloud',\n            'title'     => 'سیناپس کلود',\n            'title_en'  => 'Synapse Cloud',\n            'client'    => 'ارائه‌دهنده راهکارهای ابری سازمانی سیناپس',\n            'industry'  => 'زیرساخت ابری و IT',\n            'year'      => '۱۴۰۳',\n            'ptype'     => 'لندینگ پیج‌های پرتبدیل B2B و ماشین حساب هزینه ابری',\n            'challenge' => 'مشتریان سازمانی در نگاه اول ارزش فنی زیرساخت ابری را متوجه نمی‌شدند و نرخ پرش لندینگ پیج بالا بود.',\n            'solution'  => 'بازطراحی معماری محتوا با تمرکز بر شفافیت ارزش پیشنهادی، ماشین‌حساب تعاملی برآورد هزینه سرور و بهینه‌سازی فرم جذب سرنخ.',\n            'kpi1_lbl'  => 'نرخ تبدیل لندینگ',\n            'kpi1_val'  => '۴.۸٪',\n            'kpi2_lbl'  => 'کاهش زمان جذب مشتری',\n            'kpi2_val'  => '۳.۲ روز',\n        ),\n    );\n\n    foreach ( $default_projects as $proj ) {\n        // Check if project exists by slug\n        $existing = get_page_by_path( $proj['slug'], OBJECT, 'wispaar_project' );\n        if ( ! $existing ) {\n            $post_id = wp_insert_post( array(\n                'post_title'   => $proj['title'],\n                'post_name'    => $proj['slug'],\n                'post_type'    => 'wispaar_project',\n                'post_status'  => 'publish',\n                'post_content' => $proj['solution'],\n                'post_excerpt' => $proj['challenge'],\n            ) );\n\n            if ( ! is_wp_error( $post_id ) ) {\n                update_post_meta( $post_id, '_wispaar_title_en', $proj['title_en'] );\n                update_post_meta( $post_id, '_wispaar_client', $proj['client'] );\n                update_post_meta( $post_id, '_wispaar_industry', $proj['industry'] );\n                update_post_meta( $post_id, '_wispaar_year', $proj['year'] );\n                update_post_meta( $post_id, '_wispaar_ptype', $proj['ptype'] );\n                update_post_meta( $post_id, '_wispaar_challenge', $proj['challenge'] );\n                update_post_meta( $post_id, '_wispaar_solution', $proj['solution'] );\n                update_post_meta( $post_id, '_wispaar_kpi1_lbl', $proj['kpi1_lbl'] );\n                update_post_meta( $post_id, '_wispaar_kpi1_val', $proj['kpi1_val'] );\n                update_post_meta( $post_id, '_wispaar_kpi2_lbl', $proj['kpi2_lbl'] );\n                update_post_meta( $post_id, '_wispaar_kpi2_val', $proj['kpi2_val'] );\n                update_post_meta( $post_id, '_wispaar_is_demo', 1 );\n\n                if ( taxonomy_exists( 'project_industry' ) ) {\n                    wp_set_object_terms( $post_id, $proj['industry'], 'project_industry' );\n                }\n\n                $seeded_count++;\n            }\n        }\n    }\n\n    // Seed sample blog post if no posts exist\n    $posts_count = wp_count_posts( 'post' );\n    if ( (int) ( $posts_count->publish ?? 0 ) === 0 ) {\n        wp_insert_post( array(\n            'post_title'   => 'چرا وب‌سایت‌های سنگین و کند، اعتماد مشتری را می‌کشند؟',\n            'post_name'    => 'why-slow-websites-destroy-trust',\n            'post_type'    => 'post',\n            'post_status'  => 'publish',\n            'post_content' => 'تحقیقات نشان می‌دهد هر ثانیه تأخیر در لود سایت، ۱۶٪ از رضایت مشتری و ۷٪ از نرخ تبدیل را کاهش می‌دهد. در استودیو ویسپار، سرعت صرفاً یک ویژگی نیست؛ بلکه پایه اعتماد و معماری تجربه کاربری است.',\n            'post_excerpt' => 'تحلیل مهندسی و بیزینسی تأثیر سرعت بارگذاری سایت بر درک ارزش برند و تصمیم‌گیری مشتریان B2B و B2C.',\n        ) );\n    }\n\n    return rest_ensure_response( array(\n        'success'      => true,\n        'message'      => \"درون‌ریزی اولیه با موفقیت انجام شد. $seeded_count پروژه جدید در دیتابیس وردپرس ثبت گردید.\",\n        'seeded_count' => $seeded_count,\n    ) );\n}\n\n/**\n * 14. GET /settings (Site Information)\n */\nfunction wispaar_rest_get_settings() {\n    return rest_ensure_response( array(\n        'title'        => get_bloginfo( 'name' ),\n        'tagline'      => get_bloginfo( 'description' ),\n        'email'        => get_option( 'admin_email' ),\n        'phone'        => '021-91000000',\n        'address'      => 'تهران، میدان ونک، برج نگار، طبقه ۱۲، استودیو فناوری ویسپار',\n        'social'       => array(\n            'linkedin' => 'https://linkedin.com/company/wispaar',\n            'github'   => 'https://github.com/wispaar',\n            'telegram' => 'https://t.me/wispaar_studio',\n        ),\n    ) );\n}\n"},
+  {
+    "name": "inc/widgets/widget-brief-form.php",
+    "path": "inc/widgets/widget-brief-form.php",
+    "description": "ابزارک اختصاصی المنتور: فرم چندمرحله‌ای تعاملی ثبت بریف پروژه با ارسال ایجکس",
+    "content": "<?php\n/**\n * Elementor Widget: Wispaar Brief Form\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nclass Wispaar_Elementor_Brief_Form_Widget extends \\Elementor\\Widget_Base {\n\n    public function get_name() {\n        return 'wispaar_brief_form';\n    }\n\n    public function get_title() {\n        return esc_html__( 'فرم هوشمند بریف پروژه (Wispaar Brief Form)', 'wispaar' );\n    }\n\n    public function get_icon() {\n        return 'eicon-form-horizontal';\n    }\n\n    public function get_categories() {\n        return array( 'wispaar-elements' );\n    }\n\n    protected function register_controls() {\n        $this->start_controls_section(\n            'section_content',\n            array(\n                'label' => esc_html__( 'تنظیمات فرم', 'wispaar' ),\n                'tab'   => \\Elementor\\Controls_Manager::TAB_CONTENT,\n            )\n        );\n\n        $this->add_control(\n            'form_title',\n            array(\n                'label'   => esc_html__( 'عنوان فرم', 'wispaar' ),\n                'type'    => \\Elementor\\Controls_Manager::TEXT,\n                'default' => 'آغاز فرآیند همکاری: تنظیم بریف پروژه',\n            )\n        );\n\n        $this->end_controls_section();\n    }\n\n    protected function render() {\n        $settings = $this->get_settings_for_display();\n        ?>\n        <div id=\"wispaar-brief-section\" class=\"bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-10 text-right\">\n            <div class=\"mb-8\">\n                <span class=\"badge-code mb-2\">&lt;INTERACTIVE BRIEF CONFIGURATOR&gt;</span>\n                <h2 class=\"text-2xl sm:text-3xl font-bold text-[#F5F8FC] mt-2\">\n                    <?php echo esc_html( $settings['form_title'] ); ?>\n                </h2>\n                <p class=\"text-sm text-[#8C9BAD] mt-1\">\n                    پاسخ‌های شما مستقیماً در پنل مدیریت وردپرس ذخیره شده و تیم فنی پس از تحلیل ساختار با شما تماس خواهد گرفت.\n                </p>\n            </div>\n\n            <div id=\"brief-result-msg\" style=\"display:none; padding:12px; margin-bottom:16px; border-radius:8px; font-weight:500; font-size:14px; background:#0A1626; border:1px solid #172638;\"></div>\n\n            <form id=\"wispaar-brief-form\" class=\"space-y-6\">\n                <!-- مرحله ۱: نیازهای اصلی -->\n                <div id=\"brief-step-1\">\n                    <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۱. به چه خدماتی نیاز دارید؟</h3>\n                    <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6\">\n                        <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\">\n                            <input type=\"checkbox\" name=\"services[]\" value=\"طراحی وب‌سایت اختصاصی\">\n                            <span style=\"font-size:13px; color:#F5F8FC;\">طراحی وب‌سایت اختصاصی</span>\n                        </label>\n                        <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\">\n                            <input type=\"checkbox\" name=\"services[]\" value=\"توسعه و مهندسی وردپرس\">\n                            <span style=\"font-size:13px; color:#F5F8FC;\">توسعه و مهندسی وردپرس</span>\n                        </label>\n                        <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\">\n                            <input type=\"checkbox\" name=\"services[]\" value=\"صفحه فرود و نرخ تبدیل (CRO)\">\n                            <span style=\"font-size:13px; color:#F5F8FC;\">صفحه فرود و نرخ تبدیل (CRO)</span>\n                        </label>\n                        <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\">\n                            <input type=\"checkbox\" name=\"services[]\" value=\"سئو تکنیکال و استراتژی رشد\">\n                            <span style=\"font-size:13px; color:#F5F8FC;\">سئو تکنیکال و استراتژی رشد</span>\n                        </label>\n                    </div>\n                </div>\n\n                <!-- مرحله ۲: وضعیت و بستر فعلی -->\n                <div id=\"brief-step-2\" style=\"display:none;\">\n                    <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۲. بستر و اهداف فعلی</h3>\n                    <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6\">\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">سیستم مدیریت محتوا یا فریم‌ورک فعلی:</label>\n                            <input type=\"text\" name=\"platform\" placeholder=\"مثلاً: وردپرس، لاراول، سایت جدید...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\">\n                        </div>\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">آدرس وب‌سایت فعلی (در صورت وجود):</label>\n                            <input type=\"url\" name=\"website\" placeholder=\"https://example.com\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\">\n                        </div>\n                    </div>\n                </div>\n\n                <!-- مرحله ۳: بودجه و زمان‌بندی -->\n                <div id=\"brief-step-3\" style=\"display:none;\">\n                    <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۳. برآورد بودجه و زمان‌بندی</h3>\n                    <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6\">\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">محدوده بودجه سرمایه‌گذاری:</label>\n                            <select name=\"budget\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\">\n                                <option value=\"زیر ۵۰ میلیون تومان\">زیر ۵۰ میلیون تومان (پروژه‌های چابک)</option>\n                                <option value=\"۵۰ تا ۱۰۰ میلیون تومان\" selected>۵۰ تا ۱۰۰ میلیون تومان (استاندارد شرکتی)</option>\n                                <option value=\"۱۰۰ تا ۲۰۰ میلیون تومان\">۱۰۰ تا ۲۰۰ میلیون تومان (پلتفرم‌های جامع)</option>\n                                <option value=\"بالای ۲۰۰ میلیون تومان\">بالای ۲۰۰ میلیون تومان (سازمانی و مقیاس بزرگ)</option>\n                            </select>\n                        </div>\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">زمان‌بندی ایده‌آل برای تحویل:</label>\n                            <select name=\"timeline\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\">\n                                <option value=\"فوری (زیر ۳ هفته)\">فوری (زیر ۳ هفته)</option>\n                                <option value=\"۱ تا ۲ ماه\" selected>۱ تا ۲ ماه (روال مهندسی متعارف)</option>\n                                <option value=\"۳ ماه به بالا\">۳ ماه به بالا (پروژه‌های عمیق پژوهشی)</option>\n                            </select>\n                        </div>\n                    </div>\n                </div>\n\n                <!-- مرحله ۴: اطلاعات تماس -->\n                <div id=\"brief-step-4\" style=\"display:none;\">\n                    <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۴. مشخصات تماس و توضیحات تکمیلی</h3>\n                    <div class=\"grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4\">\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">نام و نام خانوادگی / نام برند *</label>\n                            <input type=\"text\" name=\"name\" required placeholder=\"مثال: علی احمدی / گروه آریا\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\">\n                        </div>\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">شماره تماس همراه *</label>\n                            <input type=\"tel\" name=\"phone\" required placeholder=\"۰۹۱۲...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\">\n                        </div>\n                        <div>\n                            <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">پست الکترونیکی (ایمیل) *</label>\n                            <input type=\"email\" name=\"email\" required placeholder=\"info@brand.com\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\">\n                        </div>\n                    </div>\n                    <div class=\"mb-4\">\n                        <label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">توضیحات تکمیلی، چالش‌ها یا نیازمندی‌های اختصاصی:</label>\n                        <textarea name=\"description\" rows=\"3\" placeholder=\"مختصری درباره چشم‌انداز یا چالش اصلی پروژه بنویسید...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"></textarea>\n                    </div>\n                </div>\n\n                <!-- کنترل دکمه‌های فرم -->\n                <div style=\"display:flex; items-center; justify-content:space-between; padding-top:16px; border-top:1px solid #172638;\">\n                    <button type=\"button\" id=\"brief-prev-step\" class=\"btn-secondary\" style=\"display:none;\">\n                        → مرحله قبل\n                    </button>\n                    <div></div>\n                    <button type=\"button\" id=\"brief-next-step\" class=\"btn-primary\">\n                        مرحله بعد ←\n                    </button>\n                    <button type=\"submit\" id=\"brief-submit-btn\" class=\"btn-primary\" style=\"display:none; background:#22C55E;\">\n                        ثبت نهایی بریف در سیستم وردپرس ✓\n                    </button>\n                </div>\n            </form>\n        </div>\n        <?php\n    }\n\n    public function render_plain_content() {\n        $this->render();\n    }\n}\n\nfunction wispaar_render_brief_form( $title = 'آغاز فرآیند همکاری: تنظیم بریف پروژه' ) {\n    ?>\n    <div id=\"wispaar-brief-section\" class=\"bg-[#06111F] border border-[#172638] rounded-2xl p-6 sm:p-10 text-right\">\n        <div class=\"mb-8\">\n            <span class=\"badge-code mb-2\">&lt;INTERACTIVE BRIEF CONFIGURATOR&gt;</span>\n            <h2 class=\"text-2xl sm:text-3xl font-bold text-[#F5F8FC] mt-2\"><?php echo esc_html( $title ); ?></h2>\n            <p class=\"text-sm text-[#8C9BAD] mt-1\">پاسخ‌های شما مستقیماً در پنل مدیریت وردپرس ذخیره شده و تیم فنی پس از تحلیل ساختار با شما تماس خواهد گرفت.</p>\n        </div>\n        <div id=\"brief-result-msg\" style=\"display:none; padding:12px; margin-bottom:16px; border-radius:8px; font-weight:500; font-size:14px; background:#0A1626; border:1px solid #172638;\"></div>\n        <form id=\"wispaar-brief-form\" class=\"space-y-6\">\n            <div id=\"brief-step-1\">\n                <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۱. به چه خدماتی نیاز دارید؟</h3>\n                <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6\">\n                    <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\"><input type=\"checkbox\" name=\"services[]\" value=\"طراحی وب‌سایت اختصاصی\"><span style=\"font-size:13px; color:#F5F8FC;\">طراحی وب‌سایت اختصاصی</span></label>\n                    <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\"><input type=\"checkbox\" name=\"services[]\" value=\"توسعه و مهندسی وردپرس\"><span style=\"font-size:13px; color:#F5F8FC;\">توسعه و مهندسی وردپرس</span></label>\n                    <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\"><input type=\"checkbox\" name=\"services[]\" value=\"صفحه فرود و نرخ تبدیل (CRO)\"><span style=\"font-size:13px; color:#F5F8FC;\">صفحه فرود و نرخ تبدیل (CRO)</span></label>\n                    <label style=\"display:flex; align-items:center; gap:8px; padding:12px; background:#0A1626; border:1px solid #172638; border-radius:8px; cursor:pointer;\"><input type=\"checkbox\" name=\"services[]\" value=\"سئو تکنیکال و استراتژی رشد\"><span style=\"font-size:13px; color:#F5F8FC;\">سئو تکنیکال و استراتژی رشد</span></label>\n                </div>\n            </div>\n            <div id=\"brief-step-2\" style=\"display:none;\">\n                <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۲. بستر و اهداف فعلی</h3>\n                <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6\">\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">سیستم مدیریت محتوا یا فریم‌ورک فعلی:</label><input type=\"text\" name=\"platform\" placeholder=\"مثلاً: وردپرس، لاراول، سایت جدید...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"></div>\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">آدرس وب‌سایت فعلی (در صورت وجود):</label><input type=\"url\" name=\"website\" placeholder=\"https://example.com\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\"></div>\n                </div>\n            </div>\n            <div id=\"brief-step-3\" style=\"display:none;\">\n                <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۳. برآورد بودجه و زمان‌بندی</h3>\n                <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6\">\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">محدوده بودجه سرمایه‌گذاری:</label><select name=\"budget\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"><option value=\"زیر ۵۰ میلیون تومان\">زیر ۵۰ میلیون تومان</option><option value=\"۵۰ تا ۱۰۰ میلیون تومان\" selected>۵۰ تا ۱۰۰ میلیون تومان</option><option value=\"۱۰۰ تا ۲۰۰ میلیون تومان\">۱۰۰ تا ۲۰۰ میلیون تومان</option><option value=\"بالای ۲۰۰ میلیون تومان\">بالای ۲۰۰ میلیون تومان</option></select></div>\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">زمان‌بندی تحویل:</label><select name=\"timeline\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"><option value=\"فوری (زیر ۳ هفته)\">فوری (زیر ۳ هفته)</option><option value=\"۱ تا ۲ ماه\" selected>۱ تا ۲ ماه</option><option value=\"۳ ماه به بالا\">۳ ماه به بالا</option></select></div>\n                </div>\n            </div>\n            <div id=\"brief-step-4\" style=\"display:none;\">\n                <h3 class=\"text-base font-bold text-[#00D9FF] mb-4\">۴. مشخصات تماس و توضیحات تکمیلی</h3>\n                <div class=\"grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4\">\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">نام و نام خانوادگی / نام برند *</label><input type=\"text\" name=\"name\" required placeholder=\"مثال: علی احمدی\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"></div>\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">شماره تماس همراه *</label><input type=\"tel\" name=\"phone\" required placeholder=\"۰۹۱۲...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\"></div>\n                    <div><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">پست الکترونیکی (ایمیل) *</label><input type=\"email\" name=\"email\" required placeholder=\"info@brand.com\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px; direction:ltr;\"></div>\n                </div>\n                <div class=\"mb-4\"><label style=\"display:block; font-size:12px; color:#8C9BAD; margin-bottom:6px;\">توضیحات تکمیلی:</label><textarea name=\"description\" rows=\"3\" placeholder=\"مختصری درباره چشم‌انداز یا چالش اصلی پروژه بنویسید...\" style=\"width:100%; padding:10px 14px; background:#0A1626; border:1px solid #172638; border-radius:8px; color:#F5F8FC; font-size:14px;\"></textarea></div>\n            </div>\n            <div style=\"display:flex; justify-content:space-between; padding-top:16px; border-top:1px solid #172638;\">\n                <button type=\"button\" id=\"brief-prev-step\" class=\"btn-secondary\" style=\"display:none;\">→ مرحله قبل</button>\n                <div></div>\n                <button type=\"button\" id=\"brief-next-step\" class=\"btn-primary\">مرحله بعد ←</button>\n                <button type=\"submit\" id=\"brief-submit-btn\" class=\"btn-primary\" style=\"display:none; background:#22C55E;\">ثبت نهایی بریف در سیستم وردپرس ✓</button>\n            </div>\n        </form>\n    </div>\n    <?php\n}\n"
+  },
+  {
+    "name": "inc/widgets/widget-hero.php",
+    "path": "inc/widgets/widget-hero.php",
+    "description": "ابزارک اختصاصی المنتور: سکشن هیرو مدرن ویسپار با کنترل‌های استاندارد URL و دکمه‌ها",
+    "content": "<?php\n/**\n * Elementor Widget: Wispaar Hero\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nclass Wispaar_Elementor_Hero_Widget extends \\Elementor\\Widget_Base {\n\n    public function get_name() {\n        return 'wispaar_hero';\n    }\n\n    public function get_title() {\n        return esc_html__( 'هیرو اختصاصی ویسپار (Wispaar Hero)', 'wispaar' );\n    }\n\n    public function get_icon() {\n        return 'eicon-banner';\n    }\n\n    public function get_categories() {\n        return array( 'wispaar-elements' );\n    }\n\n    protected function register_controls() {\n        $this->start_controls_section(\n            'content_section',\n            array(\n                'label' => esc_html__( 'تنظیمات محتوا', 'wispaar' ),\n                'tab'   => \\Elementor\\Controls_Manager::TAB_CONTENT,\n            )\n        );\n\n        $this->add_control(\n            'subtitle',\n            array(\n                'label'       => esc_html__( 'پیش‌عنوان / امضا', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::TEXT,\n                'default'     => 'WISDOM + TECHNOLOGY / آفرینش با خرد',\n            )\n        );\n\n        $this->add_control(\n            'headline',\n            array(\n                'label'       => esc_html__( 'عنوان اصلی', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::TEXTAREA,\n                'default'     => 'ایده‌ها را فقط اجرا نمی‌کنیم؛ آن‌ها را به تجربه‌های دیجیتال ماندگار تبدیل می‌کنیم.',\n            )\n        );\n\n        $this->add_control(\n            'description',\n            array(\n                'label'       => esc_html__( 'توضیحات معرفی', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::TEXTAREA,\n                'default'     => 'ویسپار یک استودیو فناوری و طراحی دیجیتال است. ما وب‌سایت‌های اختصاصی، زیرساخت مهندسی وردپرس، لندینگ‌پیج‌های پرتبدیل و سئو تکنیکال را با استانداردهای بین‌المللی خلق می‌کنیم.',\n            )\n        );\n\n        $this->add_control(\n            'cta_text_1',\n            array(\n                'label'       => esc_html__( 'متن دکمه اول', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::TEXT,\n                'default'     => 'شروع یک پروژه ←',\n            )\n        );\n\n        $this->add_control(\n            'cta_link_1',\n            array(\n                'label'       => esc_html__( 'لینک دکمه اول', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::URL,\n                'placeholder' => '#wispaar-brief-section',\n                'default'     => array(\n                    'url'               => '#wispaar-brief-section',\n                    'is_external'       => false,\n                    'nofollow'          => false,\n                    'custom_attributes' => '',\n                ),\n            )\n        );\n\n        $this->add_control(\n            'cta_text_2',\n            array(\n                'label'       => esc_html__( 'متن دکمه دوم', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::TEXT,\n                'default'     => 'مشاهده نمونه‌کارها',\n            )\n        );\n\n        $this->add_control(\n            'cta_link_2',\n            array(\n                'label'       => esc_html__( 'لینک دکمه دوم', 'wispaar' ),\n                'type'        => \\Elementor\\Controls_Manager::URL,\n                'placeholder' => '#portfolio',\n                'default'     => array(\n                    'url'               => '#portfolio',\n                    'is_external'       => false,\n                    'nofollow'          => false,\n                    'custom_attributes' => '',\n                ),\n            )\n        );\n\n        $this->end_controls_section();\n    }\n\n    protected function render() {\n        $settings = $this->get_settings_for_display();\n\n        $cta_1_url = '#wispaar-brief-section';\n        if ( ! empty( $settings['cta_link_1'] ) ) {\n            if ( is_array( $settings['cta_link_1'] ) && ! empty( $settings['cta_link_1']['url'] ) ) {\n                $cta_1_url = $settings['cta_link_1']['url'];\n            } elseif ( is_string( $settings['cta_link_1'] ) ) {\n                $cta_1_url = $settings['cta_link_1'];\n            }\n        }\n\n        $cta_2_url = '#portfolio';\n        if ( ! empty( $settings['cta_link_2'] ) ) {\n            if ( is_array( $settings['cta_link_2'] ) && ! empty( $settings['cta_link_2']['url'] ) ) {\n                $cta_2_url = $settings['cta_link_2']['url'];\n            } elseif ( is_string( $settings['cta_link_2'] ) ) {\n                $cta_2_url = $settings['cta_link_2'];\n            }\n        }\n        ?>\n        <div class=\"py-12 md:py-20 text-right\">\n            <div class=\"flex items-center gap-2 mb-6 font-mono text-xs text-[#00D9FF]\">\n                <span class=\"badge-code\">&lt;/&gt;</span>\n                <span><?php echo esc_html( $settings['subtitle'] ); ?></span>\n            </div>\n\n            <h1 class=\"text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F8FC] mb-6 leading-tight\">\n                <?php echo nl2br( esc_html( $settings['headline'] ) ); ?>\n            </h1>\n\n            <p class=\"text-base sm:text-lg text-[#8C9BAD] max-w-2xl mb-8 leading-relaxed\">\n                <?php echo nl2br( esc_html( $settings['description'] ) ); ?>\n            </p>\n\n            <div class=\"flex flex-wrap items-center gap-4\">\n                <a href=\"<?php echo esc_url( $cta_1_url ); ?>\" class=\"btn-primary\">\n                    <?php echo esc_html( $settings['cta_text_1'] ); ?>\n                </a>\n\n                <a href=\"<?php echo esc_url( $cta_2_url ); ?>\" class=\"btn-secondary\">\n                    <?php echo esc_html( $settings['cta_text_2'] ); ?>\n                </a>\n            </div>\n        </div>\n        <?php\n    }\n}\n"
+  },
+  {
+    "name": "inc/widgets/widget-portfolio.php",
+    "path": "inc/widgets/widget-portfolio.php",
+    "description": "ابزارک اختصاصی المنتور: گرید هوشمند پروژه‌ها با کوئری خودکار از دیتابیس",
+    "content": "<?php\n/**\n * Elementor Widget: Wispaar Portfolio Grid\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nclass Wispaar_Elementor_Portfolio_Widget extends \\Elementor\\Widget_Base {\n\n    public function get_name() {\n        return 'wispaar_portfolio';\n    }\n\n    public function get_title() {\n        return esc_html__( 'گرید پروژه‌ها (Wispaar Portfolio Grid)', 'wispaar' );\n    }\n\n    public function get_icon() {\n        return 'eicon-gallery-grid';\n    }\n\n    public function get_categories() {\n        return array( 'wispaar-elements' );\n    }\n\n    protected function register_controls() {\n        $this->start_controls_section(\n            'section_query',\n            array(\n                'label' => esc_html__( 'تنظیمات نمایش', 'wispaar' ),\n                'tab'   => \\Elementor\\Controls_Manager::TAB_CONTENT,\n            )\n        );\n\n        $this->add_control(\n            'posts_per_page',\n            array(\n                'label'   => esc_html__( 'تعداد پروژه‌ها', 'wispaar' ),\n                'type'    => \\Elementor\\Controls_Manager::NUMBER,\n                'default' => 4,\n            )\n        );\n\n        $this->end_controls_section();\n    }\n\n    protected function render() {\n        $settings = $this->get_settings_for_display();\n\n        $args = array(\n            'post_type'      => 'wispaar_project',\n            'posts_per_page' => $settings['posts_per_page'],\n            'post_status'    => 'publish',\n        );\n\n        $query = new WP_Query( $args );\n        ?>\n        <div class=\"grid grid-cols-1 md:grid-cols-2 gap-8 text-right\">\n            <?php\n            if ( $query->have_posts() ) :\n                while ( $query->have_posts() ) : $query->the_post();\n                    $id       = get_the_ID();\n                    $title_en = get_post_meta( $id, '_wispaar_title_en', true );\n                    $client   = get_post_meta( $id, '_wispaar_client', true );\n                    $year     = get_post_meta( $id, '_wispaar_year', true );\n                    $ptype    = get_post_meta( $id, '_wispaar_ptype', true );\n                    $is_demo  = get_post_meta( $id, '_wispaar_is_demo', true ) === '1';\n                    $kpi1_val = get_post_meta( $id, '_wispaar_kpi1_val', true );\n                    $kpi1_lbl = get_post_meta( $id, '_wispaar_kpi1_lbl', true );\n                    $kpi2_val = get_post_meta( $id, '_wispaar_kpi2_val', true );\n                    $kpi2_lbl = get_post_meta( $id, '_wispaar_kpi2_lbl', true );\n                    ?>\n                    <article class=\"project-card\">\n                        <div class=\"card-media\">\n                            <?php if ( $is_demo ) : ?>\n                                <div style=\"position:absolute; top:12px; right:12px; z-index:10;\">\n                                    <span class=\"badge-demo\">CONCEPT / DEMO</span>\n                                </div>\n                            <?php endif; ?>\n\n                            <a href=\"<?php the_permalink(); ?>\">\n                                <?php if ( has_post_thumbnail() ) : ?>\n                                    <?php the_post_thumbnail( 'large', array( 'class' => 'w-full h-full object-cover' ) ); ?>\n                                <?php else : ?>\n                                    <div style=\"width:100%; height:220px; background:#0A1626; display:flex; align-items:center; justify-content:center; color:#536174; font-family:monospace; font-size:12px;\">\n                                        &lt;PREVIEW FRAME&gt;\n                                    </div>\n                                <?php endif; ?>\n                            </a>\n                        </div>\n\n                        <div class=\"card-content\">\n                            <div>\n                                <div style=\"display:flex; align-items:center; gap:8px; font-size:12px; color:#8C9BAD; margin-bottom:8px;\">\n                                    <span><?php echo esc_html( $client ?: 'اختصاصی ویسپار' ); ?></span>\n                                    <span>·</span>\n                                    <span><?php echo esc_html( $ptype ?: 'وب‌سایت اختصاصی' ); ?></span>\n                                    <span>·</span>\n                                    <span><?php echo esc_html( $year ?: '۱۴۰۴' ); ?></span>\n                                </div>\n\n                                <h3 style=\"font-size:1.25rem; font-weight:700; margin-bottom:8px;\">\n                                    <a href=\"<?php the_permalink(); ?>\" style=\"color:#F5F8FC;\">\n                                        <?php the_title(); ?>\n                                        <?php if ( $title_en ) : ?>\n                                            <span style=\"display:block; font-size:12px; font-weight:normal; color:#8C9BAD; direction:ltr; text-align:right;\">\n                                                <?php echo esc_html( $title_en ); ?>\n                                            </span>\n                                        <?php endif; ?>\n                                    </a>\n                                </h3>\n\n                                <div style=\"font-size:13px; color:#8C9BAD; margin-bottom:16px;\">\n                                    <?php the_excerpt(); ?>\n                                </div>\n                            </div>\n\n                            <?php if ( $kpi1_val || $kpi2_val ) : ?>\n                                <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:12px; border-top:1px solid #172638; font-size:12px;\">\n                                    <?php if ( $kpi1_val ) : ?>\n                                        <div>\n                                            <div style=\"font-size:16px; font-weight:700; color:#00D9FF; font-family:monospace;\"><?php echo esc_html( $kpi1_val ); ?></div>\n                                            <div style=\"color:#8C9BAD; font-size:11px;\"><?php echo esc_html( $kpi1_lbl ?: 'شاخص عملکرد' ); ?></div>\n                                        </div>\n                                    <?php endif; ?>\n                                    <?php if ( $kpi2_val ) : ?>\n                                        <div>\n                                            <div style=\"font-size:16px; font-weight:700; color:#22C55E; font-family:monospace;\"><?php echo esc_html( $kpi2_val ); ?></div>\n                                            <div style=\"color:#8C9BAD; font-size:11px;\"><?php echo esc_html( $kpi2_lbl ?: 'نرخ تبدیل' ); ?></div>\n                                        </div>\n                                    <?php endif; ?>\n                                </div>\n                            <?php endif; ?>\n                        </div>\n                    </article>\n                    <?php\n                endwhile;\n                wp_reset_postdata();\n            else :\n                ?>\n                <p style=\"color:#8C9BAD;\">پروژه‌ای برای نمایش یافت نشد. می‌توانید از منوی پیشخوان وردپرس پروژه جدید ثبت کنید.</p>\n                <?php\n            endif;\n            ?>\n        </div>\n        <?php\n    }\n}\n"
+  },
+  {
+    "name": "inc/widgets/widget-services.php",
+    "path": "inc/widgets/widget-services.php",
+    "description": "ابزارک اختصاصی المنتور: کارت‌های خدمات تخصصی ویسپار",
+    "content": "<?php\n/**\n * Elementor Widget: Wispaar Services\n */\n\nif ( ! defined( 'ABSPATH' ) ) {\n    exit;\n}\n\nclass Wispaar_Elementor_Services_Widget extends \\Elementor\\Widget_Base {\n\n    public function get_name() {\n        return 'wispaar_services';\n    }\n\n    public function get_title() {\n        return esc_html__( 'خدمات ویسپار (Wispaar Services)', 'wispaar' );\n    }\n\n    public function get_icon() {\n        return 'eicon-bullet-list';\n    }\n\n    public function get_categories() {\n        return array( 'wispaar-elements' );\n    }\n\n    protected function render() {\n        $services = array(\n            array(\n                'num'   => '01',\n                'title' => 'طراحی و توسعه وب‌سایت‌های اختصاصی',\n                'desc'  => 'معماری مدرن، سرعت لود زیر ۱ ثانیه، رابط کاربری اختصاصی بدون قالب‌های سنگین آماده، هماهنگ با هویت برند شما.',\n                'link'  => home_url( '/services/web-design' ),\n            ),\n            array(\n                'num'   => '02',\n                'title' => 'توسعه و مهندسی پیشرفته وردپرس',\n                'desc'  => 'قالب‌های سفارشی تمیز، کوئری‌های بهینه، امنیت بالا، و انطباق کامل با انواع صفحه‌سازها و سیستم‌های سفارشی.',\n                'link'  => home_url( '/services/wordpress' ),\n            ),\n            array(\n                'num'   => '03',\n                'title' => 'طراحی صفحات فرود با نرخ تبدیل بالا (CRO)',\n                'desc'  => 'تحلیل رفتار مخاطب، ساختاربندی پیام بر اساس درد مشتری، طراحی هدلاین‌های گیرا و تبدیل ترافیک به مشتری وفادار.',\n                'link'  => home_url( '/services/landing-page' ),\n            ),\n            array(\n                'num'   => '04',\n                'title' => 'سئو تکنیکال و استراتژی ساختاریافته',\n                'desc'  => 'بهینه‌سازی Core Web Vitals، ساختار داده Schema، استراتژی محتوای خوشه‌ای و رشد ارگانیک و پایدار در گوگل.',\n                'link'  => home_url( '/services/technical-seo' ),\n            ),\n        );\n        ?>\n        <div class=\"grid grid-cols-1 md:grid-cols-2 gap-6 text-right\">\n            <?php foreach ( $services as $s ) : ?>\n                <div class=\"wispaar-card p-6\" style=\"display:flex; flex-direction:column; justify-content:space-between;\">\n                    <div>\n                        <div style=\"font-family:monospace; font-size:12px; color:#00D9FF; margin-bottom:12px;\">// SERVICE <?php echo esc_html($s['num']); ?></div>\n                        <h3 style=\"font-size:1.15rem; font-weight:700; color:#F5F8FC; margin-bottom:8px;\"><?php echo esc_html($s['title']); ?></h3>\n                        <p style=\"font-size:13px; color:#8C9BAD; line-height:1.7;\"><?php echo esc_html($s['desc']); ?></p>\n                    </div>\n                    <div style=\"margin-top:16px; padding-top:12px; border-top:1px solid #172638;\">\n                        <a href=\"<?php echo esc_url($s['link']); ?>\" style=\"font-size:12px; color:#00D9FF; font-weight:600;\">مشاهده جزئیات خدمت ←</a>\n                    </div>\n                </div>\n            <?php endforeach; ?>\n        </div>\n        <?php\n    }\n}\n"
+  },
+  {
+    "name": "index.php",
+    "path": "index.php",
+    "description": "قالب پیش‌فرض برای نمایش نوشته‌ها و بایگانی مطالب",
+    "content": "<?php\n/**\n * Main Index Template for WISPAAR\n * \n * @package Wispaar\n */\n\nget_header();\n?>\n\n<div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-right\">\n    <?php\n    if ( have_posts() ) :\n        while ( have_posts() ) : the_post();\n            ?>\n            <article class=\"wispaar-card p-8 mb-8\">\n                <h1 class=\"text-2xl sm:text-3xl font-bold text-[#F5F8FC] mb-4\">\n                    <a href=\"<?php the_permalink(); ?>\"><?php the_title(); ?></a>\n                </h1>\n                <div class=\"text-sm text-[#8C9BAD] leading-relaxed\">\n                    <?php the_content(); ?>\n                </div>\n            </article>\n            <?php\n        endwhile;\n    else :\n        ?>\n        <p class=\"text-[#8C9BAD]\">محتوایی یافت نشد.</p>\n        <?php\n    endif;\n    ?>\n</div>\n\n<?php\nget_footer();\n"
+  },
+  {
+    "name": "page.php",
+    "path": "page.php",
+    "description": "قالب برگه‌ها با سازگاری کامل با عرض تمام‌صفحه المنتور (Elementor Full Width)",
+    "content": "<?php\n/**\n * Page Template for WISPAAR\n * Fully compatible with Elementor Full Width and standard editor\n * \n * @package Wispaar\n */\n\nget_header();\n\nwhile ( have_posts() ) : the_post();\n    ?>\n    <div class=\"wispaar-page-content text-right\">\n        <?php the_content(); ?>\n    </div>\n    <?php\nendwhile;\n\nget_footer();\n"
+  },
+  {
+    "name": "single-wispaar_project.php",
+    "path": "single-wispaar_project.php",
+    "description": "قالب تک‌صفحه پروژه با تمام مشخصات اختصاصی (کارفرما، چالش، راهکار و شاخص‌های لایت‌هاوس)",
+    "content": "<?php\n/**\n * Single Project Template\n * \n * @package Wispaar\n */\n\nget_header();\n\nwhile ( have_posts() ) : the_post();\n    $post_id   = get_the_ID();\n    $client    = get_post_meta( $post_id, '_wispaar_client', true );\n    $title_en  = get_post_meta( $post_id, '_wispaar_title_en', true );\n    $year      = get_post_meta( $post_id, '_wispaar_year', true );\n    $ptype     = get_post_meta( $post_id, '_wispaar_ptype', true );\n    $challenge = get_post_meta( $post_id, '_wispaar_challenge', true );\n    $solution  = get_post_meta( $post_id, '_wispaar_solution', true );\n    $is_demo   = get_post_meta( $post_id, '_wispaar_is_demo', true ) === '1';\n    $demo_url  = get_post_meta( $post_id, '_wispaar_demo_url', true );\n?>\n\n<div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12\">\n    <div class=\"space-y-4\">\n        <div class=\"flex items-center gap-2 text-xs font-mono text-[#00D9FF]\">\n            <span>&lt;/&gt;</span>\n            <span>CASE STUDY / <?php echo esc_html( $title_en ?: get_the_title() ); ?></span>\n            <?php if ( $is_demo ) : ?>\n                <span class=\"bg-[#03070D] border border-[#23364C] px-2 py-0.5 rounded text-[#00D9FF]\">CONCEPT / DEMO</span>\n            <?php endif; ?>\n        </div>\n        <h1 class=\"text-3xl sm:text-5xl font-bold text-[#F5F8FC]\"><?php the_title(); ?></h1>\n    </div>\n\n    <?php if ( has_post_thumbnail() ) : ?>\n        <div class=\"rounded-2xl overflow-hidden border border-[#172638] max-h-[600px]\">\n            <?php the_post_thumbnail( 'full', array( 'class' => 'w-full object-cover' ) ); ?>\n        </div>\n    <?php endif; ?>\n\n    <div class=\"grid grid-cols-2 sm:grid-cols-4 gap-6 bg-[#06111F] border border-[#172638] rounded-xl p-6 text-xs\">\n        <div>\n            <div class=\"text-[#536174] mb-1\">کارفرما</div>\n            <div class=\"text-[#F5F8FC] font-medium\"><?php echo esc_html( $client ?: 'اختصاصی ویسپار' ); ?></div>\n        </div>\n        <div>\n            <div class=\"text-[#536174] mb-1\">سال اجرا</div>\n            <div class=\"text-[#F5F8FC] font-medium font-mono\"><?php echo esc_html( $year ?: '۱۴۰۴' ); ?></div>\n        </div>\n        <div>\n            <div class=\"text-[#536174] mb-1\">نوع اثر</div>\n            <div class=\"text-[#F5F8FC] font-medium\"><?php echo esc_html( $ptype ?: 'وب‌سایت اختصاصی' ); ?></div>\n        </div>\n        <div>\n            <div class=\"text-[#536174] mb-1\">پیش‌نمایش آنلاین</div>\n            <div>\n                <?php if ( $demo_url ) : ?>\n                    <a href=\"<?php echo esc_url($demo_url); ?>\" target=\"_blank\" class=\"text-[#00D9FF] hover:underline\">مشاهده دمو ←</a>\n                <?php else : ?>\n                    <span class=\"text-[#8C9BAD]\">در دسترس در استیجینگ</span>\n                <?php endif; ?>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"grid grid-cols-1 md:grid-cols-2 gap-8\">\n        <div class=\"bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-3\">\n            <h3 class=\"text-sm font-bold text-[#EF4444] uppercase tracking-wider\">چالش اساسی پروژه</h3>\n            <p class=\"text-sm text-[#8C9BAD] leading-relaxed\"><?php echo esc_html( $challenge ); ?></p>\n        </div>\n        <div class=\"bg-[#06111F] border border-[#172638] rounded-2xl p-8 space-y-3\">\n            <h3 class=\"text-sm font-bold text-[#00D9FF] uppercase tracking-wider\">راهکار مهندسی ویسپار</h3>\n            <p class=\"text-sm text-[#8C9BAD] leading-relaxed\"><?php echo esc_html( $solution ); ?></p>\n        </div>\n    </div>\n\n    <div class=\"prose prose-invert max-w-none text-base leading-relaxed text-[#C5D0DD]\">\n        <?php the_content(); ?>\n    </div>\n</div>\n\n<?php\nendwhile;\n\nget_footer();\n"
+  },
+  {
+    "name": "style.css",
+    "path": "style.css",
+    "description": "فایل اصلی مشخصات پوسته وردپرس ویسپار با هدر استاندارد و تعاریف متغیرهای رنگ و استایل‌های پایه",
+    "content": "/*\nTheme Name: WISPAAR - Creative Technology & Digital Agency\nTheme URI: https://wispaar.com\nAuthor: WISPAAR Studio\nAuthor URI: https://wispaar.com\nDescription: قالب فوق‌العاده مدرن، سریع و اختصاصی استودیو ویسپار بر پایه هویت «آفرینش با خرد». کاملاً سازگار با تمامی صفحه‌سازها به‌ویژه المنتور (Elementor)، گوتنبرگ و سیستم پیشرفته مدیریت بریف و پروژه‌ها در پیشخوان وردپرس.\nVersion: 1.0.2\nRequires at least: 6.0\nTested up to: 6.7\nRequires PHP: 7.4\nLicense: GNU General Public License v2 or later\nLicense URI: http://www.gnu.org/licenses/gpl-2.0.html\nText Domain: wispaar\nDomain Path: /languages\nTags: dark-theme, portfolio, agency, elementor, rtl-language-support, custom-post-types, translation-ready\n*/\n\n@import url('./assets/css/wispaar.css');\n\n/* Embedded Core Fallback Styles */\n:root {\n  --wispaar-primary: #1769FF;\n  --wispaar-cyan: #00D9FF;\n  --wispaar-indigo: #6366F1;\n  --wispaar-bg: #03070D;\n  --wispaar-secondary-bg: #06111F;\n  --wispaar-surface: #0A1626;\n  --wispaar-surface-hover: #0F2035;\n  --wispaar-heading: #F5F8FC;\n  --wispaar-body: #C5D0DD;\n  --wispaar-secondary-text: #8C9BAD;\n  --wispaar-border: #172638;\n  --wispaar-border-light: #23364C;\n  --wispaar-success: #22C55E;\n}\n\nhtml, body, body.wispaar-dark-theme {\n  margin: 0;\n  padding: 0;\n  background-color: #03070D !important;\n  color: #C5D0DD !important;\n  font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif !important;\n  direction: rtl !important;\n  text-align: right !important;\n  overflow-x: hidden;\n  max-width: 100vw;\n  line-height: 1.8;\n}\n\n.bg-\\[\\#03070D\\], .wispaar-bg-main { background-color: #03070D !important; }\n.bg-\\[\\#06111F\\], .wispaar-bg-secondary { background-color: #06111F !important; }\n.bg-\\[\\#0A1626\\], .wispaar-bg-surface { background-color: #0A1626 !important; }\n.text-\\[\\#C5D0DD\\], .wispaar-text-body { color: #C5D0DD !important; }\n.text-\\[\\#F5F8FC\\], .wispaar-text-heading { color: #F5F8FC !important; }\n.text-\\[\\#00D9FF\\], .wispaar-text-cyan { color: #00D9FF !important; }\n.text-\\[\\#8C9BAD\\], .wispaar-text-secondary { color: #8C9BAD !important; }\n.border-\\[\\#172638\\], .wispaar-border { border-color: #172638 !important; }\n\n"
   }
 ];

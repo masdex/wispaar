@@ -71,6 +71,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             alt={project.title}
             referrerPolicy="no-referrer"
             onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              setImageLoaded(true);
+              (e.currentTarget as HTMLImageElement).src =
+                "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'><rect width='800' height='500' fill='%2306111F'/><rect x='40' y='40' width='720' height='420' rx='12' fill='%230A1626' stroke='%23172638' stroke-width='2'/><circle cx='400' cy='220' r='90' fill='%231769FF' opacity='0.2'/><path d='M250 340 L400 180 L550 340' stroke='%2300D9FF' stroke-width='3' fill='none' opacity='0.5'/><text x='50%25' y='65%25' dominant-baseline='middle' text-anchor='middle' fill='%23F5F8FC' font-family='sans-serif' font-size='20' font-weight='600'>WISPAAR SHOWCASE</text></svg>";
+            }}
             className={`w-full h-full object-cover rounded-lg group-hover:scale-102 transition-transform duration-500 shadow-xl ${
               viewMode === 'mobile' ? 'border-2 border-[#172638] shadow-2xl rounded-2xl' : ''
             }`}
