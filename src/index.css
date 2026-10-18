@@ -79,3 +79,114 @@ html {
   background-image: radial-gradient(rgba(35, 54, 76, 0.6) 1px, transparent 1px);
 }
 
+/* WordPress Headless Rich Content & Gutenberg Typography */
+.wispaar-prose {
+  color: #C5D0DD;
+  line-height: 2.1;
+  font-size: 1.05rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.wispaar-prose p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+.wispaar-prose h1,
+.wispaar-prose h2,
+.wispaar-prose h3,
+.wispaar-prose h4 {
+  color: #F5F8FC;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.wispaar-prose h2 {
+  font-size: 1.65rem;
+  border-right: 3px solid #00D9FF;
+  padding-right: 0.75rem;
+}
+
+.wispaar-prose h3 {
+  font-size: 1.35rem;
+}
+
+.wispaar-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin: 2rem auto;
+  border: 1px solid #172638;
+  display: block;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.wispaar-prose figure {
+  margin: 2rem 0;
+}
+
+.wispaar-prose figcaption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8C9BAD;
+  margin-top: 0.5rem;
+}
+
+.wispaar-prose video,
+.wispaar-prose iframe,
+.wispaar-prose embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 1rem;
+  margin: 2rem 0;
+  border: 1px solid #172638;
+  background-color: #06111F;
+}
+
+.wispaar-prose blockquote {
+  margin: 2rem 0;
+  padding: 1.25rem 1.75rem;
+  background-color: #06111F;
+  border-right: 4px solid #1769FF;
+  border-radius: 0 0.75rem 0.75rem 0;
+  color: #F5F8FC;
+  font-style: italic;
+}
+
+.wispaar-prose ul {
+  list-style-type: disc;
+  padding-right: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.wispaar-prose ol {
+  list-style-type: decimal;
+  padding-right: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.wispaar-prose li {
+  margin-bottom: 0.5rem;
+}
+
+.wispaar-prose a {
+  color: #00D9FF;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.wispaar-prose a:hover {
+  color: #4AA3FF;
+}
+
+.wispaar-prose pre,
+.wispaar-prose code {
+  font-family: 'JetBrains Mono', monospace;
+  direction: ltr;
+  text-align: left;
+}
+
+

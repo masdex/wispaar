@@ -201,30 +201,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Search className="w-4 h-4" />
               </button>
 
-              <button
-                onClick={() => handleNav('wordpress-hub')}
-                className={`hidden md:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
-                  currentRoute === 'wordpress-hub'
-                    ? 'bg-[#1769FF] text-white shadow-sm shadow-[#1769FF]/40'
-                    : 'bg-[#0A1626] border border-[#23364C] text-[#C5D0DD] hover:border-[#00D9FF]'
-                }`}
-                title="مدیریت وردپرس هدلس، وب‌هوک و دریافت قالب"
-              >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${
-                  status === 'connected'
-                    ? 'bg-[#22C55E] shadow-sm shadow-[#22C55E]/60 animate-pulse'
-                    : status === 'connecting'
-                    ? 'bg-[#F59E0B] animate-spin'
-                    : 'bg-[#536174]'
-                }`} />
-                <span>
-                  {status === 'connected'
-                    ? `WP Headless (${latency ?? 20}ms)`
-                    : status === 'connecting'
-                    ? 'در حال اتصال...'
-                    : '<WP Headless Hub>'}
-                </span>
-              </button>
+
 
               <button
                 onClick={() => handleNav('start-project')}
@@ -317,13 +294,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 تماس با ما
               </button>
-              <button
-                onClick={() => handleNav('wordpress-hub')}
-                className="text-right py-2 text-[#00D9FF] hover:text-white border-b border-[#172638]/60 font-mono text-sm flex items-center justify-between"
-              >
-                <span>&lt;مرکز کنترل وردپرس هدلس & لیدها&gt;</span>
-                <span className={`w-2 h-2 rounded-full ${status === 'connected' ? 'bg-[#22C55E]' : 'bg-[#536174]'}`} />
-              </button>
+
             </div>
 
             <div className="pt-4">

@@ -1,0 +1,10 @@
+# robots.txt for https://wispaar.ir
+User-agent: *
+Allow: /
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+Disallow: /wp-content/plugins/
+Disallow: /xmlrpc.php
+
+# Sitemap
+Sitemap: https://wispaar.ir/sitemap.xml

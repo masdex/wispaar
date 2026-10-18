@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PageRoute } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { ArrowUpLeft, BookOpen, Clock, Calendar, User, RefreshCw } from 'lucide-react';
+import { ArrowUpLeft, BookOpen, Clock, Calendar, User } from 'lucide-react';
 import { useHeadless } from '../context/HeadlessContext';
 
 interface BlogPageProps {
@@ -9,21 +9,34 @@ interface BlogPageProps {
 }
 
 export const BlogPage: React.FC<BlogPageProps> = ({ onNavigate }) => {
-  const { articles, status, isSyncing, syncFromWordPress } = useHeadless();
+  const { articles } = useHeadless();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const categories = [
-    { id: 'all', label: 'همه یادداشت‌ها' },
-    { id: 'طراحی وب', label: 'طراحی وب' },
-    { id: 'وردپرس', label: 'وردپرس' },
-    { id: 'سئو', label: 'سئو' },
-    { id: 'تجربه کاربری', label: 'تجربه کاربری و پرفورمنس' },
-  ];
+  // Dynamically derive all clean categories and tags from loaded articles
+  const uniqueCategories = useMemo(() => {
+    const set = new Set<string>();
+    articles.forEach((a) => {
+      const cat = a.category?.trim();
+      if (cat && cat !== 'دسته‌بندی نشده' && cat !== 'Uncategorized' && cat !== 'عمومی') {
+        set.add(cat);
+      }
+    });
+    return Array.from(set);
+  }, [articles]);
 
-  const filteredArticles = articles.filter((a) => {
-    if (selectedCategory === 'all') return true;
-    return a.category === selectedCategory;
-  });
+  const categories = useMemo(() => [
+    { id: 'all', label: 'همه یادداشت‌ها' },
+    ...uniqueCategories.map((c) => ({ id: c, label: c })),
+  ], [uniqueCategories]);
+
+  const filteredArticles = useMemo(() => {
+    if (selectedCategory === 'all') return articles;
+    return articles.filter(
+      (a) =>
+        a.category === selectedCategory ||
+        (Array.isArray(a.tags) && a.tags.some((t) => t.trim().toLowerCase() === selectedCategory.trim().toLowerCase()))
+    );
+  }, [articles, selectedCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-16">
@@ -72,6 +85,18 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onNavigate }) => {
             }`}
           >
             <div>
+              {/* Optional featured image from WordPress */}
+              {article.featuredImage && (
+                <div className="mb-5 rounded-xl overflow-hidden border border-[#172638] aspect-video max-h-56 bg-[#03070D]">
+                  <img
+                    src={article.featuredImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+
               {/* Unboxed Metadata */}
               <div className="flex items-center gap-3 text-xs text-[#8C9BAD] mb-3">
                 <span className="text-[#00D9FF] font-medium">{article.category}</span>

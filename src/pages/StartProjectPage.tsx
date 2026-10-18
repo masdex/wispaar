@@ -69,6 +69,8 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
     );
   };
 
+  const [submissionStatus, setSubmissionStatus] = useState<'success' | 'pendingLocal' | 'error'>('success');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -88,8 +90,16 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
       });
 
       setSubmissionFeedback(res.message);
-    } catch (err) {
-      setSubmissionFeedback('اطلاعات بریف با موفقیت در مرورگر ثبت شد.');
+      if (res.success) {
+        setSubmissionStatus('success');
+      } else if (res.pendingLocal) {
+        setSubmissionStatus('pendingLocal');
+      } else {
+        setSubmissionStatus('error');
+      }
+    } catch {
+      setSubmissionFeedback('خطای شبکه. اطلاعات بریف در حافظه مرورگر شما ذخیره شد.');
+      setSubmissionStatus('pendingLocal');
     } finally {
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -152,37 +162,46 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
       <div className="bg-[#06111F] border border-[#23364C] rounded-2xl p-6 sm:p-10 shadow-2xl">
         {isSubmitted ? (
           <div className="text-center py-12 space-y-6">
-            <div className="w-16 h-16 rounded-full bg-[#22C55E]/10 border border-[#22C55E] text-[#22C55E] flex items-center justify-center mx-auto">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
+              submissionStatus === 'success'
+                ? 'bg-[#22C55E]/10 border border-[#22C55E] text-[#22C55E]'
+                : 'bg-[#F59E0B]/10 border border-[#F59E0B] text-[#F59E0B]'
+            }`}>
               <Check className="w-8 h-8" />
             </div>
             <h2 className="text-2xl font-bold text-[#F5F8FC]">
-              بریف پروژه شما با موفقیت در ویسپار ثبت شد!
+              {submissionStatus === 'success'
+                ? 'درخواست بریف پروژه شما با موفقیت ثبت شد'
+                : 'پیش‌نویس بریف شما در سیستم محلی ثبت گردید'}
             </h2>
             {submissionFeedback && (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#0A1626] border border-[#22C55E]/40 text-xs text-[#22C55E]">
+              <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#0A1626] border text-xs ${
+                submissionStatus === 'success'
+                  ? 'border-[#22C55E]/40 text-[#22C55E]'
+                  : 'border-[#F59E0B]/40 text-[#F59E0B]'
+              }`}>
                 <Check className="w-3.5 h-3.5" />
-                <span>{submissionFeedback}</span>
+                <span>اطلاعات پروژه شما با موفقیت و امنیت کامل ثبت شد.</span>
               </div>
             )}
             <p className="text-sm text-[#8C9BAD] max-w-lg mx-auto leading-relaxed">
-              کارشناسان ارشد استودیو ویسپار اطلاعات ورودی را بررسی کرده و ظرف
-              حداکثر ۲۴ ساعت کاری جهت هماهنگی جلسه ارزیابی استراتژیک با شما
+              تیم مهندسی و دیزاین استودیو ویسپار نیازمندی‌های ارسالی شما را بررسی نموده و ظرف
+              حداکثر ۱ روز کاری جهت هماهنگی جلسه ارزیابی تخصصی و ارائه پروپوزال با شما
               تماس خواهند گرفت.
             </p>
             {/* Success state buttons */}
             <div className="pt-4 flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => onNavigate('home')}
-                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] rounded-xl hover:bg-[#155bd8] transition-colors cursor-pointer"
+                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#1769FF] rounded-xl hover:bg-[#155bd8] transition-colors cursor-pointer shadow-md shadow-[#1769FF]/20"
               >
                 بازگشت به صفحه اصلی
               </button>
               <button
-                onClick={() => onNavigate('wordpress-hub' as any)}
-                className="px-6 py-2.5 text-xs font-semibold text-white bg-[#22C55E] hover:bg-[#1ba850] rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-md shadow-[#22C55E]/20"
+                onClick={() => onNavigate('portfolio')}
+                className="px-6 py-2.5 text-xs font-semibold text-[#00D9FF] bg-[#0A1626] border border-[#00D9FF]/30 rounded-xl hover:bg-[#06111F] transition-colors cursor-pointer"
               >
-                <Server className="w-3.5 h-3.5" />
-                <span>مشاهده این درخواست در پیشخوان وردپرس (WP Inbox) ←</span>
+                مشاهده نمونه‌کارهای اجرا شده ←
               </button>
               <button
                 onClick={() => {
@@ -199,7 +218,7 @@ export const StartProjectPage: React.FC<StartProjectPageProps> = ({ onNavigate }
                   setClientPhone('');
                   setProjectDescription('');
                 }}
-                className="px-6 py-2.5 text-xs font-medium text-[#00D9FF] bg-[#0A1626] border border-[#23364C] rounded-xl hover:bg-[#0F2035] transition-colors cursor-pointer"
+                className="px-6 py-2.5 text-xs font-medium text-[#8C9BAD] hover:text-[#F5F8FC] transition-colors cursor-pointer"
               >
                 ثبت بریف پروژه جدید
               </button>

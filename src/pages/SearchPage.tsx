@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
-import { projectsData } from '../data/projectsData';
 import { servicesData } from '../data/servicesData';
 import { seoCaseStudiesData } from '../data/seoCaseStudiesData';
-import { articlesData } from '../data/articlesData';
 import { faqData } from '../data/faqData';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useHeadless } from '../context/HeadlessContext';
 import { Search, ArrowUpLeft, Folder, Wrench, FileText, HelpCircle, TrendingUp } from 'lucide-react';
 
 interface SearchPageProps {
@@ -13,6 +12,7 @@ interface SearchPageProps {
 }
 
 export const SearchPage: React.FC<SearchPageProps> = ({ onNavigate }) => {
+  const { projects, articles } = useHeadless();
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'services' | 'projects' | 'seo' | 'articles' | 'faq'>('all');
 
@@ -29,7 +29,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onNavigate }) => {
     : [];
 
   const matchingProjects = normalized
-    ? projectsData.filter(
+    ? projects.filter(
         (p) =>
           p.title.toLowerCase().includes(normalized) ||
           p.titleEn.toLowerCase().includes(normalized) ||
@@ -50,7 +50,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onNavigate }) => {
     : [];
 
   const matchingArticles = normalized
-    ? articlesData.filter(
+    ? articles.filter(
         (a) =>
           a.title.toLowerCase().includes(normalized) ||
           a.excerpt.toLowerCase().includes(normalized) ||

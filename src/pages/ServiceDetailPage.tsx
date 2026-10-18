@@ -13,8 +13,45 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
   slug,
   onNavigate,
 }) => {
-  const service = servicesData.find((s) => s.slug === slug) || servicesData[0];
+  const service = servicesData.find((s) => s.slug === slug);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
+  if (!service) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pb-24 space-y-8 text-center">
+        <Breadcrumb
+          items={[
+            { label: 'خدمات ویسپار', route: 'services' },
+            { label: 'خدمت یافت نشد' },
+          ]}
+          onNavigate={onNavigate}
+        />
+        <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-10 space-y-6">
+          <div className="text-4xl font-mono text-[#00D9FF]">&lt;404 / SERVICE NOT FOUND&gt;</div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F8FC]">
+            خدمتی با شناسه «{slug}» یافت نشد.
+          </h1>
+          <p className="text-sm text-[#8C9BAD] max-w-lg mx-auto leading-relaxed">
+            لطفاً از میان دسته‌بندی‌های رسمی خدمات ویسپار انتخاب فرمایید.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              onClick={() => onNavigate('services')}
+              className="px-5 py-2.5 bg-[#1769FF] hover:bg-[#155bd8] text-white text-xs font-semibold rounded-xl transition-all cursor-pointer"
+            >
+              مشاهده همه خدمات استودیو ←
+            </button>
+            <button
+              onClick={() => onNavigate('home')}
+              className="px-5 py-2.5 bg-[#0A1626] border border-[#23364C] text-[#C5D0DD] hover:text-white text-xs font-medium rounded-xl transition-all cursor-pointer"
+            >
+              صفحه اصلی ویسپار
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-20">
@@ -49,10 +86,11 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
             درخواست این خدمت برای پروژه شما ←
           </button>
           <button
-            onClick={() => onNavigate('portfolio')}
-            className="px-5 py-3 text-sm font-medium text-[#C5D0DD] hover:text-white bg-[#0A1626] border border-[#172638] rounded-xl transition-all cursor-pointer"
+            onClick={() => onNavigate('portfolio', service.slug)}
+            className="px-5 py-3 text-sm font-medium text-[#C5D0DD] hover:text-[#00D9FF] bg-[#0A1626] border border-[#172638] hover:border-[#00D9FF]/40 rounded-xl transition-all cursor-pointer flex items-center gap-2"
           >
-            مشاهده پروژه‌های مرتبط
+            <span>مشاهده نمونه‌کارهای مرتبط با این خدمت</span>
+            <span className="font-mono text-xs text-[#00D9FF]">←</span>
           </button>
         </div>
       </section>
@@ -208,12 +246,20 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
           فرم بریف ویسپار به شما کمک می‌کند تا تمام نیازمندی‌های این بخش را به‌صورت
           شفاف ثبت کنید.
         </p>
-        <button
-          onClick={() => onNavigate('start-project')}
-          className="px-7 py-3.5 text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-all shadow-md shadow-[#1769FF]/25 cursor-pointer"
-        >
-          ثبت بریف پروژه ←
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <button
+            onClick={() => onNavigate('start-project')}
+            className="px-7 py-3.5 text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] rounded-xl transition-all shadow-md shadow-[#1769FF]/25 cursor-pointer"
+          >
+            ثبت بریف پروژه ←
+          </button>
+          <button
+            onClick={() => onNavigate('portfolio', service.slug)}
+            className="px-6 py-3.5 text-sm font-medium text-[#C5D0DD] hover:text-white bg-[#06111F] border border-[#23364C] hover:border-[#00D9FF]/40 rounded-xl transition-all cursor-pointer"
+          >
+            مشاهده پروژه‌های مرتبط با این حوزه
+          </button>
+        </div>
       </section>
     </div>
   );

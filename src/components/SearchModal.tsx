@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PageRoute } from '../types';
-import { projectsData } from '../data/projectsData';
 import { servicesData } from '../data/servicesData';
 import { seoCaseStudiesData } from '../data/seoCaseStudiesData';
-import { articlesData } from '../data/articlesData';
 import { faqData } from '../data/faqData';
+import { useHeadless } from '../context/HeadlessContext';
 import { Search, X, ArrowUpLeft, Folder, Wrench, FileText, HelpCircle } from 'lucide-react';
 
 interface SearchModalProps {
@@ -18,6 +17,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   onClose,
   onNavigate,
 }) => {
+  const { projects, articles } = useHeadless();
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -34,7 +34,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const normalizedQuery = query.trim().toLowerCase();
 
   const filteredProjects = normalizedQuery
-    ? projectsData.filter(
+    ? projects.filter(
         (p) =>
           p.title.toLowerCase().includes(normalizedQuery) ||
           p.titleEn.toLowerCase().includes(normalizedQuery) ||
@@ -53,7 +53,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     : [];
 
   const filteredArticles = normalizedQuery
-    ? articlesData.filter(
+    ? articles.filter(
         (a) =>
           a.title.toLowerCase().includes(normalizedQuery) ||
           a.excerpt.toLowerCase().includes(normalizedQuery) ||

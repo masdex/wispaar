@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PageRoute, Project } from '../types';
-import { Breadcrumb } from '../components/Breadcrumb';
 import { wpThemeFiles } from '../data/wordpressThemeFiles';
-import { downloadWordPressThemeZip } from '../utils/exportThemeZip';
+import {
+  downloadWordPressThemeZip,
+  downloadWordPressPluginZip,
+  downloadFixedHeadlessPluginZip,
+  downloadSingleHeadlessPhpFile,
+} from '../utils/exportThemeZip';
 import { WordPressLead } from '../utils/wordpressStore';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { useHeadless } from '../context/HeadlessContext';
 import {
   Download,
@@ -34,6 +39,8 @@ import {
   Database,
   Terminal,
   ShieldCheck,
+  Search,
+  Key,
 } from 'lucide-react';
 
 interface WordPressHubPageProps {
@@ -48,14 +55,21 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
   const {
     endpoint,
     setEndpoint,
+    authHeader,
+    setAuthHeader,
     status,
+    failureCategory,
+    diagnostic,
     latency,
-    wpHealth,
     projects: allProjects,
     leads,
+    totalProjects,
+    totalArticles,
     isSyncing,
     lastSynced,
+    capabilities,
     syncFromWordPress,
+    runCandidateDiscovery,
     seedDatabase,
     createProject: createHeadlessProject,
     submitBrief: submitHeadlessBrief,
@@ -65,6 +79,9 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
 
   const [activeTab, setActiveTab] = useState<'connect' | 'download' | 'leads' | 'projects' | 'files'>('connect');
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPlugin, setDownloadingPlugin] = useState(false);
+  const [isDiscovering, setIsDiscovering] = useState(false);
+  const [inputAuthHeader, setInputAuthHeader] = useState(authHeader || '');
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
   const [selectedFileIdx, setSelectedFileIdx] = useState(0);
@@ -91,7 +108,7 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
   });
 
   // Local input for endpoint editing
-  const [inputEndpoint, setInputEndpoint] = useState(endpoint || 'http://demo.local');
+  const [inputEndpoint, setInputEndpoint] = useState(endpoint || 'https://wispaar.ir');
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isTestingBrief, setIsTestingBrief] = useState(false);
@@ -114,9 +131,32 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
       showBanner('success', 'فایل زیپ کامل پوسته وردپرس دانلود شد.');
     } catch (e) {
       console.error(e);
-      showBanner('error', 'خطا در ایجاد فایل زیپ.');
+      showBanner('error', 'خطا در ایجاد فایل زیپ پوسته.');
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadPluginZip = async () => {
+    setDownloadingPlugin(true);
+    try {
+      await downloadFixedHeadlessPluginZip();
+      showBanner('success', 'فایل زیپ افزونه وردپرس هدلس (wispaar-headless.zip) دانلود شد.');
+    } catch (e) {
+      console.error(e);
+      showBanner('error', 'خطا در ایجاد فایل زیپ افزونه.');
+    } finally {
+      setDownloadingPlugin(false);
+    }
+  };
+
+  const handleDownloadSinglePhp = () => {
+    try {
+      downloadSingleHeadlessPhpFile();
+      showBanner('success', 'فایل headless.php با متد بدون BOM دانلود شد. آماده آپلود در wp-content/plugins/wispaar-headless/');
+    } catch (e) {
+      console.error(e);
+      showBanner('error', 'خطا در دریافت مستقیم فایل PHP.');
     }
   };
 
@@ -256,9 +296,19 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
             </button>
 
             <button
+              onClick={handleDownloadPluginZip}
+              disabled={downloadingPlugin}
+              className="px-5 py-3 text-xs sm:text-sm font-semibold text-[#00D9FF] bg-[#03070D] border border-[#00D9FF]/40 hover:bg-[#00D9FF]/10 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+              title="دانلود افزونه وردپرس هدلس برای حل خطای هدر و فعال‌سازی REST API"
+            >
+              <Download className="w-4 h-4 text-[#00D9FF]" />
+              <span>{downloadingPlugin ? 'در حال ایجاد زیپ...' : 'دانلود افزونه هدلس (ZIP)'}</span>
+            </button>
+
+            <button
               onClick={handleDownloadZip}
               disabled={downloading}
-              className="px-5 py-3 text-xs sm:text-sm font-semibold text-[#00D9FF] bg-[#03070D] border border-[#23364C] hover:bg-[#0A1626] rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 text-xs sm:text-sm font-semibold text-[#C5D0DD] bg-[#03070D] border border-[#23364C] hover:bg-[#0A1626] rounded-xl transition-all flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود پوسته وردپرس (ZIP)'}</span>
@@ -362,7 +412,7 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="http://demo.local"
+                      placeholder="https://wispaar.ir"
                       value={inputEndpoint}
                       onChange={(e) => setInputEndpoint(e.target.value)}
                       className="w-full bg-[#03070D] border border-[#172638] focus:border-[#00D9FF] text-white px-4 py-3 rounded-xl text-sm outline-none font-mono"
@@ -374,13 +424,13 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
 
                 {/* Quick Presets */}
                 <div className="space-y-1.5">
-                  <span className="text-[11px] text-[#536174]">انتخاب سریع آدرس‌های استاندارد LocalWP / سرور:</span>
+                  <span className="text-[11px] text-[#536174]">انتخاب سریع آدرس‌های استاندارد (سرور پروداکشن / لوکال):</span>
                   <div className="flex flex-wrap gap-2 text-xs font-mono">
                     {[
+                      'https://wispaar.ir',
                       'http://demo.local',
                       'http://localhost:10004',
                       'http://localhost/demo',
-                      'https://wispaar.com',
                     ].map((preset) => (
                       <button
                         key={preset}
@@ -464,14 +514,14 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
                     <span className="text-[#8C9BAD]">نسخه وردپرس:</span>
                     <span className="font-mono text-white">
-                      {wpHealth?.version || 'WordPress Core'}
+                      {diagnostic?.wpVersion || 'WordPress Core'}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#03070D] border border-[#172638]">
                     <span className="text-[#8C9BAD]">عنوان سایت در وردپرس:</span>
                     <span className="text-white font-medium">
-                      {wpHealth?.siteName || 'سایت وردپرسی ویسپار'}
+                      {diagnostic?.siteName || 'سایت وردپرسی ویسپار'}
                     </span>
                   </div>
 
@@ -479,7 +529,7 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                     <span className="text-[#8C9BAD]">وضعیت موتور هدلس:</span>
                     <span className="text-[#22C55E] font-medium flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" />
-                      {wpHealth?.isWispaarEngine ? 'پوسته ویسپار فعال است' : 'هسته استاندارد REST'}
+                      {diagnostic?.isWispaarEngine ? 'پوسته ویسپار فعال است' : 'هسته استاندارد REST'}
                     </span>
                   </div>
 
@@ -611,37 +661,37 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                   method: 'GET',
                   route: '/wp-json/wispaar/v1/health',
                   desc: 'بررسی زنده بودن سرور، وضعیت CORS، نسخه وردپرس و شمارش محتوا',
-                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/health"`,
+                  curl: `curl -X GET "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/health"`,
                 },
                 {
                   method: 'GET',
                   route: '/wp-json/wispaar/v1/projects',
                   desc: 'دریافت تمام نمونه‌کارها با تمام متادیتا (شاخص‌ها، فناوری‌ها، چالش، راهکار)',
-                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/projects"`,
+                  curl: `curl -X GET "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/projects"`,
                 },
                 {
                   method: 'POST',
                   route: '/wp-json/wispaar/v1/projects',
                   desc: 'ایجاد پروژه تازه در دیتابیس وردپرس CPT مستقیماً از فرانت‌اند',
-                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/projects" -H "Content-Type: application/json" -d '{"title":"پروژه جدید","industry":"فین‌تک"}'`,
+                  curl: `curl -X POST "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/projects" -H "Content-Type: application/json" -d '{"title":"پروژه جدید","industry":"فین‌تک"}'`,
                 },
                 {
                   method: 'GET',
                   route: '/wp-json/wispaar/v1/articles',
                   desc: 'دریافت مقالات ژورنال و وبلاگ با زمان تقریبی مطالعه و نام نویسنده',
-                  curl: `curl -X GET "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/articles"`,
+                  curl: `curl -X GET "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/articles"`,
                 },
                 {
                   method: 'POST',
                   route: '/wp-json/wispaar/v1/brief',
                   desc: 'ثبت بریف دریافتی در پست تایپ اختصاصی wispaar_brief همراه با اعلان ایمیل به مدیر',
-                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/brief" -H "Content-Type: application/json" -d '{"name":"علی","phone":"09121111111"}'`,
+                  curl: `curl -X POST "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/brief" -H "Content-Type: application/json" -d '{"name":"علی","phone":"09121111111"}'`,
                 },
                 {
                   method: 'POST',
                   route: '/wp-json/wispaar/v1/seed',
                   desc: 'درون‌ریزی ۱ کلیک تمام پروژه‌های دمو در دیتابیس وردپرس',
-                  curl: `curl -X POST "${endpoint || 'http://demo.local'}/wp-json/wispaar/v1/seed"`,
+                  curl: `curl -X POST "${endpoint || 'https://wispaar.ir'}/wp-json/wispaar/v1/seed"`,
                 },
               ].map((ep) => (
                 <div
@@ -745,21 +795,60 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
           </div>
 
           <div className="lg:col-span-4 space-y-6">
+            {/* Card 1: Headless Plugin (Primary for wispaar.ir) */}
+            <div className="bg-[#06111F] border-2 border-[#00D9FF]/40 rounded-2xl p-6 space-y-5 shadow-xl shadow-[#00D9FF]/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#00D9FF] bg-[#00D9FF]/10 px-2 py-0.5 rounded">
+                  ضروری برای پروداکشن
+                </span>
+                <span className="text-xs font-mono text-[#22C55E]">v2.1.0 Clean</span>
+              </div>
+              <h3 className="text-base font-bold text-[#F5F8FC]">افزونه وردپرس هدلس (حل خطای هدر)</h3>
+              <p className="text-xs text-[#8C9BAD] leading-relaxed">
+                این افزونه مسیرهای اختصاصی REST API را فعال و خطای <code className="text-[#EF4444] font-mono">Cannot modify header information</code> در سرور را به دلیل کدگذاری استاندارد UTF-8 بدون BOM کاملاً برطرف می‌کند.
+              </p>
+
+              <div className="space-y-2 text-xs font-mono bg-[#03070D] p-3 rounded-xl border border-[#172638]">
+                <div className="text-[#8C9BAD]">مسیر در سرور cPanel:</div>
+                <div className="text-[#00D9FF] text-[11px] break-all">
+                  wp-content/plugins/wispaar-headless/headless.php
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <button
+                  onClick={handleDownloadPluginZip}
+                  disabled={downloadingPlugin}
+                  className="w-full py-3 text-xs sm:text-sm font-semibold text-white bg-[#00D9FF] hover:bg-[#00c2e6] text-black disabled:opacity-50 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#00D9FF]/20"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>{downloadingPlugin ? 'در حال ایجاد فایل زیپ...' : 'دانلود زیپ افزونه (wispaar-headless.zip)'}</span>
+                </button>
+
+                <button
+                  onClick={handleDownloadSinglePhp}
+                  className="w-full py-2.5 text-xs font-medium text-[#00D9FF] hover:text-white bg-[#0A1626] border border-[#00D9FF]/30 hover:border-[#00D9FF] rounded-xl transition-colors text-center flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <FileCode className="w-4 h-4" />
+                  <span>دانلود فایل تکی headless.php (برای آپلود مستقیم)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Card 2: Monolithic Theme (Optional) */}
             <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-6 space-y-5">
-              <h3 className="text-base font-bold text-[#F5F8FC]">دانلود و مشخصات فنی بسته</h3>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-[#8C9BAD] bg-[#0A1626] px-2 py-0.5 rounded">
+                  اختیاری (قالب مستقل)
+                </span>
+                <span className="text-xs font-mono text-[#8C9BAD]">v1.0.2</span>
+              </div>
+              <h3 className="text-base font-bold text-[#F5F8FC]">پوسته کامل وردپرس ویسپار</h3>
 
               <div className="space-y-3 text-xs">
                 <div className="flex justify-between py-2 border-b border-[#172638]">
-                  <span className="text-[#8C9BAD]">نام پکیج:</span>
-                  <span className="font-mono text-white">wispaar-theme.zip</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-[#172638]">
-                  <span className="text-[#8C9BAD]">تعداد فایل‌های تم:</span>
-                  <span className="font-mono text-[#00D9FF]">{wpThemeFiles.length} فایل مستقل</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-[#172638]">
-                  <span className="text-[#8C9BAD]">نسخه:</span>
-                  <span className="font-mono text-white">1.0.2 Production</span>
+                  <span className="text-[#8C9BAD]">تعداد فایل‌ها:</span>
+                  <span className="font-mono text-[#00D9FF]">{wpThemeFiles.length} فایل</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-[#172638]">
                   <span className="text-[#8C9BAD]">نیازمندی:</span>
@@ -773,7 +862,7 @@ export const WordPressHubPage: React.FC<WordPressHubPageProps> = ({
                 className="w-full py-3 text-xs sm:text-sm font-semibold text-white bg-[#1769FF] hover:bg-[#155bd8] disabled:opacity-50 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#1769FF]/20"
               >
                 <Download className="w-4 h-4" />
-                <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود زیپ آماده نصب (Theme Zip)'}</span>
+                <span>{downloading ? 'در حال ایجاد فایل زیپ...' : 'دانلود پوسته وردپرس (Theme Zip)'}</span>
               </button>
 
               <button

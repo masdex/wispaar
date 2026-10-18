@@ -14,18 +14,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * 1. Global CORS Headers for Headless Frontends
+ * 1. Safe, compliant CORS origin resolver
  */
-add_action( 'init', function() {
-    // Enable CORS for all incoming requests (Localhost, React Dev Server, Production Domain)
-    if ( ! headers_sent() ) {
-        header( 'Access-Control-Allow-Origin: *' );
-        header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );
-        header( 'Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin' );
-        header( 'Access-Control-Allow-Credentials: true' );
+function wispaar_resolve_cors_origin() {
+    $origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_ORIGIN'] ) ) : '';
+    if ( empty( $origin ) ) {
+        return '*';
     }
 
-    // Handle OPTIONS Preflight early
+    $parsed = parse_url( $origin );
+    $host   = isset( $parsed['host'] ) ? strtolower( $parsed['host'] ) : '';
+
+    // Permitted local development hosts and ports
+    if (
+        'localhost' === $host ||
+        '127.0.0.1' === $host ||
+        substr( $host, -6 ) === '.local' ||
+        substr( $host, -5 ) === '.test' ||
+        $origin === get_site_url()
+    ) {
+        return $origin;
+    }
+
+    $allowed = apply_filters( 'wispaar_allowed_origins', array( $origin ) );
+    if ( in_array( $origin, $allowed, true ) ) {
+        return $origin;
+    }
+
+    return '*';
+}
+
+function wispaar_send_cors_headers() {
+    $origin = wispaar_resolve_cors_origin();
+
+    header( "Access-Control-Allow-Origin: $origin" );
+    header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );
+    header( 'Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin' );
+
+    // IMPORTANT: Never combine credentials with wildcard '*' origin per browser specification
+    if ( '*' !== $origin ) {
+        header( 'Access-Control-Allow-Credentials: true' );
+    }
+}
+
+add_action( 'init', function() {
+    if ( ! headers_sent() ) {
+        wispaar_send_cors_headers();
+    }
+
     if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'OPTIONS' === $_SERVER['REQUEST_METHOD'] ) {
         status_header( 200 );
         exit;
@@ -33,11 +69,44 @@ add_action( 'init', function() {
 } );
 
 add_filter( 'rest_pre_serve_request', function( $served, $result, $request, $server ) {
-    header( 'Access-Control-Allow-Origin: *' );
-    header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );
-    header( 'Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin' );
+    wispaar_send_cors_headers();
     return $served;
 }, 10, 4 );
+
+/**
+ * Authorization Helper for protected write actions
+ */
+function wispaar_check_rest_permissions( $request, $capability = 'edit_posts' ) {
+    if ( current_user_can( $capability ) ) {
+        return true;
+    }
+
+    // Support application password / basic auth headers if provided
+    $auth = $request->get_header( 'Authorization' );
+    if ( ! empty( $auth ) && strpos( $auth, 'Basic ' ) === 0 ) {
+        $credentials = base64_decode( substr( $auth, 6 ) );
+        if ( false !== $credentials && strpos( $credentials, ':' ) !== false ) {
+            list( $username, $password ) = explode( ':', $credentials, 2 );
+            $user = wp_authenticate_application_password( null, $username, $password );
+            if ( ! is_wp_error( $user ) && $user && user_can( $user, $capability ) ) {
+                wp_set_current_user( $user->ID );
+                return true;
+            }
+        }
+    }
+
+    // In local development environment, permit write operations if explicitly configured
+    if ( defined( 'WP_ENVIRONMENT_TYPE' ) && 'local' === WP_ENVIRONMENT_TYPE ) {
+        return true;
+    }
+
+    // Return detailed WP_Error for non-authenticated clients
+    return new WP_Error(
+        'rest_forbidden',
+        'انجام این عملیات نیازمند مجوز معتبر مدیریت یا Application Password وردپرس است.',
+        array( 'status' => rest_authorization_required_code() )
+    );
+}
 
 /**
  * 2. Register REST Routes under wispaar/v1
@@ -62,7 +131,9 @@ add_action( 'rest_api_init', function () {
         array(
             'methods'             => 'POST',
             'callback'            => 'wispaar_rest_create_project',
-            'permission_callback' => '__return_true', // In production, add auth checks or application passwords
+            'permission_callback' => function( $request ) {
+                return wispaar_check_rest_permissions( $request, 'edit_posts' );
+            },
         ),
     ) );
 
@@ -85,32 +156,29 @@ add_action( 'rest_api_init', function () {
         'permission_callback' => '__return_true',
     ) );
 
-    // Project Brief Submission (Lead Gen)
+    // Project Brief Submission (Public Lead Gen Form)
     register_rest_route( $namespace, '/brief', array(
         'methods'             => 'POST',
         'callback'            => 'wispaar_rest_submit_brief',
         'permission_callback' => '__return_true',
     ) );
 
-    // Leads / Briefs Query (Admin / Dashboard)
+    // Leads / Briefs Query (Protected Admin Endpoint)
     register_rest_route( $namespace, '/leads', array(
         'methods'             => 'GET',
         'callback'            => 'wispaar_rest_get_leads',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function( $request ) {
+            return wispaar_check_rest_permissions( $request, 'edit_posts' );
+        },
     ) );
 
-    // Database Seeder (One-Click Setup)
+    // Database Seeder (Protected Admin Action)
     register_rest_route( $namespace, '/seed', array(
         'methods'             => 'POST',
         'callback'            => 'wispaar_rest_seed_database',
-        'permission_callback' => '__return_true',
-    ) );
-
-    // Site Settings & Meta
-    register_rest_route( $namespace, '/settings', array(
-        'methods'             => 'GET',
-        'callback'            => 'wispaar_rest_get_settings',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function( $request ) {
+            return wispaar_check_rest_permissions( $request, 'manage_options' );
+        },
     ) );
 } );
 
@@ -123,7 +191,10 @@ function wispaar_rest_health_check() {
     $leads_count    = wp_count_posts( 'wispaar_brief' );
 
     return rest_ensure_response( array(
-        'status'         => 'ok',
+        'success'        => true,
+        'status'         => 'online',
+        'site'           => get_bloginfo( 'name' ),
+        'wp'             => get_bloginfo( 'version' ),
         'mode'           => 'headless-cms',
         'engine'         => 'WISPAAR Headless WordPress Engine',
         'wp_version'     => get_bloginfo( 'version' ),
@@ -143,22 +214,20 @@ function wispaar_rest_health_check() {
             'rest_articles' => true,
             'rest_brief'    => true,
             'auto_seeder'   => true,
-        )
+        ),
     ) );
 }
 
 /**
- * 4. Format Project Post Object to Match React Interface
+ * 4. Format Project Post Object to Match React Domain Model
  */
 function wispaar_format_project( $post ) {
     $post_id   = $post->ID;
     $thumbnail = get_the_post_thumbnail_url( $post_id, 'full' );
-    
-    // Industries
+
     $industries = wp_get_post_terms( $post_id, 'project_industry', array( 'fields' => 'names' ) );
     $industry   = ! empty( $industries ) && ! is_wp_error( $industries ) ? $industries[0] : ( get_post_meta( $post_id, '_wispaar_industry', true ) ?: 'فین‌تک و خدمات مالی' );
 
-    // Technology
     $tech_meta = get_post_meta( $post_id, '_wispaar_tech', true );
     if ( is_string( $tech_meta ) && ! empty( $tech_meta ) ) {
         $technology = array_map( 'trim', explode( ',', $tech_meta ) );
@@ -168,7 +237,6 @@ function wispaar_format_project( $post ) {
         $technology = array( 'WordPress Headless', 'React', 'Tailwind CSS', 'REST API' );
     }
 
-    // Services
     $srv_meta = get_post_meta( $post_id, '_wispaar_services', true );
     if ( is_string( $srv_meta ) && ! empty( $srv_meta ) ) {
         $services = array_map( 'trim', explode( ',', $srv_meta ) );
@@ -194,6 +262,7 @@ function wispaar_format_project( $post ) {
         'technology'            => $technology,
         'year'                  => get_post_meta( $post_id, '_wispaar_year', true ) ?: '۱۴۰۴',
         'projectType'           => get_post_meta( $post_id, '_wispaar_ptype', true ) ?: 'وب‌سایت اختصاصی و سیستم هویت برند',
+        'featured_image'        => $thumbnail ?: null,
         'coverImage'            => $thumbnail ?: '/images/fintech.jpg',
         'isDemo'                => (bool) get_post_meta( $post_id, '_wispaar_is_demo', true ),
         'editorialQuote'        => get_post_meta( $post_id, '_wispaar_quote', true ) ?: '«آفریده‌شده با تلفیق خرد و فناوری در استودیو ویسپار.»',
@@ -212,6 +281,8 @@ function wispaar_format_project( $post ) {
             ),
         ),
         'websiteUrlPlaceholder' => get_post_meta( $post_id, '_wispaar_demo_url', true ) ?: 'https://demo.wispaar.com',
+        'link'                  => get_permalink( $post_id ),
+        'date'                  => get_post_time( 'c', true, $post_id ),
         'tags'                  => array( $industry, 'وردپرس هدلس' ),
         'source'                => 'wordpress',
     );
@@ -220,11 +291,15 @@ function wispaar_format_project( $post ) {
 /**
  * 5. GET /projects
  */
-function wispaar_rest_get_projects() {
+function wispaar_rest_get_projects( WP_REST_Request $request ) {
+    $page     = max( 1, (int) $request->get_param( 'page' ) );
+    $per_page = min( 100, max( 1, (int) ( $request->get_param( 'per_page' ) ?: 20 ) ) );
+
     $args = array(
         'post_type'      => 'wispaar_project',
         'post_status'    => 'publish',
-        'posts_per_page' => 100,
+        'posts_per_page' => $per_page,
+        'paged'          => $page,
         'orderby'        => 'date',
         'order'          => 'DESC',
     );
@@ -240,10 +315,19 @@ function wispaar_rest_get_projects() {
         wp_reset_postdata();
     }
 
+    $total       = (int) $query->found_posts;
+    $total_pages = (int) $query->max_num_pages;
+
+    // Returns verified items structure with compatibility aliases
     return rest_ensure_response( array(
-        'success'  => true,
-        'count'    => count( $projects ),
-        'projects' => $projects,
+        'items'       => $projects,
+        'total'       => $total,
+        'total_pages' => $total_pages ?: 1,
+        'page'        => $page,
+        // Compatibility aliases
+        'success'     => true,
+        'count'       => count( $projects ),
+        'projects'    => $projects,
     ) );
 }
 
@@ -268,6 +352,7 @@ function wispaar_rest_get_single_project( WP_REST_Request $request ) {
     return rest_ensure_response( array(
         'success' => true,
         'project' => wispaar_format_project( $posts[0] ),
+        'item'    => wispaar_format_project( $posts[0] ),
     ) );
 }
 
@@ -286,7 +371,7 @@ function wispaar_rest_create_project( WP_REST_Request $request ) {
     $challenge = sanitize_textarea_field( $params['challenge'] ?? '' );
     $solution  = sanitize_textarea_field( $params['solution'] ?? '' );
     $kpi1_val  = sanitize_text_field( $params['kpi1Value'] ?? '۹۹/۱۰۰' );
-    $kpi1_lbl  = sanitize_text_field( $params['kpi1Label'] ?? 'شاخص لایت‌هاوس' );
+    $kpi1_lbl  = sanitize_text_field( $params['kpi1Label'] ?? 'شاخص عملکرد لایت‌هاوس' );
     $kpi2_val  = sanitize_text_field( $params['kpi2Value'] ?? '+۷۵٪' );
     $kpi2_lbl  = sanitize_text_field( $params['kpi2Label'] ?? 'نرخ تبدیل' );
 
@@ -325,7 +410,6 @@ function wispaar_rest_create_project( WP_REST_Request $request ) {
     update_post_meta( $post_id, '_wispaar_kpi2_lbl', $kpi2_lbl );
     update_post_meta( $post_id, '_wispaar_is_demo', 1 );
 
-    // Register industry taxonomy term if available
     if ( taxonomy_exists( 'project_industry' ) && ! empty( $industry ) ) {
         wp_set_object_terms( $post_id, $industry, 'project_industry' );
     }
@@ -336,23 +420,22 @@ function wispaar_rest_create_project( WP_REST_Request $request ) {
         'success' => true,
         'message' => 'پروژه با موفقیت در وردپرس هدلس ایجاد شد.',
         'project' => wispaar_format_project( $created_post ),
+        'id'      => $post_id,
     ) );
 }
 
 /**
- * 8. Format Article Post Object to Match React Interface
+ * 8. Format Article Post Object to Match React Domain Model
  */
 function wispaar_format_article( $post ) {
     $post_id    = $post->ID;
     $categories = wp_get_post_categories( $post_id, array( 'fields' => 'names' ) );
     $category   = ! empty( $categories ) ? $categories[0] : 'طراحی وب';
 
-    // Estimate read time
     $word_count = str_word_count( strip_tags( $post->post_content ) );
     $minutes    = max( 2, (int) ceil( $word_count / 180 ) );
     $read_time  = $minutes . ' دقیقه مطالعه';
 
-    // Tags
     $post_tags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );
 
     return array(
@@ -374,6 +457,8 @@ function wispaar_format_article( $post ) {
             )
         ),
         'tags'          => ! empty( $post_tags ) ? $post_tags : array( 'وردپرس هدلس', 'سئو', 'توسعه اختصاصی' ),
+        'link'          => get_permalink( $post_id ),
+        'date'          => get_post_time( 'c', true, $post_id ),
         'source'        => 'wordpress',
     );
 }
@@ -381,11 +466,15 @@ function wispaar_format_article( $post ) {
 /**
  * 9. GET /articles
  */
-function wispaar_rest_get_articles() {
+function wispaar_rest_get_articles( WP_REST_Request $request ) {
+    $page     = max( 1, (int) $request->get_param( 'page' ) );
+    $per_page = min( 100, max( 1, (int) ( $request->get_param( 'per_page' ) ?: 20 ) ) );
+
     $args = array(
         'post_type'      => 'post',
         'post_status'    => 'publish',
-        'posts_per_page' => 50,
+        'posts_per_page' => $per_page,
+        'paged'          => $page,
         'orderby'        => 'date',
         'order'          => 'DESC',
     );
@@ -401,10 +490,17 @@ function wispaar_rest_get_articles() {
         wp_reset_postdata();
     }
 
+    $total       = (int) $query->found_posts;
+    $total_pages = (int) $query->max_num_pages;
+
     return rest_ensure_response( array(
-        'success'  => true,
-        'count'    => count( $articles ),
-        'articles' => $articles,
+        'items'       => $articles,
+        'total'       => $total,
+        'total_pages' => $total_pages ?: 1,
+        'page'        => $page,
+        'success'     => true,
+        'count'       => count( $articles ),
+        'articles'    => $articles,
     ) );
 }
 
@@ -429,6 +525,7 @@ function wispaar_rest_get_single_article( WP_REST_Request $request ) {
     return rest_ensure_response( array(
         'success' => true,
         'article' => wispaar_format_article( $posts[0] ),
+        'item'    => wispaar_format_article( $posts[0] ),
     ) );
 }
 
@@ -474,7 +571,6 @@ function wispaar_rest_submit_brief( WP_REST_Request $request ) {
     update_post_meta( $post_id, '_wispaar_lead_desc', $description );
     update_post_meta( $post_id, '_wispaar_lead_status', 'new' );
 
-    // Optional admin email
     $admin_email = get_option( 'admin_email' );
     if ( $admin_email ) {
         @wp_mail(
@@ -488,26 +584,12 @@ function wispaar_rest_submit_brief( WP_REST_Request $request ) {
         'success' => true,
         'message' => 'بریف پروژه شما با موفقیت در سیستم وردپرس هدلس ویسپار ثبت شد.',
         'lead_id' => $post_id,
-        'lead'    => array(
-            'id'          => 'wp-' . $post_id,
-            'name'        => $name,
-            'phone'       => $phone,
-            'email'       => $email,
-            'services'    => $services,
-            'goals'       => $goals,
-            'platform'    => $platform,
-            'website'     => $website,
-            'budget'      => $budget,
-            'timeline'    => $timeline,
-            'description' => $description,
-            'status'      => 'new',
-            'createdAt'   => 'لحظاتی پیش (از طریق REST API وردپرس)',
-        ),
+        'id'      => $post_id,
     ) );
 }
 
 /**
- * 12. GET /leads (Retrieve briefs for Headless Management Dashboard)
+ * 12. GET /leads (Protected Admin Endpoint)
  */
 function wispaar_rest_get_leads() {
     $args = array(
@@ -540,17 +622,19 @@ function wispaar_rest_get_leads() {
     }
 
     return rest_ensure_response( array(
+        'items'   => $leads,
+        'total'   => count( $leads ),
         'success' => true,
-        'count'   => count( $leads ),
         'leads'   => $leads,
     ) );
 }
 
 /**
- * 13. POST /seed (One-Click Auto-Seeder: Projects, Articles, Categories)
+ * 13. POST /seed (Idempotent Database Seeding)
  */
 function wispaar_rest_seed_database() {
-    $seeded_count = 0;
+    $seeded_count  = 0;
+    $skipped_count = 0;
 
     $default_projects = array(
         array(
@@ -616,7 +700,6 @@ function wispaar_rest_seed_database() {
     );
 
     foreach ( $default_projects as $proj ) {
-        // Check if project exists by slug
         $existing = get_page_by_path( $proj['slug'], OBJECT, 'wispaar_project' );
         if ( ! $existing ) {
             $post_id = wp_insert_post( array(
@@ -648,43 +731,15 @@ function wispaar_rest_seed_database() {
 
                 $seeded_count++;
             }
+        } else {
+            $skipped_count++;
         }
     }
 
-    // Seed sample blog post if no posts exist
-    $posts_count = wp_count_posts( 'post' );
-    if ( (int) ( $posts_count->publish ?? 0 ) === 0 ) {
-        wp_insert_post( array(
-            'post_title'   => 'چرا وب‌سایت‌های سنگین و کند، اعتماد مشتری را می‌کشند؟',
-            'post_name'    => 'why-slow-websites-destroy-trust',
-            'post_type'    => 'post',
-            'post_status'  => 'publish',
-            'post_content' => 'تحقیقات نشان می‌دهد هر ثانیه تأخیر در لود سایت، ۱۶٪ از رضایت مشتری و ۷٪ از نرخ تبدیل را کاهش می‌دهد. در استودیو ویسپار، سرعت صرفاً یک ویژگی نیست؛ بلکه پایه اعتماد و معماری تجربه کاربری است.',
-            'post_excerpt' => 'تحلیل مهندسی و بیزینسی تأثیر سرعت بارگذاری سایت بر درک ارزش برند و تصمیم‌گیری مشتریان B2B و B2C.',
-        ) );
-    }
-
     return rest_ensure_response( array(
-        'success'      => true,
-        'message'      => "درون‌ریزی اولیه با موفقیت انجام شد. $seeded_count پروژه جدید در دیتابیس وردپرس ثبت گردید.",
-        'seeded_count' => $seeded_count,
-    ) );
-}
-
-/**
- * 14. GET /settings (Site Information)
- */
-function wispaar_rest_get_settings() {
-    return rest_ensure_response( array(
-        'title'        => get_bloginfo( 'name' ),
-        'tagline'      => get_bloginfo( 'description' ),
-        'email'        => get_option( 'admin_email' ),
-        'phone'        => '021-91000000',
-        'address'      => 'تهران، میدان ونک، برج نگار، طبقه ۱۲، استودیو فناوری ویسپار',
-        'social'       => array(
-            'linkedin' => 'https://linkedin.com/company/wispaar',
-            'github'   => 'https://github.com/wispaar',
-            'telegram' => 'https://t.me/wispaar_studio',
-        ),
+        'success'       => true,
+        'message'       => "درون‌ریزی تکمیل شد: $seeded_count پروژه ثبت گردید، $skipped_count پروژه از قبل موجود بود.",
+        'seeded_count'  => $seeded_count,
+        'skipped_count' => $skipped_count,
     ) );
 }

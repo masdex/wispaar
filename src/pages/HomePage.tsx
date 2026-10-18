@@ -23,6 +23,16 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const { projects, articles } = useHeadless();
+
+  // Prioritize projects explicitly marked as "Featured" in WordPress
+  const featuredProjects = React.useMemo(() => {
+    const explicitlyFeatured = projects.filter((p) => p.isFeatured);
+    if (explicitlyFeatured.length > 0) {
+      return explicitlyFeatured.slice(0, 4);
+    }
+    return projects.slice(0, 4);
+  }, [projects]);
+
   return (
     <div className="space-y-24 md:space-y-36 pb-20">
       {/* 01. HERO SECTION */}
@@ -200,7 +210,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* Editorial Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {projects.slice(0, 4).map((project, idx) => (
+          {featuredProjects.map((project, idx) => (
             <ProjectCard
               key={project.id}
               project={project}

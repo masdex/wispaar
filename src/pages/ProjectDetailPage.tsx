@@ -23,13 +23,52 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
   slug,
   onNavigate,
 }) => {
-  const { projects } = useHeadless();
-  const currentIndex = projects.findIndex((p) => p.slug === slug);
-  const project = currentIndex !== -1 ? projects[currentIndex] : projects[0];
-  const nextProject = projects[(currentIndex + 1) % projects.length];
+  const { projects, isSyncing } = useHeadless();
+  const project = projects.find((p) => p.slug === slug);
+  const currentIndex = project ? projects.findIndex((p) => p.slug === slug) : -1;
+  const nextProject = currentIndex !== -1 && projects.length > 1 ? projects[(currentIndex + 1) % projects.length] : null;
 
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [showCmsSchema, setShowCmsSchema] = useState(false);
+
+  if (!project) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pb-24 space-y-8 text-center">
+        <Breadcrumb
+          items={[
+            { label: 'پروژه‌ها', route: 'portfolio' },
+            { label: 'پروژه یافت نشد' },
+          ]}
+          onNavigate={onNavigate}
+        />
+        <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-10 space-y-6">
+          <div className="text-4xl font-mono text-[#00D9FF]">&lt;404 / NOT FOUND&gt;</div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F8FC]">
+            پروژه‌ای با شناسه «{slug}» یافت نشد.
+          </h1>
+          <p className="text-sm text-[#8C9BAD] max-w-lg mx-auto leading-relaxed">
+            {isSyncing
+              ? 'در حال دریافت اطلاعات از سرور وردپرس...'
+              : 'ممکن است این نمونه‌کار در وردپرس منتشر نشده باشد یا شناسه آن تغییر کرده باشد.'}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              onClick={() => onNavigate('portfolio')}
+              className="px-5 py-2.5 bg-[#1769FF] hover:bg-[#155bd8] text-white text-xs font-semibold rounded-xl transition-all cursor-pointer"
+            >
+              بازگشت به نمایشگاه پروژه‌ها ←
+            </button>
+            <button
+              onClick={() => onNavigate('home')}
+              className="px-5 py-2.5 bg-[#0A1626] border border-[#23364C] text-[#C5D0DD] hover:text-white text-xs font-medium rounded-xl transition-all cursor-pointer"
+            >
+              صفحه اصلی ویسپار
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-16">
@@ -288,15 +327,27 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
       {/* Next Project Footer Bar */}
       <section className="border-t border-[#172638] pt-12 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div>
-          <div className="text-xs text-[#536174] mb-1">پروژه بعدی برای بررسی:</div>
-          <button
-            onClick={() => onNavigate('project-detail', nextProject.slug)}
-            className="text-xl font-bold text-[#F5F8FC] hover:text-[#00D9FF] transition-colors flex items-center gap-2"
-          >
-            <span>{nextProject.title}</span>
-            <span className="text-sm font-normal text-[#8C9BAD]">({nextProject.industry})</span>
-            <ArrowUpLeft className="w-5 h-5 text-[#00D9FF]" />
-          </button>
+          {nextProject ? (
+            <>
+              <div className="text-xs text-[#536174] mb-1">پروژه بعدی برای بررسی:</div>
+              <button
+                onClick={() => onNavigate('project-detail', nextProject.slug)}
+                className="text-xl font-bold text-[#F5F8FC] hover:text-[#00D9FF] transition-colors flex items-center gap-2"
+              >
+                <span>{nextProject.title}</span>
+                <span className="text-sm font-normal text-[#8C9BAD]">({nextProject.industry})</span>
+                <ArrowUpLeft className="w-5 h-5 text-[#00D9FF]" />
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => onNavigate('portfolio')}
+              className="text-sm font-medium text-[#00D9FF] hover:underline flex items-center gap-1.5"
+            >
+              <span>مشاهده سایر پروژه‌ها در گالری</span>
+              <ArrowUpLeft className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         <button

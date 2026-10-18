@@ -1,5 +1,4 @@
 import { Project } from '../types';
-import { projectsData } from '../data/projectsData';
 
 export interface WordPressLead {
   id: string;
@@ -20,7 +19,11 @@ export interface WordPressLead {
 const LEADS_STORAGE_KEY = 'wispaar_wp_leads';
 const PROJECTS_STORAGE_KEY = 'wispaar_wp_projects';
 const WP_ENDPOINT_KEY = 'wispaar_wp_endpoint';
+const WP_AUTH_KEY = 'wispaar_wp_auth_header';
 
+/**
+ * Returns saved leads from local storage for offline fallback
+ */
 export function getStoredLeads(): WordPressLead[] {
   try {
     const raw = localStorage.getItem(LEADS_STORAGE_KEY);
@@ -28,7 +31,6 @@ export function getStoredLeads(): WordPressLead[] {
   } catch (e) {
     console.error('Error reading stored leads', e);
   }
-  // Default seeded leads so the admin table looks realistic immediately
   return [
     {
       id: 'lead-1',
@@ -43,7 +45,7 @@ export function getStoredLeads(): WordPressLead[] {
       timeline: 'استاندارد (طی ۱ الی ۲ ماه)',
       description: 'نیاز به بازطراحی کامل سایت شرکتی و بهینه‌سازی سرعت وردپرس داریم.',
       status: 'new',
-      createdAt: 'امروز، ساعت ۱۰:۳۰'
+      createdAt: 'امروز، ساعت ۱۰:۳۰',
     },
     {
       id: 'lead-2',
@@ -58,11 +60,14 @@ export function getStoredLeads(): WordPressLead[] {
       timeline: 'فوری (طی ۲ الی ۳ هفته)',
       description: 'کمپین تبلیغاتی داریم و نیاز به یک لندینگ پیج اختصاصی فوق سریع با فرم نوبت‌دهی داریم.',
       status: 'contacted',
-      createdAt: 'دیروز، ساعت ۱۶:۱۵'
-    }
+      createdAt: 'دیروز، ساعت ۱۶:۱۵',
+    },
   ];
 }
 
+/**
+ * Saves a lead into local storage for offline availability
+ */
 export function saveLead(lead: Omit<WordPressLead, 'id' | 'createdAt' | 'status'>): WordPressLead {
   const current = getStoredLeads();
   const now = new Date();
@@ -73,29 +78,14 @@ export function saveLead(lead: Omit<WordPressLead, 'id' | 'createdAt' | 'status'
     ...lead,
     id: 'lead-' + Date.now(),
     status: 'new',
-    createdAt: dateStr
+    createdAt: dateStr,
   };
 
   const updated = [newLead, ...current];
   try {
     localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Error saving lead', e);
-  }
-
-  // Also if a real WordPress endpoint is set, fire a non-blocking POST
-  const wpUrl = getWordPressEndpoint();
-  if (wpUrl) {
-    try {
-      const cleanUrl = wpUrl.endsWith('/') ? wpUrl.slice(0, -1) : wpUrl;
-      fetch(`${cleanUrl}/wp-json/wispaar/v1/brief`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lead),
-      }).catch((err) => console.log('Notice: Remote WP endpoint sync attempted', err));
-    } catch (e) {
-      // ignore
-    }
+    console.error('Error saving lead locally', e);
   }
 
   return newLead;
@@ -143,18 +133,72 @@ export function saveCustomProject(project: Project): void {
   }
 }
 
+/**
+ * Predictable endpoint precedence:
+ * 1. Explicit user override in localStorage
+ * 2. Environment configuration (import.meta.env.VITE_WP_API_URL)
+ * 3. Verified same-origin production configuration (when running on wispaar.ir)
+ * 4. Canonical production base URL fallback (https://wispaar.ir)
+ */
 export function getWordPressEndpoint(): string {
   try {
-    return localStorage.getItem(WP_ENDPOINT_KEY) || '';
-  } catch (e) {
-    return '';
+    const userOverride = localStorage.getItem(WP_ENDPOINT_KEY);
+    if (userOverride && userOverride.trim() !== '') {
+      return userOverride.trim();
+    }
+  } catch {
+    // Local storage unavailable
   }
+
+  // Check Vite environment variable
+  const envUrl = (import.meta as any).env?.VITE_WP_API_URL;
+  if (typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return envUrl.trim();
+  }
+
+  // Verified same-origin check for browser execution on target domain
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    const origin = window.location.origin;
+    if (origin.includes('wispaar.ir')) {
+      return origin;
+    }
+  }
+
+  // Canonical production endpoint
+  return 'https://wispaar.ir';
 }
 
 export function setWordPressEndpoint(url: string): void {
   try {
-    localStorage.setItem(WP_ENDPOINT_KEY, url);
+    if (!url || url.trim() === '') {
+      localStorage.removeItem(WP_ENDPOINT_KEY);
+    } else {
+      localStorage.setItem(WP_ENDPOINT_KEY, url.trim());
+    }
   } catch (e) {
     console.error('Error saving WP endpoint', e);
+  }
+}
+
+/**
+ * Optional WordPress Auth Header (e.g. Basic Auth for Application Passwords)
+ */
+export function getWordPressAuthHeader(): string {
+  try {
+    return localStorage.getItem(WP_AUTH_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+export function setWordPressAuthHeader(header: string): void {
+  try {
+    if (!header || header.trim() === '') {
+      localStorage.removeItem(WP_AUTH_KEY);
+    } else {
+      localStorage.setItem(WP_AUTH_KEY, header.trim());
+    }
+  } catch {
+    // ignore
   }
 }

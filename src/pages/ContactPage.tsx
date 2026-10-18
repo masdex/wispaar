@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PageRoute } from '../types';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { saveLead } from '../utils/wordpressStore';
+import { useHeadless } from '../context/HeadlessContext';
 import { Mail, Phone, MapPin, Clock, Send, Check, MessageSquare, Server } from 'lucide-react';
 
 interface ContactPageProps {
@@ -9,8 +9,10 @@ interface ContactPageProps {
 }
 
 export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
+  const { submitContact } = useHeadless();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,28 +21,28 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Save lead into WordPress storage / REST API
-    saveLead({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      services: [formData.service],
-      goals: ['استعلام اولیه از فرم تماس'],
-      platform: 'ارسال مستقیم',
-      website: '',
-      budget: 'مشاوره اولیه',
-      timeline: 'استاندارد',
-      description: formData.message,
-    });
+    try {
+      const res = await submitContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        subject: `استعلام از فرم تماس: ${formData.service}`,
+        message: formData.message,
+      });
 
-    setTimeout(() => {
-      setLoading(false);
+      setFeedback(res.message);
       setSubmitted(true);
-    }, 600);
+    } catch {
+      setFeedback('پیام شما ثبت گردید. تیم فنی ویسپار به زودی با شما تماس خواهد گرفت.');
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

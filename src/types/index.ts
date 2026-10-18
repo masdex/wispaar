@@ -45,6 +45,8 @@ export interface Project {
   tags: string[];
   coverImage: string;
   isDemo: boolean;
+  isFeatured?: boolean;
+  relatedService?: string;
   editorialQuote?: string;
   responsivePreview?: {
     desktopUrl?: string;
@@ -101,7 +103,7 @@ export interface Article {
   id: string;
   slug: string;
   title: string;
-  category: 'طراحی وب' | 'وردپرس' | 'سئو' | 'تجربه کاربری' | 'استراتژی دیجیتال';
+  category: string;
   readTime: string;
   publishedDate: string;
   author: {
@@ -115,6 +117,8 @@ export interface Article {
     quote?: string;
   }[];
   tags: string[];
+  featuredImage?: string;
+  rawHtmlContent?: string;
 }
 
 export interface FaqItem {
@@ -136,3 +140,13 @@ export interface ProjectBriefState {
   website: string;
   description: string;
 }
+
+export interface ContactFormState {
+  name: string;
+  email: string;
+  phone: string;
+  service?: string;
+  subject?: string;
+  message: string;
+}
+

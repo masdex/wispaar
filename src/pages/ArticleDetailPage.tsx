@@ -13,9 +13,48 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
   slug,
   onNavigate,
 }) => {
-  const { articles } = useHeadless();
-  const article = articles.find((a) => a.slug === slug) || articles[0];
-  const relatedArticles = articles.filter((a) => a.slug !== article.slug).slice(0, 2);
+  const { articles, isSyncing } = useHeadless();
+  const article = articles.find((a) => a.slug === slug);
+  const relatedArticles = article ? articles.filter((a) => a.slug !== article.slug).slice(0, 2) : [];
+
+  if (!article) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pb-24 space-y-8 text-center">
+        <Breadcrumb
+          items={[
+            { label: 'یادداشت‌ها', route: 'blog' },
+            { label: 'مطلب یافت نشد' },
+          ]}
+          onNavigate={onNavigate}
+        />
+        <div className="bg-[#06111F] border border-[#172638] rounded-2xl p-10 space-y-6">
+          <div className="text-4xl font-mono text-[#00D9FF]">&lt;404 / ARTICLE NOT FOUND&gt;</div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F8FC]">
+            مقاله‌ای با شناسه «{slug}» یافت نشد.
+          </h1>
+          <p className="text-sm text-[#8C9BAD] max-w-lg mx-auto leading-relaxed">
+            {isSyncing
+              ? 'در حال جستجو در پایگاه مقالات وردپرس...'
+              : 'ممکن است این مقاله حذف شده یا نشانی آن در وردپرس تغییر یافته باشد.'}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              onClick={() => onNavigate('blog')}
+              className="px-5 py-2.5 bg-[#1769FF] hover:bg-[#155bd8] text-white text-xs font-semibold rounded-xl transition-all cursor-pointer"
+            >
+              بازگشت به فهرست یادداشت‌ها ←
+            </button>
+            <button
+              onClick={() => onNavigate('home')}
+              className="px-5 py-2.5 bg-[#0A1626] border border-[#23364C] text-[#C5D0DD] hover:text-white text-xs font-medium rounded-xl transition-all cursor-pointer"
+            >
+              صفحه اصلی ویسپار
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 space-y-12">
@@ -65,45 +104,66 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
             <span className="text-[11px] text-[#536174]">انتشار اختصاصی در ژورنال ویسپار</span>
           </div>
         </div>
+
+        {/* Featured Image if supplied by WordPress */}
+        {article.featuredImage && (
+          <div className="rounded-2xl overflow-hidden border border-[#172638] aspect-video sm:aspect-[21/9] bg-[#0A1626]">
+            <img
+              src={article.featuredImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+        )}
       </header>
 
-      {/* Table of Contents Mini Box */}
-      <div className="bg-[#06111F] border border-[#172638] rounded-xl p-5 text-xs space-y-2">
-        <div className="font-bold text-[#F5F8FC] flex items-center gap-1.5 mb-2">
-          <BookOpen className="w-3.5 h-3.5 text-[#00D9FF]" />
-          <span>سرفصل‌های این نوشتار:</span>
+      {/* Table of Contents Mini Box (Shown if headings exist) */}
+      {!article.rawHtmlContent && article.contentParagraphs.some((p) => p.subheading) && (
+        <div className="bg-[#06111F] border border-[#172638] rounded-xl p-5 text-xs space-y-2">
+          <div className="font-bold text-[#F5F8FC] flex items-center gap-1.5 mb-2">
+            <BookOpen className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <span>سرفصل‌های این نوشتار:</span>
+          </div>
+          <ul className="space-y-1.5 text-[#8C9BAD]">
+            {article.contentParagraphs.map((para, i) => (
+              para.subheading && (
+                <li key={i} className="hover:text-[#F5F8FC] transition-colors">
+                  • {para.subheading}
+                </li>
+              )
+            ))}
+          </ul>
         </div>
-        <ul className="space-y-1.5 text-[#8C9BAD]">
-          {article.contentParagraphs.map((para, i) => (
-            para.subheading && (
-              <li key={i} className="hover:text-[#F5F8FC] transition-colors">
-                • {para.subheading}
-              </li>
-            )
-          ))}
-        </ul>
-      </div>
+      )}
 
-      {/* Body Content */}
-      <div className="space-y-10 text-base text-[#C5D0DD] leading-loose">
-        {article.contentParagraphs.map((para, idx) => (
-          <section key={idx} className="space-y-4">
-            {para.subheading && (
-              <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC] pt-4">
-                {para.subheading}
-              </h2>
-            )}
-            <p className="text-justify text-[#C5D0DD] leading-relaxed">
-              {para.text}
-            </p>
-            {para.quote && (
-              <blockquote className="my-6 p-6 bg-[#06111F] border-r-4 border-[#00D9FF] rounded-l-xl text-[#F5F8FC] font-medium italic leading-relaxed text-sm sm:text-base">
-                {para.quote}
-              </blockquote>
-            )}
-          </section>
-        ))}
-      </div>
+      {/* Body Content: Render Gutenberg / Classic Rich HTML when available */}
+      {article.rawHtmlContent ? (
+        <div
+          className="wispaar-prose"
+          dangerouslySetInnerHTML={{ __html: article.rawHtmlContent }}
+        />
+      ) : (
+        <div className="space-y-10 text-base text-[#C5D0DD] leading-loose">
+          {article.contentParagraphs.map((para, idx) => (
+            <section key={idx} className="space-y-4">
+              {para.subheading && (
+                <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC] pt-4">
+                  {para.subheading}
+                </h2>
+              )}
+              <p className="text-justify text-[#C5D0DD] leading-relaxed">
+                {para.text}
+              </p>
+              {para.quote && (
+                <blockquote className="my-6 p-6 bg-[#06111F] border-r-4 border-[#00D9FF] rounded-l-xl text-[#F5F8FC] font-medium italic leading-relaxed text-sm sm:text-base">
+                  {para.quote}
+                </blockquote>
+              )}
+            </section>
+          ))}
+        </div>
+      )}
 
       {/* Tags */}
       <div className="pt-6 border-t border-[#172638] flex flex-wrap items-center gap-2 text-xs">
